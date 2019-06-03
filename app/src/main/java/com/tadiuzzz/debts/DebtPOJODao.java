@@ -16,7 +16,7 @@ import io.reactivex.Flowable;
 @Dao
 public interface DebtPOJODao {
 
-    @Transaction @Query("SELECT * FROM debt_table ORDER BY dateOfStart DESC")
+    @Transaction @Query("SELECT * FROM debt_table ORDER BY dateOfStart") //в обратном порядке добавить в конце DESC
     Flowable<List<DebtPOJO>> getAllDebtPOJOs();
 
 }

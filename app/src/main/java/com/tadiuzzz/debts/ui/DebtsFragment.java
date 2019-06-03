@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +21,7 @@ import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.entity.Debt;
 import com.tadiuzzz.debts.entity.DebtPOJO;
 import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
 
 import java.util.List;
 import java.util.Random;
@@ -41,7 +40,7 @@ public class DebtsFragment extends Fragment {
 
     private DebtsViewModel debtsViewModel;
     public static final String TAG = "logTag";
-    @BindView(R2.id.rvDebts)
+    @BindView(R.id.rvDebts)
     RecyclerView rvDebts;
 
 
@@ -66,11 +65,8 @@ public class DebtsFragment extends Fragment {
                 .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
                     @Override
                     public void onNext(List<DebtPOJO> debtPOJOS) {
-                        for (DebtPOJO debtPOJO : debtPOJOS) {
-                            Log.i(TAG, "onNext: debtId: " + debtPOJO.getDebt().getId());
                             debtPOJOsAdapter.setData(debtPOJOS);
                             debtPOJOsAdapter.notifyDataSetChanged();
-                        }
                     }
 
                     @Override

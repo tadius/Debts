@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.ui;
+package com.tadiuzzz.debts.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.R2;
-import com.tadiuzzz.debts.entity.Debt;
 import com.tadiuzzz.debts.entity.DebtPOJO;
 
 import java.text.SimpleDateFormat;
@@ -61,13 +60,13 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
 
     public class DebtPOJOViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R2.id.tvDebtItemDateOfStart) TextView tvDebtItemDateOfStart;
-        @BindView(R2.id.tvDebtItemDateOfExpiration) TextView tvDebtItemDateOfExpiration;
-        @BindView(R2.id.tvDebtItemDateOfEnd) TextView tvDebtItemDateOfEnd;
-        @BindView(R2.id.tvDebtItemPersonName) TextView tvDebtItemPersonName;
-        @BindView(R2.id.tvDebtItemCategoryName) TextView tvDebtItemCategoryName;
-        @BindView(R2.id.tvDebtItemAmount) TextView tvDebtItemAmount;
-        @BindView(R2.id.tvDebtItemDescription) TextView tvDebtItemDescription;
+        @BindView(R.id.tvDebtItemDateOfStart) TextView tvDebtItemDateOfStart;
+        @BindView(R.id.tvDebtItemDateOfExpiration) TextView tvDebtItemDateOfExpiration;
+        @BindView(R.id.tvDebtItemDateOfEnd) TextView tvDebtItemDateOfEnd;
+        @BindView(R.id.tvDebtItemPersonName) TextView tvDebtItemPersonName;
+        @BindView(R.id.tvDebtItemCategoryName) TextView tvDebtItemCategoryName;
+        @BindView(R.id.tvDebtItemAmount) TextView tvDebtItemAmount;
+        @BindView(R.id.tvDebtItemDescription) TextView tvDebtItemDescription;
 
 
         public DebtPOJOViewHolder(@NonNull View itemView) {

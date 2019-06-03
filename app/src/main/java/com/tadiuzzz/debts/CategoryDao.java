@@ -35,7 +35,7 @@ public interface CategoryDao {
     @Query("DELETE FROM category_table")
     Completable deleteAllCategories();
 
-    @Query("SELECT * FROM category_table ORDER BY id DESC")
+    @Query("SELECT * FROM category_table ORDER BY id")
     Flowable<List<Category>> getAllCategories();
 
     @Query("SELECT * FROM category_table WHERE id = :id")

@@ -32,7 +32,7 @@ public interface DebtDao {
     @Query("DELETE FROM debt_table")
     Completable deleteAllDebts();
 
-    @Query("SELECT * FROM debt_table ORDER BY dateOfStart DESC")
+    @Query("SELECT * FROM debt_table ORDER BY dateOfStart")
     Flowable<List<Debt>> getAllDebts();
 
     @Query("SELECT * FROM debt_table WHERE id = :id")

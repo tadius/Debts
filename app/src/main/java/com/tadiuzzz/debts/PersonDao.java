@@ -34,7 +34,7 @@ public interface PersonDao {
     @Query("DELETE FROM person_table")
     Completable deleteAllPersons();
 
-    @Query("SELECT * FROM person_table ORDER BY id DESC")
+    @Query("SELECT * FROM person_table ORDER BY id")
     Flowable<List<Person>> getAllPersons();
 
     @Query("SELECT * FROM person_table WHERE id = :id")
