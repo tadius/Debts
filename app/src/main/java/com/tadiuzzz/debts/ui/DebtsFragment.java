@@ -12,13 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.DebtsViewModel;
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.R2;
 import com.tadiuzzz.debts.entity.Debt;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -31,7 +36,7 @@ public class DebtsFragment extends Fragment {
 
     private DebtsViewModel debtsViewModel;
     public static final String TAG = "logTag";
-    private TextView tvDebts;
+    @BindView(R2.id.rvDebts) RecyclerView rvDebts;
 
 
     @Nullable
@@ -40,7 +45,12 @@ public class DebtsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_debts, container, false);
 
-        tvDebts = view.findViewById(R.id.tvDebts);
+        ButterKnife.bind(this, view);
+
+        DebtsAdapter debtsAdapter = new DebtsAdapter();
+        rvDebts.setAdapter(debtsAdapter);
+        rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
         debtsViewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
 
@@ -53,7 +63,8 @@ public class DebtsFragment extends Fragment {
 //                adapter.submitList(notes);
                 for (Debt debt : debts) {
                     Log.i(TAG, "onNext: debtId: " + debt.getId());
-                    tvDebts.setText(tvDebts.getText() + " - " + String.valueOf(debt.getId()));
+                    debtsAdapter.setData(debts);
+                    debtsAdapter.notifyDataSetChanged();
 
                 }
 
@@ -85,10 +96,10 @@ public class DebtsFragment extends Fragment {
 
     private void addDebt(){
         String description = "Debt 1";
-        long amount = 100;
-        long dateOfStart = 100000;
-        long dateOfEnd = 0;
-        long dateOfExpiration = 200000;
+        long amount = 100L;
+        long dateOfStart = 1343805819061L;
+        long dateOfEnd = 13805819061L;
+        long dateOfExpiration = 13438059061L;
         boolean isReturned = false;
         boolean isActive = true;
         int categoryId = 1;

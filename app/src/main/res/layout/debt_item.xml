@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="4dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,12 +38,12 @@
             android:layout_weight="1"
             android:gravity="center">
             <TextView
-                android:id="@+id/tvLabelForDebtItemExpirationDate"
+                android:id="@+id/tvLabelForDebtItemDateOfExpiration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="до " />
             <TextView
-                android:id="@+id/tvDebtItemExpirationDate"
+                android:id="@+id/tvDebtItemDateOfExpiration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="23.05.2019" />
@@ -70,7 +73,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="4dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -106,7 +111,7 @@
 
         <TextView
             android:id="@+id/tvDebtItemDescription"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="textEnd"
@@ -114,6 +119,9 @@
 
     </LinearLayout>
 
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
 </LinearLayout>
