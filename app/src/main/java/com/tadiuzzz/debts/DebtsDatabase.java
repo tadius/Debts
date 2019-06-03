@@ -21,7 +21,7 @@ public abstract class DebtsDatabase extends RoomDatabase {
     public abstract DebtDao debtDao();
     public abstract PersonDao personDao();
     public abstract CategoryDao categoryDao();
-    public abstract DebtWithPersonAndCategoryDao debtWithPersonAndCategoryDao();
+    public abstract DebtPOJODao debtWithPersonAndCategoryDao();
 
     public static synchronized DebtsDatabase getInstance(Context context){
         if (inststance == null) {

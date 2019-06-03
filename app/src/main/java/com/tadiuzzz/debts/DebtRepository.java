@@ -1,24 +1,17 @@
 package com.tadiuzzz.debts;
 
 import android.app.Application;
-import android.provider.ContactsContract;
-
-import androidx.annotation.MainThread;
-import androidx.lifecycle.LiveData;
 
 import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.DebtWithPersonAndCategory;
+import com.tadiuzzz.debts.entity.DebtPOJO;
 import com.tadiuzzz.debts.entity.Person;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -29,41 +22,35 @@ public class DebtRepository {
     private DebtDao debtDao;
     private PersonDao personDao;
     private CategoryDao categoryDao;
-    private DebtWithPersonAndCategoryDao debtWithPersonAndCategoryDao;
+    private DebtPOJODao debtPOJODao;
 
-//    private Flowable<List<DebtWithPersonAndCategory>> allDebtsWithPersonAndCategory;
-    private Flowable<List<Debt>> allDebts;
+    private Flowable<List<Person>> allPersons;
+    private Flowable<List<Category>> allCategories;
+    private Flowable<List<DebtPOJO>> allDebtPOJOs;
 
     public DebtRepository(Application application) {
         DebtsDatabase database = DebtsDatabase.getInstance(application);
         debtDao = database.debtDao();
         personDao = database.personDao();
         categoryDao = database.categoryDao();
-        debtWithPersonAndCategoryDao = database.debtWithPersonAndCategoryDao();
+        debtPOJODao = database.debtWithPersonAndCategoryDao();
 
-//        allDebtsWithPersonAndCategory = getAllDebts();
-        allDebts = getAllDebts();
+        allDebtPOJOs = debtPOJODao.getAllDebtPOJOs();
+        allPersons = personDao.getAllPersons();
+        allCategories = categoryDao.getAllCategories();
     }
 
-//    private Flowable<List<DebtWithPersonAndCategory>> getAllDebts() {
-//        return debtWithPersonAndCategoryDao.getAllDebtsWithPersonAndCategory();
-//    }
-
-    public Flowable<List<Debt>> getAllDebts() {
-        return debtDao.getAllDebts();
+    public Flowable<List<DebtPOJO>> getAllDebtPOJOs() {
+        return allDebtPOJOs;
     }
 
-//    public Completable insert(DebtWithPersonAndCategory debtWithPersonAndCategory) {
-//
-//        for (Person person : debtWithPersonAndCategory.getPerson()) {
-//            insertPerson(person);
-//        }
-//
-//        insertPerson(debtWithPersonAndCategory.getPerson());
-//        return Completable.fromAction(() -> debtWithPersonAndCategoryDao.getAllDebtsWithPersonAndCategory())
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread());
-//    }
+    public Flowable<List<Person>> getAllPersons() {
+        return allPersons;
+    }
+
+    public Flowable<List<Category>> getAllCategories() {
+        return allCategories;
+    }
 
     public Completable insertDebt(Debt debt){
         return debtDao.insert(debt);
@@ -87,6 +74,18 @@ public class DebtRepository {
 
     public Completable deletePerson(Person person){
         return personDao.delete(person);
+    }
+
+    public Completable insertCategory(Category category){
+        return categoryDao.insert(category);
+    }
+
+    public Completable updateCategory(Category category){
+        return categoryDao.update(category);
+    }
+
+    public Completable deleteCategory(Category category){
+        return categoryDao.delete(category);
     }
 
 }

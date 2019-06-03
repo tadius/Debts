@@ -5,7 +5,10 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.entity.Debt;
+import com.tadiuzzz.debts.entity.DebtPOJO;
+import com.tadiuzzz.debts.entity.Person;
 
 import java.util.List;
 
@@ -24,8 +27,8 @@ public class DebtsViewModel extends AndroidViewModel {
         debtRepository = new DebtRepository(application);
     }
 
-    public Flowable<List<Debt>> getDebts(){
-        return debtRepository.getAllDebts();
+    public Flowable<List<DebtPOJO>> getDebtPOJOs(){
+        return debtRepository.getAllDebtPOJOs();
     }
 
     public Completable insertDebt(Debt debt){
@@ -38,6 +41,30 @@ public class DebtsViewModel extends AndroidViewModel {
 
     public Completable deleteDebt(Debt debt){
         return debtRepository.deleteDebt(debt);
+    }
+
+    public Completable insertPerson(Person person){
+        return debtRepository.insertPerson(person);
+    }
+
+    public Completable updatePerson(Person person){
+        return debtRepository.updatePerson(person);
+    }
+
+    public Completable deletePerson(Person person){
+        return debtRepository.deletePerson(person);
+    }
+
+    public Completable insertCategory(Category category){
+        return debtRepository.insertCategory(category);
+    }
+
+    public Completable updateCategory(Category category){
+        return debtRepository.updateCategory(category);
+    }
+
+    public Completable deleteCategory(Category category){
+        return debtRepository.deleteCategory(category);
     }
 
 }

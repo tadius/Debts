@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tadiuzzz.debts.DebtsViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.R2;
+import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.entity.Debt;
+import com.tadiuzzz.debts.entity.DebtPOJO;
+import com.tadiuzzz.debts.entity.Person;
 
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +41,8 @@ public class DebtsFragment extends Fragment {
 
     private DebtsViewModel debtsViewModel;
     public static final String TAG = "logTag";
-    @BindView(R2.id.rvDebts) RecyclerView rvDebts;
+    @BindView(R2.id.rvDebts)
+    RecyclerView rvDebts;
 
 
     @Nullable
@@ -47,79 +53,116 @@ public class DebtsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        DebtsAdapter debtsAdapter = new DebtsAdapter();
-        rvDebts.setAdapter(debtsAdapter);
-        rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
+        DebtPOJOsAdapter debtPOJOsAdapter = new DebtPOJOsAdapter();
+        rvDebts.setAdapter(debtPOJOsAdapter);
 
+        rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         debtsViewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
 
-        debtsViewModel.getDebts()
+        debtsViewModel.getDebtPOJOs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Debt>>() {
-            @Override
-            public void onNext(List<Debt> debts) {
-//                adapter.submitList(notes);
-                for (Debt debt : debts) {
-                    Log.i(TAG, "onNext: debtId: " + debt.getId());
-                    debtsAdapter.setData(debts);
-                    debtsAdapter.notifyDataSetChanged();
+                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                    @Override
+                    public void onNext(List<DebtPOJO> debtPOJOS) {
+                        for (DebtPOJO debtPOJO : debtPOJOS) {
+                            Log.i(TAG, "onNext: debtId: " + debtPOJO.getDebt().getId());
+                            debtPOJOsAdapter.setData(debtPOJOS);
+                            debtPOJOsAdapter.notifyDataSetChanged();
+                        }
+                    }
 
-                }
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.i(TAG, "onError: ");
+                    }
 
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
-
-        addDebt();
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete: ");
+                    }
+                });
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                addDebt();
+                addRandomPerson();
+                addRandomCategory();
+//                addRandomDebt(1, 1);
+//                addRandomDebt(2, 2);
+//                addRandomDebt(3, 2);
             }
         }, 5000);
 
         return view;
     }
 
-    private void addDebt(){
-        String description = "Debt 1";
-        long amount = 100L;
-        long dateOfStart = 1343805819061L;
-        long dateOfEnd = 13805819061L;
-        long dateOfExpiration = 13438059061L;
+    private void addRandomPerson() {
+        Random random = new Random();
+        int i = random.nextInt(100);
+        Person person = new Person("Name" + i, "SecondName" + i);
+        debtsViewModel.insertPerson(person)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableCompletableObserver() {
+            @Override
+            public void onComplete() {
+                Log.i(TAG, "Person inserted!");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    private void addRandomCategory() {
+        Random random = new Random();
+        int i = random.nextInt(100);
+        Category category = new Category("Category" + i);
+        debtsViewModel.insertCategory(category)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableCompletableObserver() {
+            @Override
+            public void onComplete() {
+                Log.i(TAG, "Category inserted!");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    private void addRandomDebt(int personId, int categoryId) {
+        Random random = new Random();
+        int i = random.nextInt(100);
+        String description = "Debt " + i;
+        long amount = 5000L + i;
+        long dateOfStart = 1343805819061L * i;
+        long dateOfEnd = 1380583119061L * i;
+        long dateOfExpiration = 1343128059061L * i;
         boolean isReturned = false;
         boolean isActive = true;
-        int categoryId = 1;
-        int personId = 1;
         Debt debt = new Debt(description, amount, dateOfStart, dateOfEnd, dateOfExpiration, isReturned, isActive, categoryId, personId);
 
         debtsViewModel.insertDebt(debt)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableCompletableObserver() {
-            @Override
-            public void onComplete() {
-                Log.i(TAG, "Debt inserted! debtId: " + debt.getId());
-            }
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "Debt inserted! debtId: " + debt.getId());
+                    }
 
-            @Override
-            public void onError(Throwable e) {
+                    @Override
+                    public void onError(Throwable e) {
 //                Log.i(TAG, "Error inserting! debtId: " + debt.getId());
-                Log.i(TAG, "Error inserting! debtId: " + e.getLocalizedMessage());
-            }
-        });
+                        Log.i(TAG, "Error inserting! debtId: " + e.getLocalizedMessage());
+                    }
+                });
     }
 }
