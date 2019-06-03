@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.tadiuzzz.debts"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    def lifecycle_version = "2.0.0"
+    def room_version = "2.1.0-beta01"
+    def navigation_version = "2.0.0"
+    def butterknife_version = "10.1.0"
+    def rxjava2_version = "2.1.9"
+    def rxandroid_version = "2.0.1"
+    def retrofit2_rxjava2_adapter_version = "1.0.0"
+
+    // ViewModel and LiveData
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+
+    //Navigation
+    implementation "androidx.navigation:navigation-fragment:$navigation_version"
+
+    //Butterknife
+    implementation "com.jakewharton:butterknife-gradle-plugin:$butterknife_version"
+
+    //RxJava
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava2_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$retrofit2_rxjava2_adapter_version"
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}
