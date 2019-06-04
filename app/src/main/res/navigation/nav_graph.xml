@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/debtsFragment">
+    app:startDestination="@id/categoriesFragment">
 
     <fragment
         android:id="@+id/debtsFragment"
@@ -14,5 +14,16 @@
         android:id="@+id/categoriesFragment"
         android:name="com.tadiuzzz.debts.ui.CategoriesFragment"
         android:label="fragment_categories"
-        tools:layout="@layout/fragment_categories" />
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_editCategoryFragment"
+            app:destination="@+id/editCategoryFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/editCategoryFragment"
+        android:name="com.tadiuzzz.debts.ui.EditCategoryFragment"
+        android:label="fragment_edit_category"
+        tools:layout="@layout/fragment_edit_category" />
 </navigation>

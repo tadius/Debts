@@ -11,6 +11,8 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -50,6 +52,10 @@ public class DebtRepository {
 
     public Flowable<List<Category>> getAllCategories() {
         return allCategories;
+    }
+
+    public Maybe<Category> getCategoryByID(int id) {
+        return categoryDao.getCategoryById(id);
     }
 
     public Completable insertDebt(Debt debt){

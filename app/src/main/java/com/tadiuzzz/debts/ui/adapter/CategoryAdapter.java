@@ -19,12 +19,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Simonov.vv on 03.06.2019.
  */
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
+    private OnCategoryClickListener onCategoryClickListener;
     private List<Category> categories;
 
     public void setData(List<Category> categories) {
@@ -61,8 +63,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if(onCategoryClickListener != null && position != RecyclerView.NO_POSITION) {
+                    onCategoryClickListener.onCategoryClick(categories.get(position));
+                }
+            });
         }
     }
 
+    public interface OnCategoryClickListener{
+        void onCategoryClick(Category category);
+    }
+
+    public void setOnCategoryClickListener(OnCategoryClickListener onCategoryClickListener){
+        this.onCategoryClickListener = onCategoryClickListener;
+    }
 
 }

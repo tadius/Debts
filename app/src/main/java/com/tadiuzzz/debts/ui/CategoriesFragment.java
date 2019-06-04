@@ -1,37 +1,30 @@
 package com.tadiuzzz.debts.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tadiuzzz.debts.CategoriesViewModel;
-import com.tadiuzzz.debts.DebtsViewModel;
+import com.tadiuzzz.debts.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.R2;
 import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.DebtPOJO;
-import com.tadiuzzz.debts.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
-import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
 
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -42,7 +35,8 @@ public class CategoriesFragment extends Fragment {
 
     private CategoriesViewModel categoriesViewModel;
     public static final String TAG = "logTag";
-    @BindView(R.id.rvCategories) RecyclerView rvCategories;
+    @BindView(R.id.rvCategories)
+    RecyclerView rvCategories;
 
 
     @Nullable
@@ -55,6 +49,16 @@ public class CategoriesFragment extends Fragment {
 
         CategoryAdapter categoryAdapter = new CategoryAdapter();
         rvCategories.setAdapter(categoryAdapter);
+        categoryAdapter.setOnCategoryClickListener(new CategoryAdapter.OnCategoryClickListener() {
+            @Override
+            public void onCategoryClick(Category category) {
+
+                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putInt("categoryId", category.getId());
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
+            }
+        });
 
         rvCategories.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -66,8 +70,8 @@ public class CategoriesFragment extends Fragment {
                 .subscribe(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
-                            categoryAdapter.setData(categories);
-                            categoryAdapter.notifyDataSetChanged();
+                        categoryAdapter.setData(categories);
+                        categoryAdapter.notifyDataSetChanged();
                     }
 
                     @Override
