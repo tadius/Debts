@@ -12,22 +12,32 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tvEditCategoryId"
+            android:id="@+id/tvEditPersonId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
+            android:layout_weight="5"
             android:text="id"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-        <EditText
-            android:id="@+id/etCategoryName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Категория"
-            android:inputType="textPersonName"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            <EditText
+                android:id="@+id/etPersonFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:hint="Имя"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <EditText
+                android:id="@+id/etPersonSecondName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:hint="Фамилия"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,14 +46,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btnSaveCategory"
+            android:id="@+id/btnSavePerson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Сохранить" />
 
         <Button
-            android:id="@+id/btnDeleteCategory"
+            android:id="@+id/btnDeletePerson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

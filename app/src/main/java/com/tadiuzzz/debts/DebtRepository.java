@@ -58,6 +58,10 @@ public class DebtRepository {
         return categoryDao.getCategoryById(id);
     }
 
+    public Maybe<Person> getPersonByID(int id) {
+        return personDao.getPersonById(id);
+    }
+
     public Completable insertDebt(Debt debt){
         return debtDao.insert(debt);
     }

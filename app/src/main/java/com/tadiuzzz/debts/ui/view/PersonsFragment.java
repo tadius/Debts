@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.ui;
+package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +45,7 @@ public class PersonsFragment extends Fragment {
 
     @OnClick(R.id.fbAddPerson)
     void onAddButtonClick(){
-//        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_csategoriesFragment_to_editCategoryFragment);
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment);
     }
 
     @Nullable
@@ -64,7 +64,7 @@ public class PersonsFragment extends Fragment {
                 Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
                 bundle.putInt("personId", person.getId());
-//                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categor_iesFragment_to_editCategoryFragment, bundle);
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
             }
         });
 

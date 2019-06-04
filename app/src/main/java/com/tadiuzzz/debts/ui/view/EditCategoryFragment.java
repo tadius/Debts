@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.ui;
+package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
 import android.util.Log;

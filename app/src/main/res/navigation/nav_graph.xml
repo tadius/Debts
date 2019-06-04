@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/debtsFragment"
-        android:name="com.tadiuzzz.debts.ui.DebtsFragment"
+        android:name="com.tadiuzzz.debts.ui.view.DebtsFragment"
         android:label="fragment_debts"
         tools:layout="@layout/fragment_debts" />
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.tadiuzzz.debts.ui.CategoriesFragment"
+        android:name="com.tadiuzzz.debts.ui.view.CategoriesFragment"
         android:label="fragment_categories"
         tools:layout="@layout/fragment_categories" >
         <action
@@ -23,12 +23,23 @@
     </fragment>
     <fragment
         android:id="@+id/editCategoryFragment"
-        android:name="com.tadiuzzz.debts.ui.EditCategoryFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditCategoryFragment"
         android:label="fragment_edit_category"
         tools:layout="@layout/fragment_edit_category" />
     <fragment
         android:id="@+id/personsFragment"
-        android:name="com.tadiuzzz.debts.ui.PersonsFragment"
+        android:name="com.tadiuzzz.debts.ui.view.PersonsFragment"
         android:label="fragment_persons"
-        tools:layout="@layout/fragment_persons" />
+        tools:layout="@layout/fragment_persons" >
+        <action
+            android:id="@+id/action_personsFragment_to_editPersonFragment"
+            app:destination="@id/editPersonFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPersonFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditPersonFragment"
+        android:label="fragment_edit_person"
+        tools:layout="@layout/fragment_edit_person" />
 </navigation>
