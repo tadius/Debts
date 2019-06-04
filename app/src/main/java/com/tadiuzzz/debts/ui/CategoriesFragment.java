@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
@@ -37,7 +39,13 @@ public class CategoriesFragment extends Fragment {
     public static final String TAG = "logTag";
     @BindView(R.id.rvCategories)
     RecyclerView rvCategories;
+    @BindView(R.id.fbAddCategory)
+    FloatingActionButton fbAddCategory;
 
+    @OnClick(R.id.fbAddCategory)
+    void onAddButtonClick(){
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment);
+    }
 
     @Nullable
     @Override

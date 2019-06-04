@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.presentation.EditCategoryViewModel;
@@ -63,6 +65,7 @@ public class EditCategoryFragment extends Fragment {
                     @Override
                     public void onComplete() {
                         Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
                     }
 
                     @Override
@@ -80,6 +83,7 @@ public class EditCategoryFragment extends Fragment {
                             @Override
                             public void onComplete() {
                                 Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
                             }
 
                             @Override
@@ -95,14 +99,31 @@ public class EditCategoryFragment extends Fragment {
 
     @OnClick(R.id.btnDeleteCategory)
     void onDeleteClick() {
-        Toast.makeText(getActivity(), "Delete", Toast.LENGTH_SHORT).show();
+        if(loadedCategory != null) {
+            editCategoryViewModel.deleteCategory(loadedCategory)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new DisposableCompletableObserver() {
+                @Override
+                public void onComplete() {
+                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Toast.makeText(getActivity(), "Error deleting!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(getActivity(), "Такой категории не существует!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_category, container, false);
-
 
         ButterKnife.bind(this, view);
 
