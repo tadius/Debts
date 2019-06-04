@@ -1,6 +1,5 @@
-package com.tadiuzzz.debts.entity;
+package com.tadiuzzz.debts.domain.entity;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 

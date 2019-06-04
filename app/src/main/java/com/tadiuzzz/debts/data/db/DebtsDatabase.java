@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts;
+package com.tadiuzzz.debts.data.db;
 
 import android.content.Context;
 
@@ -6,9 +6,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Debt;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 /**
  * Created by Simonov.vv on 30.05.2019.

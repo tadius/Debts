@@ -1,20 +1,22 @@
-package com.tadiuzzz.debts;
+package com.tadiuzzz.debts.data;
 
 import android.app.Application;
 
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.DebtPOJO;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.data.db.CategoryDao;
+import com.tadiuzzz.debts.data.db.DebtDao;
+import com.tadiuzzz.debts.data.db.DebtPOJODao;
+import com.tadiuzzz.debts.data.db.DebtsDatabase;
+import com.tadiuzzz.debts.data.db.PersonDao;
+import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Debt;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 30.05.2019.

@@ -5,11 +5,11 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.tadiuzzz.debts.DebtRepository;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.DebtPOJO;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Debt;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.List;
 

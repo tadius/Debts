@@ -1,7 +1,6 @@
-package com.tadiuzzz.debts.entity;
+package com.tadiuzzz.debts.domain.entity;
 
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 /**

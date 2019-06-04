@@ -9,8 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.List;
 

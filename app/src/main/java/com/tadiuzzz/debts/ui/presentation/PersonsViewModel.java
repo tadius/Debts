@@ -5,8 +5,8 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.tadiuzzz.debts.DebtRepository;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.List;
 

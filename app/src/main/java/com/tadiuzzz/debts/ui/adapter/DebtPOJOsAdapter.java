@@ -9,8 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.R2;
-import com.tadiuzzz.debts.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

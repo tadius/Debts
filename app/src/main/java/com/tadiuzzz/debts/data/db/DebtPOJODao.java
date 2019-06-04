@@ -1,10 +1,10 @@
-package com.tadiuzzz.debts;
+package com.tadiuzzz.debts.data.db;
 
 import androidx.room.Dao;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
-import com.tadiuzzz.debts.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
 import java.util.List;
 

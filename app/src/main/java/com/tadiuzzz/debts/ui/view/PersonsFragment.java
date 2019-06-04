@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
 import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
 

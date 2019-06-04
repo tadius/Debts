@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
 
 import butterknife.BindView;

@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.entity;
+package com.tadiuzzz.debts.domain.entity;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

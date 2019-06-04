@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.DebtPOJO;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Debt;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
 
 import java.util.List;

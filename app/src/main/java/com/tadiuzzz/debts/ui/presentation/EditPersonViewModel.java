@@ -5,9 +5,8 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.tadiuzzz.debts.DebtRepository;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;

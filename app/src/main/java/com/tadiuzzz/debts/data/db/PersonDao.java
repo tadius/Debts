@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts;
+package com.tadiuzzz.debts.data.db;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -6,15 +6,13 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.tadiuzzz.debts.entity.Debt;
-import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.Single;
 
 /**
  * Created by Simonov.vv on 30.05.2019.

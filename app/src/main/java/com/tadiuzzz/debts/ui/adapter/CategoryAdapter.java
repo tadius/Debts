@@ -9,17 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.R2;
-import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.entity.Debt;
+import com.tadiuzzz.debts.domain.entity.Category;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Simonov.vv on 03.06.2019.
