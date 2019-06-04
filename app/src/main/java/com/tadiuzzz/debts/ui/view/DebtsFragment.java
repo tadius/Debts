@@ -6,11 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,6 +56,16 @@ public class DebtsFragment extends Fragment {
         DebtPOJOsAdapter debtPOJOsAdapter = new DebtPOJOsAdapter();
         rvDebts.setAdapter(debtPOJOsAdapter);
 
+        debtPOJOsAdapter.setOnDebtPOJOClickListener(new DebtPOJOsAdapter.OnDebtPOJOClickListener() {
+            @Override
+            public void onDebtPOJOClick(DebtPOJO debtPOJO) {
+                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putInt("debtId", debtPOJO.getDebt().getId());
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment, bundle);
+            }
+        });
+
         rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         debtsViewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
@@ -78,18 +90,6 @@ public class DebtsFragment extends Fragment {
                         Log.i(TAG, "onComplete: ");
                     }
                 });
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addRandomPerson();
-                addRandomCategory();
-//                addRandomDebt(1, 1);
-//                addRandomDebt(2, 2);
-//                addRandomDebt(3, 2);
-            }
-        }, 5000);
 
         return view;
     }

@@ -12,7 +12,7 @@ public class Debt {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String description;
-    private long amount;
+    private double amount;
     private long dateOfStart;
     private long dateOfEnd;
     private long dateOfExpiration;
@@ -22,7 +22,7 @@ public class Debt {
     private int personId;
 
     public Debt(String description,
-                long amount,
+                double amount,
                 long dateOfStart,
                 long dateOfEnd,
                 long dateOfExpiration,
@@ -54,7 +54,7 @@ public class Debt {
         return description;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

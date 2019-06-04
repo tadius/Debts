@@ -56,6 +56,10 @@ public class DebtRepository {
         return allCategories;
     }
 
+    public Maybe<DebtPOJO> getDebtPOJOByID(int id) {
+        return debtPOJODao.getDebtPOJOById(id);
+    }
+
     public Maybe<Category> getCategoryByID(int id) {
         return categoryDao.getCategoryById(id);
     }

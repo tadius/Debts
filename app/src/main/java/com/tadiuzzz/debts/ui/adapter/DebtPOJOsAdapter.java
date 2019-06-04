@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.DebtPOJOViewHolder> {
 
     private List<DebtPOJO> debtPOJOs;
+    private OnDebtPOJOClickListener onDebtPOJOClickListener;
 
     public void setData(List<DebtPOJO> debtPOJOs) {
         this.debtPOJOs = debtPOJOs;
@@ -72,7 +74,22 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if(onDebtPOJOClickListener != null && position != RecyclerView.NO_POSITION) {
+                    onDebtPOJOClickListener.onDebtPOJOClick(debtPOJOs.get(position));
+                }
+            });
+
         }
+    }
+
+    public interface OnDebtPOJOClickListener{
+        void onDebtPOJOClick(DebtPOJO debtPOJO);
+    }
+
+    public void setOnDebtPOJOClickListener(DebtPOJOsAdapter.OnDebtPOJOClickListener onDebtPOJOClickListener){
+        this.onDebtPOJOClickListener = onDebtPOJOClickListener;
     }
 
 

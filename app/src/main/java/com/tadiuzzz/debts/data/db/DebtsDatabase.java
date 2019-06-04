@@ -13,7 +13,7 @@ import com.tadiuzzz.debts.domain.entity.Person;
 /**
  * Created by Simonov.vv on 30.05.2019.
  */
-@Database(entities = {Debt.class, Person.class, Category.class}, version = 1, exportSchema = false)
+@Database(entities = {Debt.class, Person.class, Category.class}, version = 2, exportSchema = false)
 public abstract class DebtsDatabase extends RoomDatabase {
 
     private static DebtsDatabase inststance;

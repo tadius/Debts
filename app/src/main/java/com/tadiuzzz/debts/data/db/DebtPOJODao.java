@@ -4,11 +4,13 @@ import androidx.room.Dao;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
+import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 /**
  * Created by Simonov.vv on 30.05.2019.
@@ -18,5 +20,8 @@ public interface DebtPOJODao {
 
     @Transaction @Query("SELECT * FROM debt_table ORDER BY dateOfStart") //в обратном порядке добавить в конце DESC
     Flowable<List<DebtPOJO>> getAllDebtPOJOs();
+
+    @Query("SELECT * FROM debt_table WHERE id = :id")
+    Maybe<DebtPOJO> getDebtPOJOById(int id);
 
 }

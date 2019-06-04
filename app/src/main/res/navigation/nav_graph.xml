@@ -9,7 +9,13 @@
         android:id="@+id/debtsFragment"
         android:name="com.tadiuzzz.debts.ui.view.DebtsFragment"
         android:label="fragment_debts"
-        tools:layout="@layout/fragment_debts" />
+        tools:layout="@layout/fragment_debts" >
+        <action
+            android:id="@+id/action_debtsFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.tadiuzzz.debts.ui.view.CategoriesFragment"
@@ -42,4 +48,9 @@
         android:name="com.tadiuzzz.debts.ui.view.EditPersonFragment"
         android:label="fragment_edit_person"
         tools:layout="@layout/fragment_edit_person" />
+    <fragment
+        android:id="@+id/editDebtFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditDebtFragment"
+        android:label="fragment_edit_debt"
+        tools:layout="@layout/fragment_edit_debt" />
 </navigation>
