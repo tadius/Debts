@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.presentation;
+package com.tadiuzzz.debts.ui.presentation;
 
 import android.app.Application;
 
@@ -19,17 +19,41 @@ import io.reactivex.Flowable;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class CategoriesViewModel extends AndroidViewModel {
+public class DebtsViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
 
-    public CategoriesViewModel(@NonNull Application application) {
+    public DebtsViewModel(@NonNull Application application) {
         super(application);
         debtRepository = new DebtRepository(application);
     }
 
-    public Flowable<List<Category>> getCategories(){
-        return debtRepository.getAllCategories();
+    public Flowable<List<DebtPOJO>> getDebtPOJOs(){
+        return debtRepository.getAllDebtPOJOs();
+    }
+
+    public Completable insertDebt(Debt debt){
+        return debtRepository.insertDebt(debt);
+    }
+
+    public Completable updateDebt(Debt debt){
+        return debtRepository.updateDebt(debt);
+    }
+
+    public Completable deleteDebt(Debt debt){
+        return debtRepository.deleteDebt(debt);
+    }
+
+    public Completable insertPerson(Person person){
+        return debtRepository.insertPerson(person);
+    }
+
+    public Completable updatePerson(Person person){
+        return debtRepository.updatePerson(person);
+    }
+
+    public Completable deletePerson(Person person){
+        return debtRepository.deletePerson(person);
     }
 
     public Completable insertCategory(Category category){

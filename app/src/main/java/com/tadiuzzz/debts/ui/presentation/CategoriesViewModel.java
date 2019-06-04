@@ -1,4 +1,4 @@
-package com.tadiuzzz.debts.presentation;
+package com.tadiuzzz.debts.ui.presentation;
 
 import android.app.Application;
 
@@ -12,22 +12,21 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditCategoryViewModel extends AndroidViewModel {
+public class CategoriesViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
 
-    public EditCategoryViewModel(@NonNull Application application) {
+    public CategoriesViewModel(@NonNull Application application) {
         super(application);
         debtRepository = new DebtRepository(application);
     }
 
-    public Maybe<Category> getCategoryByID(int id){
-        return debtRepository.getCategoryByID(id);
+    public Flowable<List<Category>> getCategories(){
+        return debtRepository.getAllCategories();
     }
 
     public Completable insertCategory(Category category){

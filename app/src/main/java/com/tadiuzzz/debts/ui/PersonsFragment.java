@@ -16,10 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
+import com.tadiuzzz.debts.entity.Person;
+import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
+import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
 
 import java.util.List;
 
@@ -33,53 +34,52 @@ import io.reactivex.subscribers.DisposableSubscriber;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class CategoriesFragment extends Fragment {
+public class PersonsFragment extends Fragment {
 
-    private CategoriesViewModel categoriesViewModel;
+    private PersonsViewModel personsViewModel;
     public static final String TAG = "logTag";
-    @BindView(R.id.rvCategories)
-    RecyclerView rvCategories;
-    @BindView(R.id.fbAddCategory)
-    FloatingActionButton fbAddCategory;
+    @BindView(R.id.rvPersons)
+    RecyclerView rvPersons;
+    @BindView(R.id.fbAddPerson)
+    FloatingActionButton fbAddPerson;
 
-    @OnClick(R.id.fbAddCategory)
+    @OnClick(R.id.fbAddPerson)
     void onAddButtonClick(){
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment);
+//        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_csategoriesFragment_to_editCategoryFragment);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_categories, container, false);
+        View view = inflater.inflate(R.layout.fragment_persons, container, false);
 
         ButterKnife.bind(this, view);
 
-        CategoryAdapter categoryAdapter = new CategoryAdapter();
-        rvCategories.setAdapter(categoryAdapter);
-        categoryAdapter.setOnCategoryClickListener(new CategoryAdapter.OnCategoryClickListener() {
+        PersonAdapter personAdapter = new PersonAdapter();
+        rvPersons.setAdapter(personAdapter);
+        personAdapter.setOnPersonClickListener(new PersonAdapter.OnPersonClickListener() {
             @Override
-            public void onCategoryClick(Category category) {
-
+            public void onPersonClick(Person person) {
                 Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
-                bundle.putInt("categoryId", category.getId());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
+                bundle.putInt("personId", person.getId());
+//                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categor_iesFragment_to_editCategoryFragment, bundle);
             }
         });
 
-        rvCategories.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvPersons.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        personsViewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
 
-        categoriesViewModel.getCategories()
+        personsViewModel.getPersons()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Category>>() {
+                .subscribe(new DisposableSubscriber<List<Person>>() {
                     @Override
-                    public void onNext(List<Category> categories) {
-                        categoryAdapter.setData(categories);
-                        categoryAdapter.notifyDataSetChanged();
+                    public void onNext(List<Person> persons) {
+                        personAdapter.setData(persons);
+                        personAdapter.notifyDataSetChanged();
                     }
 
                     @Override

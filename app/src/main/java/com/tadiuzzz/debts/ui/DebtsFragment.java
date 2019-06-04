@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tadiuzzz.debts.presentation.DebtsViewModel;
+import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.entity.Debt;

@@ -16,10 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
-import com.tadiuzzz.debts.presentation.EditCategoryViewModel;
+import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
