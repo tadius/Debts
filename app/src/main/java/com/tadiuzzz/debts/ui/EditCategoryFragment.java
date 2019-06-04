@@ -14,24 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.tadiuzzz.debts.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.entity.Category;
 import com.tadiuzzz.debts.presentation.EditCategoryViewModel;
-import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -39,6 +33,8 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class EditCategoryFragment extends Fragment {
 
     private EditCategoryViewModel editCategoryViewModel;
+    private Category loadedCategory;
+
     public static final String TAG = "logTag";
     @BindView(R.id.tvEditCategoryId)
     TextView tvEditCategoryId;
@@ -51,7 +47,50 @@ public class EditCategoryFragment extends Fragment {
 
     @OnClick(R.id.btnSaveCategory)
     void onSaveClick() {
-        Toast.makeText(getActivity(), "Save", Toast.LENGTH_SHORT).show();
+
+        String enteredCategoryName = etCategoryName.getText().toString().trim();
+        if(loadedCategory != null) {
+            if(loadedCategory.getName().equals(enteredCategoryName)) {
+                Toast.makeText(getActivity(), "Название категории не изменилось!", Toast.LENGTH_SHORT).show();
+            } else if (enteredCategoryName.isEmpty()) {
+                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
+            } else {
+                loadedCategory.setName(enteredCategoryName);
+                editCategoryViewModel.updateCategory(loadedCategory)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            if (!enteredCategoryName.isEmpty()) {
+                editCategoryViewModel.insertCategory(new Category(enteredCategoryName))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+                                Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @OnClick(R.id.btnDeleteCategory)
@@ -85,6 +124,7 @@ public class EditCategoryFragment extends Fragment {
                     @Override
                     public void onSuccess(Category category) {
                         Log.i(TAG, "onSuccess: " + category.getId());
+                        loadedCategory = category;
                         tvEditCategoryId.setText(String.valueOf(category.getId()));
                         etCategoryName.setText(category.getName());
                     }

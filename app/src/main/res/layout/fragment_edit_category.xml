@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="25" />
+            android:text="id" />
 
         <EditText
             android:id="@+id/etCategoryName"
@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Категория" />
+            android:hint="Категория" />
     </LinearLayout>
 
     <LinearLayout
