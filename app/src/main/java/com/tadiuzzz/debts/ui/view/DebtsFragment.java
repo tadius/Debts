@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
@@ -52,6 +53,7 @@ public class DebtsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_debts, container, false);
 
         ButterKnife.bind(this, view);
+        CacheEditing.getInstance().clearCachedDebtPOJO();
 
         DebtPOJOsAdapter debtPOJOsAdapter = new DebtPOJOsAdapter();
         rvDebts.setAdapter(debtPOJOsAdapter);
@@ -59,10 +61,8 @@ public class DebtsFragment extends Fragment {
         debtPOJOsAdapter.setOnDebtPOJOClickListener(new DebtPOJOsAdapter.OnDebtPOJOClickListener() {
             @Override
             public void onDebtPOJOClick(DebtPOJO debtPOJO) {
-                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putInt("debtId", debtPOJO.getDebt().getId());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment, bundle);
+                CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO); //записываем в кэш для передачи в экран редактирования
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
             }
         });
 

@@ -16,11 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,6 +38,7 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class CategoriesFragment extends Fragment {
 
     private CategoriesViewModel categoriesViewModel;
+    private boolean isPickingCategory;
     public static final String TAG = "logTag";
     @BindView(R.id.rvCategories)
     RecyclerView rvCategories;
@@ -43,7 +46,7 @@ public class CategoriesFragment extends Fragment {
     FloatingActionButton fbAddCategory;
 
     @OnClick(R.id.fbAddCategory)
-    void onAddButtonClick(){
+    void onAddButtonClick() {
         Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment);
     }
 
@@ -55,16 +58,26 @@ public class CategoriesFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            isPickingCategory = bundle.getBoolean("pickCategory", false);
+        }
+
         CategoryAdapter categoryAdapter = new CategoryAdapter();
         rvCategories.setAdapter(categoryAdapter);
         categoryAdapter.setOnCategoryClickListener(new CategoryAdapter.OnCategoryClickListener() {
             @Override
             public void onCategoryClick(Category category) {
-
-                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putInt("categoryId", category.getId());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
+                if (isPickingCategory) { //если попали на этот экран с экрана редактирование Debt для выбора категории, то записываем ее в кэш и возвращаемся обратно
+                    List<Category> categories = new ArrayList<>();
+                    categories.add(category);
+                    CacheEditing.getInstance().getCachedDebtPOJO().setCategory(categories);
+                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("categoryId", category.getId());
+                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
+                }
             }
         });
 

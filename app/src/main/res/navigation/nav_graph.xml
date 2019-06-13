@@ -52,5 +52,16 @@
         android:id="@+id/editDebtFragment"
         android:name="com.tadiuzzz.debts.ui.view.EditDebtFragment"
         android:label="fragment_edit_debt"
-        tools:layout="@layout/fragment_edit_debt" />
+        tools:layout="@layout/fragment_edit_debt" >
+        <action
+            android:id="@+id/action_editDebtFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_editDebtFragment_to_personsFragment"
+            app:destination="@id/personsFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
 </navigation>

@@ -165,7 +165,7 @@
             android:ems="10"
             android:layout_weight="1"
             android:hint="Категория"
-            android:inputType="text"
+            android:focusable="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
@@ -189,7 +189,7 @@
             android:ems="10"
             android:layout_weight="1"
             android:hint="Персона"
-            android:inputType="text"
+            android:focusable="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 

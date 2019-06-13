@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
 import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,6 +38,7 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class PersonsFragment extends Fragment {
 
     private PersonsViewModel personsViewModel;
+    private boolean isPickingPerson;
     public static final String TAG = "logTag";
     @BindView(R.id.rvPersons)
     RecyclerView rvPersons;
@@ -55,15 +58,26 @@ public class PersonsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            isPickingPerson = bundle.getBoolean("pickPerson", false);
+        }
+
         PersonAdapter personAdapter = new PersonAdapter();
         rvPersons.setAdapter(personAdapter);
         personAdapter.setOnPersonClickListener(new PersonAdapter.OnPersonClickListener() {
             @Override
             public void onPersonClick(Person person) {
-                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putInt("personId", person.getId());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
+                if (isPickingPerson) { //если попали на этот экран с экрана редактирование Debt для выбора персоны, то записываем ее в кэш и возвращаемся обратно
+                    List<Person> persons = new ArrayList<>();
+                    persons.add(person);
+                    CacheEditing.getInstance().getCachedDebtPOJO().setPerson(persons);
+                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("personId", person.getId());
+                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
+                }
             }
         });
 

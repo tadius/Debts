@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
@@ -69,77 +70,28 @@ public class EditDebtFragment extends Fragment {
     @BindView(R.id.btnDeleteDebt)
     Button btnDeleteDebt;
 
+    @OnClick(R.id.etEditDebtCategoryName)
+    void onCategoryClick(){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("pickCategory", true);
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);
+    }
+
+    @OnClick(R.id.etEditDebtPersonNameAndSecondName)
+    void onPersonClick(){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("pickPerson", true);
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
+    }
+
     @OnClick(R.id.btnSaveDebt)
     void onSaveClick() {
 
-//        String enteredDebtName = etDebtName.getText().toString().trim();
-//        if(loadedCategory != null) {
-//            if(loadedCategory.getName().equals(enteredCategoryName)) {
-//                Toast.makeText(getActivity(), "Название категории не изменилось!", Toast.LENGTH_SHORT).show();
-//            } else if (enteredCategoryName.isEmpty()) {
-//                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
-//            } else {
-//                loadedCategory.setName(enteredCategoryName);
-//                editCategoryViewModel.updateCategory(loadedCategory)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new DisposableCompletableObserver() {
-//                    @Override
-//                    public void onComplete() {
-//                        Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-//                        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            }
-//        } else {
-//            if (!enteredCategoryName.isEmpty()) {
-//                editCategoryViewModel.insertCategory(new Category(enteredCategoryName))
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(new DisposableCompletableObserver() {
-//                            @Override
-//                            public void onComplete() {
-//                                Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-//                                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//            } else {
-//                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
-//            }
-//        }
     }
 
     @OnClick(R.id.btnDeleteDebt)
     void onDeleteClick() {
-//        if(loadedCategory != null) {
-//            editCategoryViewModel.deleteCategory(loadedCategory)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(new DisposableCompletableObserver() {
-//                @Override
-//                public void onComplete() {
-//                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-//                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-//                }
-//
-//                @Override
-//                public void onError(Throwable e) {
-//                    Toast.makeText(getActivity(), "Error deleting!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        } else {
-//            Toast.makeText(getActivity(), "Такой категории не существует!", Toast.LENGTH_SHORT).show();
-//        }
+
     }
 
     @Nullable
@@ -148,15 +100,28 @@ public class EditDebtFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_debt, container, false);
 
         ButterKnife.bind(this, view);
-
         editDebtViewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            int debtId = bundle.getInt("debtId");
-            setFieldsFromDb(debtId);
-        }
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setFieldsFromCache(); //заполняем поля из кэша
+    }
+
+    private void setFieldsFromCache() {
+        DebtPOJO debtPOJO = CacheEditing.getInstance().getCachedDebtPOJO();
+        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
+        etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
+        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
+        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
+        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
+        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
+        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
+        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFirstName() + " " + debtPOJO.getDebtPerson().getSecondName());//TODO %s String format
+        cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
     }
 
     private void setFieldsFromDb(int debtId) {
@@ -168,6 +133,7 @@ public class EditDebtFragment extends Fragment {
                     public void onSuccess(DebtPOJO debtPOJO) {
                         Log.i(TAG, "onSuccess: " + debtPOJO.getDebt().getId());
                         loadedDebtPOJO = debtPOJO;
+                        CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
                         tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
                         etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
                         etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
