@@ -48,7 +48,7 @@ import io.reactivex.schedulers.Schedulers;
 public class EditDebtFragment extends Fragment {
 
     private EditDebtViewModel editDebtViewModel;
-    private DebtPOJO editingDebtPOJO;
+//    private DebtPOJO editingDebtPOJO;
     private Calendar calendar;
 
     public static final String TAG = "logTag";
@@ -134,7 +134,7 @@ public class EditDebtFragment extends Fragment {
         editDebtViewModel.showPickDateOfStartDialog().observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
-                showDatePickerDialog();
+                showDatePickerDialog((Calendar) o);
             }
         });
 
@@ -178,61 +178,30 @@ public class EditDebtFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        editDebtViewModel.getCachedDebtPOJO()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
 
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        editingDebtPOJO = debtPOJO;
-                        //если получаем пустой объект (пустой кэш), то создаем пустые объекты внутри него, чтобы не было NPE
-                        if (editingDebtPOJO.getDebt() == null) {
-                            editingDebtPOJO.setDebt(new Debt());
-                        }
-                        if (editingDebtPOJO.getCategory() == null) {
-                            List<Category> categories = new ArrayList<>();
-                            Category category = new Category();
-                            categories.add(category);
-                            editingDebtPOJO.setCategory(categories);
-                        }
-                        if (editingDebtPOJO.getPerson() == null) {
-                            List<Person> persons = new ArrayList<>();
-                            Person person = new Person();
-                            persons.add(person);
-                            editingDebtPOJO.setPerson(persons);
-                        }
-                        setFieldsFromCache();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        editDebtViewModel.getLiveDataCachedDebtPOJO().observe(this, new Observer<DebtPOJO>() {
+            @Override
+            public void onChanged(DebtPOJO debtPOJO) {
+                setFields(debtPOJO);
+            }
+        });
 
     }
 
-    private void setFieldsFromCache() {
-//        DebtPOJO debtPOJO = CacheEditing.getInstance().getCachedDebtPOJO();
-        tvEditDebtId.setText(String.valueOf(editingDebtPOJO.getDebt().getId()));
-        etEditDebtDescription.setText(editingDebtPOJO.getDebt().getDescription());
-        etEditDebtAmount.setText(String.valueOf(editingDebtPOJO.getDebt().getAmount()));
-        etEditDebtDateOfStart.setText(getStringDate(editingDebtPOJO.getDebt().getDateOfStart()));
-        etEditDebtDateOfExpiration.setText(getStringDate(editingDebtPOJO.getDebt().getDateOfExpiration()));
-        etEditDebtDateOfEnd.setText(getStringDate(editingDebtPOJO.getDebt().getDateOfEnd()));
-        cbIsReturned.setChecked(editingDebtPOJO.getDebt().isReturned());
-        etEditDebtCategoryName.setText(editingDebtPOJO.getDebtCategory().getName());
-        etEditDebtPersonNameAndSecondName.setText(editingDebtPOJO.getDebtPerson().getFullName());
+    private void setFields(DebtPOJO debtPOJO) {
+        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
+        etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
+        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
+        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
+        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
+        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
+        cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
+        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
+        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFullName());
     }
 
-    public void showDatePickerDialog() {
-        calendar = Calendar.getInstance();
+    public void showDatePickerDialog(Calendar calendar) {
+
         // чтобы вызывался календарь с датой, которая была выбрана ранее, а не сбрасывалась
 //        if (dateOfPayment != 0) {
 //            calendar.setTimeInMillis(dateOfPayment);
@@ -244,9 +213,7 @@ public class EditDebtFragment extends Fragment {
         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                calendar.set(year, month, day);
-                editingDebtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
-                etEditDebtDateOfStart.setText(getStringDate(calendar)); // устанавливаем дату в текстовое поле
+                editDebtViewModel.pickedDateOfStart(year, month, day);
             }
         };
         DatePickerDialog dialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);
@@ -268,38 +235,38 @@ public class EditDebtFragment extends Fragment {
         return stringDate;
     }
 
-    private void setFieldsFromDb(int debtId) {
-        editDebtViewModel.getDebtPOJOByID(debtId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        Log.i(TAG, "onSuccess: " + debtPOJO.getDebt().getId());
-                        editingDebtPOJO = debtPOJO;
-                        CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
-                        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
-                        etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
-                        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
-                        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
-                        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
-                        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
-                        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
-                        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFirstName() + " " + debtPOJO.getDebtPerson().getSecondName());//TODO %s String format
-                        cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
+//    private void setFieldsFromDb(int debtId) {
+//        editDebtViewModel.getDebtPOJOByID(debtId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
+//                    @Override
+//                    public void onSuccess(DebtPOJO debtPOJO) {
+//                        Log.i(TAG, "onSuccess: " + debtPOJO.getDebt().getId());
+//                        editingDebtPOJO = debtPOJO;
+//                        CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
+//                        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
+//                        etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
+//                        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
+//                        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
+//                        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
+//                        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
+//                        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
+//                        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFirstName() + " " + debtPOJO.getDebtPerson().getSecondName());//TODO %s String format
+//                        cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.i(TAG, "onError: " + e.getLocalizedMessage());
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//    }
 
     private String getStringDate(long inputDate) {
         Date date = new Date(inputDate);
