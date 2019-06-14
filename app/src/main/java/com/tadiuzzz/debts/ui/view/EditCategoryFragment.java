@@ -1,7 +1,7 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -23,10 +24,6 @@ import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableMaybeObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -34,7 +31,6 @@ import io.reactivex.schedulers.Schedulers;
 public class EditCategoryFragment extends Fragment {
 
     private EditCategoryViewModel editCategoryViewModel;
-    private Category loadedCategory;
 
     public static final String TAG = "logTag";
     @BindView(R.id.tvEditCategoryId)
@@ -48,75 +44,13 @@ public class EditCategoryFragment extends Fragment {
 
     @OnClick(R.id.btnSaveCategory)
     void onSaveClick() {
-
         String enteredCategoryName = etCategoryName.getText().toString().trim();
-        if(loadedCategory != null) {
-            if(loadedCategory.getName().equals(enteredCategoryName)) {
-                Toast.makeText(getActivity(), "Название категории не изменилось!", Toast.LENGTH_SHORT).show();
-            } else if (enteredCategoryName.isEmpty()) {
-                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
-            } else {
-                loadedCategory.setName(enteredCategoryName);
-                editCategoryViewModel.updateCategory(loadedCategory)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            if (!enteredCategoryName.isEmpty()) {
-                editCategoryViewModel.insertCategory(new Category(enteredCategoryName))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity(), "Введите название категории!", Toast.LENGTH_SHORT).show();
-            }
-        }
+        editCategoryViewModel.saveButtonClicked(enteredCategoryName);
     }
 
     @OnClick(R.id.btnDeleteCategory)
     void onDeleteClick() {
-        if(loadedCategory != null) {
-            editCategoryViewModel.deleteCategory(loadedCategory)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new DisposableCompletableObserver() {
-                @Override
-                public void onComplete() {
-                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Toast.makeText(getActivity(), "Error deleting!", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(getActivity(), "Такой категории не существует!", Toast.LENGTH_SHORT).show();
-        }
+        editCategoryViewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -131,34 +65,44 @@ public class EditCategoryFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int categoryId = bundle.getInt("categoryId");
-            setFieldsFromDb(categoryId);
+            editCategoryViewModel.pickedCategory(categoryId);
         }
+
+        editCategoryViewModel.getLiveDataCategory().observe(this, new Observer<Category>() {
+            @Override
+            public void onChanged(Category category) {
+                setFields(category);
+            }
+        });
+
+        // Подписываемся на состояние действия тоста
+        editCategoryViewModel.showToast().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showToast((String) o);
+            }
+        });
+
+        // Подписываемся на состояние действия навигации
+        editCategoryViewModel.navigateToPreviousScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+            }
+        });
+
         return view;
     }
 
-    private void setFieldsFromDb(int categoryId) {
-        editCategoryViewModel.getCategoryByID(categoryId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<Category>() {
-                    @Override
-                    public void onSuccess(Category category) {
-                        Log.i(TAG, "onSuccess: " + category.getId());
-                        loadedCategory = category;
-                        tvEditCategoryId.setText(String.valueOf(category.getId()));
-                        etCategoryName.setText(category.getName());
-                    }
+    void showToast(String text) {
+        Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    private void setFields(Category category) {
+        tvEditCategoryId.setText(String.valueOf(category.getId()));
+        etCategoryName.setText(category.getName());
     }
 
 }
