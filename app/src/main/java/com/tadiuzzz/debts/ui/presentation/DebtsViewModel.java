@@ -10,11 +10,16 @@ import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.domain.entity.Person;
+import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -22,6 +27,7 @@ import io.reactivex.Flowable;
 public class DebtsViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
+    private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
     public DebtsViewModel(@NonNull Application application) {
         super(application);
@@ -66,6 +72,29 @@ public class DebtsViewModel extends AndroidViewModel {
 
     public Completable deleteCategory(Category category){
         return debtRepository.deleteCategory(category);
+    }
+
+    public SingleLiveEvent navigateToEditDebtScreen(){
+        return navigateToEditDebtScreen;
+    }
+
+    public void clickedOnDebtPOJO(DebtPOJO debtPOJO){
+        debtRepository.putDebtPOJOtoCache(debtPOJO)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        //сохранили в кэш
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+
+        navigateToEditDebtScreen.call();
     }
 
 }

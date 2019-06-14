@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,8 +62,7 @@ public class DebtsFragment extends Fragment {
         debtPOJOsAdapter.setOnDebtPOJOClickListener(new DebtPOJOsAdapter.OnDebtPOJOClickListener() {
             @Override
             public void onDebtPOJOClick(DebtPOJO debtPOJO) {
-                CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO); //записываем в кэш для передачи в экран редактирования
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
+                debtsViewModel.clickedOnDebtPOJO(debtPOJO);
             }
         });
 
@@ -90,6 +90,13 @@ public class DebtsFragment extends Fragment {
                         Log.i(TAG, "onComplete: ");
                     }
                 });
+
+        debtsViewModel.navigateToEditDebtScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
+            }
+        });
 
         return view;
     }
