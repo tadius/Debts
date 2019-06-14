@@ -74,28 +74,13 @@ public class CategoriesFragment extends Fragment {
 
         categoriesViewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
-        categoriesViewModel.getCategories()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Category>>() {
-                    @Override
-                    public void onNext(List<Category> categories) {
-                        categoryAdapter.setData(categories);
-                        categoryAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.i(TAG, "onError: ");
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-
-                    }
-                });
+        categoriesViewModel.getLiveDataCategories().observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(List<Category> categories) {
+                categoryAdapter.setData(categories);
+                categoryAdapter.notifyDataSetChanged();
+            }
+        });
 
         categoriesViewModel.navigateToEditCategoryScreen().observe(this, new Observer() {
             @Override

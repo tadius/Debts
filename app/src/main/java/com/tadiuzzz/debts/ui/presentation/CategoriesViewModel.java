@@ -4,6 +4,8 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.data.DebtRepository;
@@ -30,33 +32,51 @@ public class CategoriesViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    public CategoriesViewModel(@NonNull Application application) {
-        super(application);
-        debtRepository = new DebtRepository(application);
-    }
+    private MutableLiveData<List<Category>> liveDataCategories = new MutableLiveData<>();
 
-    public Flowable<List<Category>> getCategories(){
-        return debtRepository.getAllCategories();
-    }
 
-    public Completable insertCategory(Category category){
-        return debtRepository.insertCategory(category);
-    }
+    // ====== подписки для навигации
 
-    public Completable updateCategory(Category category){
-        return debtRepository.updateCategory(category);
-    }
-
-    public Completable deleteCategory(Category category){
-        return debtRepository.deleteCategory(category);
+    public SingleLiveEvent navigateToPreviousScreen(){
+        return navigateToPreviousScreen;
     }
 
     public SingleLiveEvent navigateToEditCategoryScreen(){
         return navigateToEditCategoryScreen;
     }
 
-    public SingleLiveEvent navigateToPreviousScreen(){
-        return navigateToPreviousScreen;
+    // ===================================
+
+    public CategoriesViewModel(@NonNull Application application) {
+        super(application);
+        debtRepository = new DebtRepository(application);
+        loadAllCategories();
+    }
+
+    private void loadAllCategories() {
+        debtRepository.getAllCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSubscriber<List<Category>>() {
+                    @Override
+                    public void onNext(List<Category> categories) {
+                        liveDataCategories.setValue(categories);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public LiveData<List<Category>> getLiveDataCategories() { //Предоставляем объект LiveData View для подписки
+        return liveDataCategories;
     }
 
     public void clickedOnCategory(Category category, boolean isPicking) {
