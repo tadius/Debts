@@ -70,26 +70,13 @@ public class DebtsFragment extends Fragment {
 
         debtsViewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
 
-        debtsViewModel.getDebtPOJOs()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
-                    @Override
-                    public void onNext(List<DebtPOJO> debtPOJOS) {
-                            debtPOJOsAdapter.setData(debtPOJOS);
-                            debtPOJOsAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.i(TAG, "onError: ");
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-                    }
-                });
+        debtsViewModel.getLiveDataDebtPOJOs().observe(this, new Observer<List<DebtPOJO>>() {
+            @Override
+            public void onChanged(List<DebtPOJO> debtPOJOS) {
+                debtPOJOsAdapter.setData(debtPOJOS);
+                debtPOJOsAdapter.notifyDataSetChanged();
+            }
+        });
 
         debtsViewModel.navigateToEditDebtScreen().observe(this, new Observer() {
             @Override
@@ -100,6 +87,21 @@ public class DebtsFragment extends Fragment {
 
         return view;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    // *********************************************************
+    // *********************тестовые методы*********************
+    // *********************************************************
 
     private void addRandomPerson() {
         Random random = new Random();

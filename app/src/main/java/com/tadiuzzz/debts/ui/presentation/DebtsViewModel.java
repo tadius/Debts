@@ -4,6 +4,8 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
@@ -15,11 +17,10 @@ import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -29,53 +30,47 @@ public class DebtsViewModel extends AndroidViewModel {
     DebtRepository debtRepository;
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
-    public DebtsViewModel(@NonNull Application application) {
-        super(application);
-        debtRepository = new DebtRepository(application);
-    }
+    private MutableLiveData<List<DebtPOJO>> liveDataDebtPOJOs = new MutableLiveData<>();
 
-    public Flowable<List<DebtPOJO>> getDebtPOJOs(){
-        return debtRepository.getAllDebtPOJOs();
-    }
 
-    public Completable insertDebt(Debt debt){
-        return debtRepository.insertDebt(debt);
-    }
-
-    public Completable updateDebt(Debt debt){
-        return debtRepository.updateDebt(debt);
-    }
-
-    public Completable deleteDebt(Debt debt){
-        return debtRepository.deleteDebt(debt);
-    }
-
-    public Completable insertPerson(Person person){
-        return debtRepository.insertPerson(person);
-    }
-
-    public Completable updatePerson(Person person){
-        return debtRepository.updatePerson(person);
-    }
-
-    public Completable deletePerson(Person person){
-        return debtRepository.deletePerson(person);
-    }
-
-    public Completable insertCategory(Category category){
-        return debtRepository.insertCategory(category);
-    }
-
-    public Completable updateCategory(Category category){
-        return debtRepository.updateCategory(category);
-    }
-
-    public Completable deleteCategory(Category category){
-        return debtRepository.deleteCategory(category);
-    }
+    // ====== подписки для навигации
 
     public SingleLiveEvent navigateToEditDebtScreen(){
         return navigateToEditDebtScreen;
+    }
+
+    // ===============================
+
+    public DebtsViewModel(@NonNull Application application) {
+        super(application);
+        debtRepository = new DebtRepository(application);
+        loadAllDebtPOJOs();
+    }
+
+    private void loadAllDebtPOJOs() {
+        debtRepository.getAllDebtPOJOs()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                    @Override
+                    public void onNext(List<DebtPOJO> debtPOJOS) {
+                        liveDataDebtPOJOs.setValue(debtPOJOS);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public LiveData<List<DebtPOJO>> getLiveDataDebtPOJOs() { //Предоставляем объект LiveData View для подписки
+        return liveDataDebtPOJOs;
     }
 
     public void clickedOnDebtPOJO(DebtPOJO debtPOJO){
@@ -95,6 +90,27 @@ public class DebtsViewModel extends AndroidViewModel {
                 });
 
         navigateToEditDebtScreen.call();
+    }
+
+
+
+
+
+
+    // *********************************************************
+    // *********************тестовые методы*********************
+    // *********************************************************
+
+    public Completable insertDebt(Debt debt){
+        return debtRepository.insertDebt(debt);
+    }
+
+     public Completable insertPerson(Person person){
+        return debtRepository.insertPerson(person);
+    }
+
+    public Completable insertCategory(Category category){
+        return debtRepository.insertCategory(category);
     }
 
 }
