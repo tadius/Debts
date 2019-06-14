@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.domain.entity;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 /**
@@ -12,6 +13,12 @@ public class Person {
     private int id;
     private String firstName;
     private String secondName;
+
+    @Ignore
+    public Person() {
+        this.firstName = "Неизвестная";
+        this.secondName = "персона";
+    }
 
     public Person(String firstName, String secondName) {
         this.firstName = firstName;
@@ -40,5 +47,9 @@ public class Person {
 
     public void setSecondName(String secondName) {
         this.secondName = secondName;
+    }
+
+    public String getFullName() {
+        return this.getFirstName() + " " + this.getSecondName();
     }
 }

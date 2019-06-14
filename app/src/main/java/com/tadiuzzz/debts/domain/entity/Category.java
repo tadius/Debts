@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.domain.entity;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 /**
@@ -11,6 +12,11 @@ public class Category {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
+
+    @Ignore
+    public Category() {
+        this.name = "Неизвестная категория";
+    }
 
     public Category(String name) {
         this.name = name;

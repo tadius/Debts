@@ -69,6 +69,7 @@
             android:ems="10"
             android:layout_weight="1"
             android:hint="Количество"
+            android:selectAllOnFocus="true"
             android:inputType="numberDecimal"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
@@ -94,6 +95,7 @@
             android:layout_weight="1"
             android:hint="Дата начала"
             android:inputType="date"
+            android:focusable="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
@@ -118,6 +120,7 @@
             android:layout_weight="1"
             android:hint="Дата окончания (план)"
             android:inputType="date"
+            android:focusable="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
@@ -142,6 +145,7 @@
             android:layout_weight="1"
             android:hint="Дата окончания (факт)"
             android:inputType="date"
+            android:focusable="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 

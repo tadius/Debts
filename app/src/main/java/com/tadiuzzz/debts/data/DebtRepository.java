@@ -32,6 +32,8 @@ public class DebtRepository {
     private Flowable<List<Category>> allCategories;
     private Flowable<List<DebtPOJO>> allDebtPOJOs;
 
+    private Maybe<DebtPOJO> cachedDebtPOJO;
+
     public DebtRepository(Application application) {
         DebtsDatabase database = DebtsDatabase.getInstance(application);
         debtDao = database.debtDao();
@@ -42,6 +44,8 @@ public class DebtRepository {
         allDebtPOJOs = debtPOJODao.getAllDebtPOJOs();
         allPersons = personDao.getAllPersons();
         allCategories = categoryDao.getAllCategories();
+
+        cachedDebtPOJO = CacheEditing.getInstance().getCachedDebtPOJO();
     }
 
     public Flowable<List<DebtPOJO>> getAllDebtPOJOs() {
@@ -102,6 +106,18 @@ public class DebtRepository {
 
     public Completable deleteCategory(Category category){
         return categoryDao.delete(category);
+    }
+
+    public Maybe<DebtPOJO> getCachedDebtPOJO(){
+        return cachedDebtPOJO;
+    }
+
+    public Completable putDebtPOJOtoCache(DebtPOJO debtPOJO){
+        return Completable.fromAction(()-> CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO));
+    }
+
+    public Completable clearDebtPOJOCache(DebtPOJO debtPOJO){
+        return Completable.fromAction(()-> CacheEditing.getInstance().clearCachedDebtPOJO());
     }
 
 }

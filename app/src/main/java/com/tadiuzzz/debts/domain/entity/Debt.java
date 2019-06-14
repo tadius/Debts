@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.domain.entity;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 /**
@@ -20,6 +21,11 @@ public class Debt {
     private boolean isActive;
     private int categoryId;
     private int personId;
+
+    @Ignore
+    public Debt(){
+
+    }
 
     public Debt(String description,
                 double amount,
@@ -54,35 +60,71 @@ public class Debt {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public double getAmount() {
         return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public long getDateOfStart() {
         return dateOfStart;
     }
 
+    public void setDateOfStart(long dateOfStart) {
+        this.dateOfStart = dateOfStart;
+    }
+
     public long getDateOfEnd() {
         return dateOfEnd;
+    }
+
+    public void setDateOfEnd(long dateOfEnd) {
+        this.dateOfEnd = dateOfEnd;
     }
 
     public long getDateOfExpiration() {
         return dateOfExpiration;
     }
 
+    public void setDateOfExpiration(long dateOfExpiration) {
+        this.dateOfExpiration = dateOfExpiration;
+    }
+
     public boolean isReturned() {
         return isReturned;
+    }
+
+    public void setReturned(boolean returned) {
+        isReturned = returned;
     }
 
     public boolean isActive() {
         return isActive;
     }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public int getCategoryId() {
         return categoryId;
     }
 
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public int getPersonId() {
         return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 }

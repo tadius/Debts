@@ -5,24 +5,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,16 +66,7 @@ public class CategoriesFragment extends Fragment {
         categoryAdapter.setOnCategoryClickListener(new CategoryAdapter.OnCategoryClickListener() {
             @Override
             public void onCategoryClick(Category category) {
-                if (isPickingCategory) { //если попали на этот экран с экрана редактирование Debt для выбора категории, то записываем ее в кэш и возвращаемся обратно
-                    List<Category> categories = new ArrayList<>();
-                    categories.add(category);
-                    CacheEditing.getInstance().getCachedDebtPOJO().setCategory(categories);
-                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("categoryId", category.getId());
-                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
-                }
+                categoriesViewModel.clickedOnCategory(category, isPickingCategory);
             }
         });
 
@@ -107,6 +96,23 @@ public class CategoriesFragment extends Fragment {
 
                     }
                 });
+
+        categoriesViewModel.navigateToEditCategoryScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Category category = (Category) o;
+                Bundle bundle = new Bundle();
+                bundle.putInt("categoryId", category.getId());
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
+            }
+        });
+
+        categoriesViewModel.navigateToPreviousScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+            }
+        });
 
         return view;
     }

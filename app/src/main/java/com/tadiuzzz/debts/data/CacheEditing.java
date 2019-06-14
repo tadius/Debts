@@ -2,6 +2,11 @@ package com.tadiuzzz.debts.data;
 
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
+import java.util.Observable;
+
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+
 /**
  * Created by Simonov.vv on 13.06.2019.
  */
@@ -11,14 +16,16 @@ public class CacheEditing {
 
     private DebtPOJO debtPOJO;
 
-    private CacheEditing(){}
+    private CacheEditing(){
+        debtPOJO = new DebtPOJO();
+    }
 
     public static CacheEditing getInstance(){
         return INSTANCE;
     }
 
-    public DebtPOJO getCachedDebtPOJO() {
-        return debtPOJO;
+    public Maybe<DebtPOJO> getCachedDebtPOJO() {
+        return Maybe.just(debtPOJO);
     }
 
     public void putDebtPOJOToCache(DebtPOJO debtPOJO) {
@@ -26,6 +33,6 @@ public class CacheEditing {
     }
 
     public void clearCachedDebtPOJO(){
-        this.debtPOJO = null;
+        this.debtPOJO = new DebtPOJO();
     }
 }
