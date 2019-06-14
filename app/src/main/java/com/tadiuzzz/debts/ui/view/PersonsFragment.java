@@ -74,28 +74,13 @@ public class PersonsFragment extends Fragment {
 
         personsViewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
 
-        personsViewModel.getPersons()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Person>>() {
-                    @Override
-                    public void onNext(List<Person> persons) {
-                        personAdapter.setData(persons);
-                        personAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.i(TAG, "onError: ");
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-
-                    }
-                });
+        personsViewModel.getLiveDataPersons().observe(this, new Observer<List<Person>>() {
+            @Override
+            public void onChanged(List<Person> persons) {
+                personAdapter.setData(persons);
+                personAdapter.notifyDataSetChanged();
+            }
+        });
 
         personsViewModel.navigateToEditPersonScreen().observe(this, new Observer() {
             @Override
