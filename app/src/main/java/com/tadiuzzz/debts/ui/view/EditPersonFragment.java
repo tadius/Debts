@@ -2,6 +2,7 @@ package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.presentation.EditPersonViewModel;
 
@@ -50,77 +53,15 @@ public class EditPersonFragment extends Fragment {
 
     @OnClick(R.id.btnSavePerson)
     void onSaveClick() {
-
         String enteredPersonFirstName = etPersonFirstName.getText().toString().trim();
         String enteredPersonSecondName = etPersonSecondName.getText().toString().trim();
-        if(loadedPerson != null) {
-            if(loadedPerson.getFirstName().equals(enteredPersonFirstName) && loadedPerson.getSecondName().equals(enteredPersonSecondName)) {
-                Toast.makeText(getActivity(), "Имя и фамилия не изменились!", Toast.LENGTH_SHORT).show();
-            } else if (enteredPersonFirstName.isEmpty() || enteredPersonSecondName.isEmpty()) {
-                Toast.makeText(getActivity(), "Введите имя и фамилию!", Toast.LENGTH_SHORT).show();
-            } else {
-                loadedPerson.setFirstName(enteredPersonFirstName);
-                loadedPerson.setSecondName(enteredPersonSecondName);
-                editPersonViewModel.updatePerson(loadedPerson)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            if (!enteredPersonFirstName.isEmpty() && !enteredPersonSecondName.isEmpty()) {
-                editPersonViewModel.insertPerson(new Person(enteredPersonFirstName, enteredPersonSecondName))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(getActivity(), "Error saving!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity(), "Введите имя и фамилию!", Toast.LENGTH_SHORT).show();
-            }
-        }
+        editPersonViewModel.saveButtonClicked(enteredPersonFirstName, enteredPersonSecondName);
     }
 
     @OnClick(R.id.btnDeletePerson)
     void onDeleteClick() {
-        if(loadedPerson != null) {
-            editPersonViewModel.deletePerson(loadedPerson)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new DisposableCompletableObserver() {
-                @Override
-                public void onComplete() {
-                    Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Toast.makeText(getActivity(), "Error deleting!", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(getActivity(), "Такой персоны не существует!", Toast.LENGTH_SHORT).show();
-        }
+        editPersonViewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -135,35 +76,46 @@ public class EditPersonFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int personId = bundle.getInt("personId");
-            setFieldsFromDb(personId);
+            editPersonViewModel.gotPickedPerson(personId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
+
+        //Подписываемся на объект LiveData
+        editPersonViewModel.getLiveDataPerson().observe(this, new Observer<Person>() {
+            @Override
+            public void onChanged(Person person) {
+                setFields(person);
+            }
+        });
+
+        // Подписываемся на состояние действия тоста
+        editPersonViewModel.showToast().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showToast((String) o);
+            }
+        });
+
+        // Подписываемся на состояние действия навигации
+        editPersonViewModel.navigateToPreviousScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+            }
+        });
         return view;
     }
 
-    private void setFieldsFromDb(int personId) {
-        editPersonViewModel.getPersonByID(personId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<Person>() {
-                    @Override
-                    public void onSuccess(Person person) {
-                        Log.i(TAG, "onSuccess: " + person.getId());
-                        loadedPerson = person;
-                        tvEditPersonId.setText(String.valueOf(person.getId()));
-                        etPersonFirstName.setText(person.getFirstName());
-                        etPersonSecondName.setText(person.getSecondName());
-                    }
+    void showToast(String text) {
+        Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getLocalizedMessage());
-                    }
+    private void setFields(Person person) {
+        tvEditPersonId.setText(String.valueOf(person.getId()));
+        etPersonFirstName.setText(person.getFirstName());
+        etPersonSecondName.setText(person.getSecondName());
 
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
 }

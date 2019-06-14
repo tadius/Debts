@@ -65,9 +65,10 @@ public class EditCategoryFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int categoryId = bundle.getInt("categoryId");
-            editCategoryViewModel.pickedCategory(categoryId);
+            editCategoryViewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
+        //Подписываемся на объект LiveData
         editCategoryViewModel.getLiveDataCategory().observe(this, new Observer<Category>() {
             @Override
             public void onChanged(Category category) {

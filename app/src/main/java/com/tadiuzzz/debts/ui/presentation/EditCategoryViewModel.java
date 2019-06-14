@@ -45,7 +45,7 @@ public class EditCategoryViewModel extends AndroidViewModel {
         debtRepository = new DebtRepository(application);
     }
 
-    public void pickedCategory(int categoryId) { //Подгружаем из базы выбранную категорию в объект LiveData
+    public void gotPickedCategory(int categoryId) { //Подгружаем из базы выбранную категорию в объект LiveData
         debtRepository.getCategoryByID(categoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -126,7 +126,7 @@ public class EditCategoryViewModel extends AndroidViewModel {
                     .subscribe(new DisposableCompletableObserver() {
                         @Override
                         public void onComplete() {
-                            showToast.callWithArgument("Deleted!");
+                            showToast.callWithArgument("Категория удалена!");
                             navigateToPreviousScreen.call();
                         }
 
