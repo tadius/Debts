@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,25 +21,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.data.CacheEditing;
-import com.tadiuzzz.debts.domain.entity.Category;
-import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
-import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.presentation.EditDebtViewModel;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableMaybeObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -82,19 +72,23 @@ public class EditDebtFragment extends Fragment {
         editDebtViewModel.pickDateOfStartClicked();
     }
 
+    @OnClick(R.id.etEditDebtDateOfExpiration)
+    void onDateExpirationClick() {
+        editDebtViewModel.pickDateOfExpirationClicked();
+    }
+
+    @OnClick(R.id.etEditDebtDateOfEnd)
+    void onDateEndClick() {
+        editDebtViewModel.pickDateOfEndClicked();
+    }
+
     @OnClick(R.id.etEditDebtCategoryName)
     void onCategoryClick() {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("pickCategory", true);
-//        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);
         editDebtViewModel.pickCategoryClicked();
     }
 
     @OnClick(R.id.etEditDebtPersonNameAndSecondName)
     void onPersonClick() {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("pickPerson", true);
-//        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
         editDebtViewModel.pickPersonClicked();
     }
 
@@ -134,7 +128,21 @@ public class EditDebtFragment extends Fragment {
         editDebtViewModel.showPickDateOfStartDialog().observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
-                showDatePickerDialog((Calendar) o);
+                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_START);
+            }
+        });
+
+        editDebtViewModel.showPickDateOfExpirationDialog().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_EXPIRATION);
+            }
+        });
+
+        editDebtViewModel.showPickDateOfEndDialog().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_END);
             }
         });
 
@@ -200,7 +208,7 @@ public class EditDebtFragment extends Fragment {
         etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFullName());
     }
 
-    public void showDatePickerDialog(Calendar calendar) {
+    public void showDatePickerDialog(Calendar calendar, int typeOfDate) {
 
         // чтобы вызывался календарь с датой, которая была выбрана ранее, а не сбрасывалась
 //        if (dateOfPayment != 0) {
@@ -213,7 +221,7 @@ public class EditDebtFragment extends Fragment {
         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                editDebtViewModel.pickedDateOfStart(year, month, day);
+                editDebtViewModel.pickedDate(year, month, day, typeOfDate);
             }
         };
         DatePickerDialog dialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);

@@ -31,11 +31,17 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class EditDebtViewModel extends AndroidViewModel {
     public static final String TAG = "logTag";
 
+    public final int TYPE_OF_DATE_START = 100;
+    public final int TYPE_OF_DATE_EXPIRATION = 200;
+    public final int TYPE_OF_DATE_END = 300;
+
     DebtRepository debtRepository;
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPersonsList = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToCategoryList = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Calendar> showPickDateOfExpirationDialog = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Calendar> showPickDateOfEndDialog = new SingleLiveEvent<>();
 
     private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
 
@@ -55,6 +61,14 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public SingleLiveEvent showPickDateOfStartDialog() {
         return showPickDateOfStartDialog;
+    }
+
+    public SingleLiveEvent showPickDateOfExpirationDialog() {
+        return showPickDateOfExpirationDialog;
+    }
+
+    public SingleLiveEvent showPickDateOfEndDialog() {
+        return showPickDateOfEndDialog;
     }
 
     // ===================================
@@ -90,12 +104,42 @@ public class EditDebtViewModel extends AndroidViewModel {
         }
     }
 
-    public void pickedDateOfStart(int year, int month, int day) {
+    public void pickDateOfExpirationClicked() {
+        Calendar calendar = Calendar.getInstance();
+        long dateOfExpiration = debtRepository.getCachedDebtPOJO().getDebt().getDateOfExpiration();
+        if (dateOfExpiration != 0) {
+            calendar.setTimeInMillis(dateOfExpiration);
+            showPickDateOfExpirationDialog.callWithArgument(calendar);
+        }
+    }
+
+    public void pickDateOfEndClicked() {
+        Calendar calendar = Calendar.getInstance();
+        long dateOfEnd = debtRepository.getCachedDebtPOJO().getDebt().getDateOfEnd();
+        if (dateOfEnd != 0) {
+            calendar.setTimeInMillis(dateOfEnd);
+            showPickDateOfEndDialog.callWithArgument(calendar);
+        }
+    }
+
+    public void pickedDate(int year, int month, int day, int typeOfDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
         DebtPOJO debtPOJO = debtRepository.getCachedDebtPOJO();
-        debtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
+
+        switch (typeOfDate) {
+            case TYPE_OF_DATE_START:
+                debtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
+                break;
+            case TYPE_OF_DATE_EXPIRATION:
+                debtPOJO.getDebt().setDateOfExpiration(calendar.getTimeInMillis());
+                break;
+            case TYPE_OF_DATE_END:
+                debtPOJO.getDebt().setDateOfEnd(calendar.getTimeInMillis());
+                break;
+        }
+
         liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
 
     }
