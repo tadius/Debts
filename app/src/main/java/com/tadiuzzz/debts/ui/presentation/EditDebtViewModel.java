@@ -21,6 +21,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
@@ -39,6 +40,8 @@ public class EditDebtViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPersonsList = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToCategoryList = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
+
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfExpirationDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfEndDialog = new SingleLiveEvent<>();
@@ -57,6 +60,10 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public SingleLiveEvent navigateToPickCategoryScreen() {
         return navigateToCategoryList;
+    }
+
+    public SingleLiveEvent showToast() {
+        return showToast;
     }
 
     public SingleLiveEvent showPickDateOfStartDialog() {
@@ -100,8 +107,8 @@ public class EditDebtViewModel extends AndroidViewModel {
         long dateOfStart = debtRepository.getCachedDebtPOJO().getDebt().getDateOfStart();
         if (dateOfStart != 0) {
             calendar.setTimeInMillis(dateOfStart);
-            showPickDateOfStartDialog.callWithArgument(calendar);
         }
+        showPickDateOfStartDialog.callWithArgument(calendar);
     }
 
     public void pickDateOfExpirationClicked() {
@@ -109,8 +116,8 @@ public class EditDebtViewModel extends AndroidViewModel {
         long dateOfExpiration = debtRepository.getCachedDebtPOJO().getDebt().getDateOfExpiration();
         if (dateOfExpiration != 0) {
             calendar.setTimeInMillis(dateOfExpiration);
-            showPickDateOfExpirationDialog.callWithArgument(calendar);
         }
+        showPickDateOfExpirationDialog.callWithArgument(calendar);
     }
 
     public void pickDateOfEndClicked() {
@@ -118,8 +125,8 @@ public class EditDebtViewModel extends AndroidViewModel {
         long dateOfEnd = debtRepository.getCachedDebtPOJO().getDebt().getDateOfEnd();
         if (dateOfEnd != 0) {
             calendar.setTimeInMillis(dateOfEnd);
-            showPickDateOfEndDialog.callWithArgument(calendar);
         }
+        showPickDateOfEndDialog.callWithArgument(calendar);
     }
 
     public void pickedDate(int year, int month, int day, int typeOfDate) {
@@ -142,6 +149,66 @@ public class EditDebtViewModel extends AndroidViewModel {
 
         liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
 
+    }
+
+    public void saveButtonClicked() {
+        //возможно нужно будет сделать проверки на пустые поля?
+        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+            debtRepository.updateDebt(debtRepository.getCachedDebtPOJO().getDebt())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+                            showToast.callWithArgument("Запись успешно обновлена!");
+                            navigateToPreviousScreen.call();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            showToast.callWithArgument("Ошибка обновления записи!");
+                        }
+                    });
+
+        } else {
+            debtRepository.insertDebt(debtRepository.getCachedDebtPOJO().getDebt())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+                            showToast.callWithArgument("Запись успешно сохранена!");
+                            navigateToPreviousScreen.call();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            showToast.callWithArgument("Ошибка сохранения записи!");
+                        }
+                    });
+        }
+    }
+
+    public void deleteButtonClicked() {
+        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+            debtRepository.deleteDebt(debtRepository.getCachedDebtPOJO().getDebt())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+                            showToast.callWithArgument("Запись успешно удалена!");
+                            navigateToPreviousScreen.call();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            showToast.callWithArgument("Ошибка удаления записи!");
+                        }
+                    });
+        } else {
+            showToast.callWithArgument("Такой записи не существует!");
+        }
     }
 
     public void changedTextDebtAmount(String allText) {

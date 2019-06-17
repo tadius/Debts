@@ -79,17 +79,19 @@ public class PersonsViewModel extends AndroidViewModel {
 
     public void clickedOnPerson(Person person, boolean isPicking) {
         if(isPicking){
-            List<Person> persons = new ArrayList<>();
-            persons.add(person);
-            putPersonToCache(persons);
+
+            putPersonToCache(person);
             navigateToPreviousScreen.call();
         } else {
             navigateToEditPersonScreen.callWithArgument(person);
         }
     }
 
-    private void putPersonToCache(List<Person> persons){
+    private void putPersonToCache(Person person){
+        List<Person> persons = new ArrayList<>();
+        persons.add(person);
         debtRepository.getCachedDebtPOJO().setPerson(persons);
+        debtRepository.getCachedDebtPOJO().getDebt().setPersonId(person.getId());
     }
 
 }

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -95,12 +97,12 @@ public class EditDebtFragment extends Fragment {
 
     @OnClick(R.id.btnSaveDebt)
     void onSaveClick() {
-
+        editDebtViewModel.saveButtonClicked();
     }
 
     @OnClick(R.id.btnDeleteDebt)
     void onDeleteClick() {
-
+        editDebtViewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -110,6 +112,22 @@ public class EditDebtFragment extends Fragment {
 
         ButterKnife.bind(this, view);
         editDebtViewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
+
+        // Подписываемся на состояние действия тоста
+        editDebtViewModel.showToast().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showToast((String) o);
+            }
+        });
+
+        editDebtViewModel.navigateToPreviousScreen().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+            }
+        });
+
         editDebtViewModel.navigateToPickPersonScreen().observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -202,6 +220,12 @@ public class EditDebtFragment extends Fragment {
             }
         });
 
+    }
+
+    void showToast(String text) {
+        Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     private void setFields(DebtPOJO debtPOJO) {

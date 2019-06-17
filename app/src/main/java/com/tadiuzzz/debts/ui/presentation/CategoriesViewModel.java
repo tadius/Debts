@@ -81,17 +81,18 @@ public class CategoriesViewModel extends AndroidViewModel {
 
     public void clickedOnCategory(Category category, boolean isPicking) {
         if(isPicking){
-            List<Category> categories = new ArrayList<>();
-            categories.add(category);
-            putCategoryToCache(categories);
+            putCategoryToCache(category);
             navigateToPreviousScreen.call();
         } else {
             navigateToEditCategoryScreen.callWithArgument(category);
         }
     }
 
-    private void putCategoryToCache(List<Category> categories){
+    private void putCategoryToCache(Category category){
+        List<Category> categories = new ArrayList<>();
+        categories.add(category);
         debtRepository.getCachedDebtPOJO().setCategory(categories);
+        debtRepository.getCachedDebtPOJO().getDebt().setCategoryId(category.getId());
     }
 
 }
