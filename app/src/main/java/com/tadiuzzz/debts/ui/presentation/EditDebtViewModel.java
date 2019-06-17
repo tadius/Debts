@@ -153,4 +153,8 @@ public class EditDebtViewModel extends AndroidViewModel {
         debtRepository.getCachedDebtPOJO().getDebt().setDescription(allText.trim());
     }
 
+    public void isReturnedCheckChanged(boolean isChecked) {
+        debtRepository.getCachedDebtPOJO().getDebt().setReturned(isChecked);
+    }
+
 }
