@@ -74,20 +74,7 @@ public class DebtsViewModel extends AndroidViewModel {
     }
 
     public void clickedOnDebtPOJO(DebtPOJO debtPOJO){
-        debtRepository.putDebtPOJOtoCache(debtPOJO)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        //сохранили в кэш
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
+        debtRepository.putDebtPOJOtoCache(debtPOJO);
 
         navigateToEditDebtScreen.call();
     }

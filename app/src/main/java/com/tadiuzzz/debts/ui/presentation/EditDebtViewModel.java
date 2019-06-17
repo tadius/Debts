@@ -41,19 +41,19 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     // ====== подписки для навигации и диалоговых окон
 
-    public SingleLiveEvent navigateToPreviousScreen(){
+    public SingleLiveEvent navigateToPreviousScreen() {
         return navigateToPreviousScreen;
     }
 
-    public SingleLiveEvent navigateToPickPersonScreen(){
+    public SingleLiveEvent navigateToPickPersonScreen() {
         return navigateToPersonsList;
     }
 
-    public SingleLiveEvent navigateToPickCategoryScreen(){
+    public SingleLiveEvent navigateToPickCategoryScreen() {
         return navigateToCategoryList;
     }
 
-    public SingleLiveEvent showPickDateOfStartDialog(){
+    public SingleLiveEvent showPickDateOfStartDialog() {
         return showPickDateOfStartDialog;
     }
 
@@ -66,133 +66,47 @@ public class EditDebtViewModel extends AndroidViewModel {
     }
 
     private void loadCachedDebtPOJO() {
-        debtRepository.getCachedDebtPOJO()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        liveDataCachedDebtPOJO.setValue(debtPOJO);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
     }
 
     public LiveData<DebtPOJO> getLiveDataCachedDebtPOJO() { //Предоставляем объект LiveData View для подписки
         return liveDataCachedDebtPOJO;
     }
 
-    public void pickPersonClicked(){
+    public void pickPersonClicked() {
         navigateToPersonsList.call();
     }
 
-    public void pickCategoryClicked(){
+    public void pickCategoryClicked() {
         navigateToCategoryList.call();
     }
 
-    public void pickDateOfStartClicked(){
+    public void pickDateOfStartClicked() {
         Calendar calendar = Calendar.getInstance();
-
-        debtRepository.getCachedDebtPOJO().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        if (debtPOJO.getDebt().getDateOfStart() != 0) {
-                            calendar.setTimeInMillis(debtPOJO.getDebt().getDateOfStart());
-                            showPickDateOfStartDialog.callWithArgument(calendar);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
+        long dateOfStart = debtRepository.getCachedDebtPOJO().getDebt().getDateOfStart();
+        if (dateOfStart != 0) {
+            calendar.setTimeInMillis(dateOfStart);
+            showPickDateOfStartDialog.callWithArgument(calendar);
+        }
     }
 
     public void pickedDateOfStart(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
-        debtRepository.getCachedDebtPOJO().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        debtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
-                        liveDataCachedDebtPOJO.setValue(debtPOJO);
-                    }
+        DebtPOJO debtPOJO = debtRepository.getCachedDebtPOJO();
+        debtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
+        liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
-    public void changedTextDebtAmount(final String allText) {
-        debtRepository.getCachedDebtPOJO().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        String text = allText;
-                        if(text.trim().equals("")) text = "0.0";
-                        debtPOJO.getDebt().setAmount(Double.valueOf(text.trim()));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    public void changedTextDebtAmount(String allText) {
+        if (allText.trim().equals("")) allText = "0.0";
+        debtRepository.getCachedDebtPOJO().getDebt().setAmount(Double.valueOf(allText.trim()));
     }
 
     public void changedTextDebtDescription(final String allText) {
-        debtRepository.getCachedDebtPOJO().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        debtPOJO.getDebt().setDescription(allText.trim());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        debtRepository.getCachedDebtPOJO().getDebt().setDescription(allText.trim());
     }
 
 }

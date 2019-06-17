@@ -90,28 +90,8 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
-    public void putCategoryToCache(List<Category> categories){
-        debtRepository.getCachedDebtPOJO()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        debtPOJO.setCategory(categories);
-
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    private void putCategoryToCache(List<Category> categories){
+        debtRepository.getCachedDebtPOJO().setCategory(categories);
     }
 
 }

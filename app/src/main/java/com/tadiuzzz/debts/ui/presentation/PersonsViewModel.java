@@ -88,27 +88,8 @@ public class PersonsViewModel extends AndroidViewModel {
         }
     }
 
-    public void putPersonToCache(List<Person> persons){
-        debtRepository.getCachedDebtPOJO()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-
-                    @Override
-                    public void onSuccess(DebtPOJO debtPOJO) {
-                        debtPOJO.setPerson(persons);
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    private void putPersonToCache(List<Person> persons){
+        debtRepository.getCachedDebtPOJO().setPerson(persons);
     }
 
 }

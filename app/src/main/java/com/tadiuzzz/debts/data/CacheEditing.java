@@ -42,8 +42,8 @@ public class CacheEditing {
         return INSTANCE;
     }
 
-    public Maybe<DebtPOJO> getCachedDebtPOJO() {
-        return Maybe.just(debtPOJO);
+    public DebtPOJO getCachedDebtPOJO() {
+        return debtPOJO;
     }
 
     public void putDebtPOJOToCache(DebtPOJO debtPOJO) {
