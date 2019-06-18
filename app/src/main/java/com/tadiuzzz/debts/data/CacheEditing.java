@@ -23,19 +23,7 @@ public class CacheEditing {
 
     private CacheEditing(){
         // Создаем пустой объект кэша, чтобы не было NPE при заполнении полей до выбора категории, персоны
-        debtPOJO = new DebtPOJO();
-
-        debtPOJO.setDebt(new Debt());
-
-        List<Category> categories = new ArrayList<>();
-        Category category = new Category();
-        categories.add(category);
-        debtPOJO.setCategory(categories);
-
-        List<Person> persons = new ArrayList<>();
-        Person person = new Person();
-        persons.add(person);
-        debtPOJO.setPerson(persons);
+        clearCachedDebtPOJO();
     }
 
     public static CacheEditing getInstance(){
@@ -51,6 +39,17 @@ public class CacheEditing {
     }
 
     public void clearCachedDebtPOJO(){
-        this.debtPOJO = new DebtPOJO();
+        debtPOJO = new DebtPOJO();
+        debtPOJO.setDebt(new Debt());
+
+        List<Category> categories = new ArrayList<>();
+        Category category = new Category();
+        categories.add(category);
+        debtPOJO.setCategory(categories);
+
+        List<Person> persons = new ArrayList<>();
+        Person person = new Person();
+        persons.add(person);
+        debtPOJO.setPerson(persons);
     }
 }

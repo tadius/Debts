@@ -74,6 +74,7 @@ public class DebtsViewModel extends AndroidViewModel {
     }
 
     public void viewLoaded() {
+        debtRepository.clearDebtPOJOCache();
         loadAllDebtPOJOs();
     }
 

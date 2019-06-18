@@ -116,7 +116,7 @@ public class DebtRepository {
         CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
     }
 
-    public void clearDebtPOJOCache(DebtPOJO debtPOJO){
+    public void clearDebtPOJOCache(){
         CacheEditing.getInstance().clearCachedDebtPOJO();
     }
 

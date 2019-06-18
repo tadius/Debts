@@ -99,6 +99,22 @@ public class PersonsFragment extends Fragment {
             }
         });
 
+        //анимация FAB
+        rvPersons.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy < 0 && !fbAddPerson.isShown())
+                    fbAddPerson.show();
+                else if (dy > 0 && fbAddPerson.isShown())
+                    fbAddPerson.hide();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
         return view;
     }
 

@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
@@ -31,10 +32,10 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -45,6 +46,13 @@ public class DebtsFragment extends Fragment {
     public static final String TAG = "logTag";
     @BindView(R.id.rvDebts)
     RecyclerView rvDebts;
+    @BindView(R.id.fbAddDebt)
+    FloatingActionButton fbAddDebt;
+
+    @OnClick(R.id.fbAddDebt)
+    void onAddButtonClick() {
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
+    }
 
 
     @Nullable
@@ -54,7 +62,7 @@ public class DebtsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_debts, container, false);
 
         ButterKnife.bind(this, view);
-        CacheEditing.getInstance().clearCachedDebtPOJO();
+//        CacheEditing.getInstance().clearCachedDebtPOJO();
 
         DebtPOJOsAdapter debtPOJOsAdapter = new DebtPOJOsAdapter();
         rvDebts.setAdapter(debtPOJOsAdapter);
@@ -86,6 +94,22 @@ public class DebtsFragment extends Fragment {
         });
 
         debtsViewModel.viewLoaded();
+
+        //анимация FAB
+        rvDebts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy < 0 && !fbAddDebt.isShown())
+                    fbAddDebt.show();
+                else if (dy > 0 && fbAddDebt.isShown())
+                    fbAddDebt.hide();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         return view;
     }

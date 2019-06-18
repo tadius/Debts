@@ -99,6 +99,22 @@ public class CategoriesFragment extends Fragment {
             }
         });
 
+        //анимация FAB
+        rvCategories.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy < 0 && !fbAddCategory.isShown())
+                    fbAddCategory.show();
+                else if (dy > 0 && fbAddCategory.isShown())
+                    fbAddCategory.hide();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
         return view;
     }
 

@@ -1,6 +1,8 @@
 package com.tadiuzzz.debts.ui.view;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -127,6 +130,7 @@ public class EditDebtFragment extends Fragment {
         editDebtViewModel.navigateToPreviousScreen().observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
+                hideKeyboard(getActivity());
                 Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
             }
         });
@@ -331,6 +335,17 @@ public class EditDebtFragment extends Fragment {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String resultDate = simpleDateFormat.format(date);
         return resultDate;
+    }
+
+    private void hideKeyboard(Activity activity) {
+        InputMethodManager inputManager = (InputMethodManager) activity
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View currentFocusedView = activity.getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
 }
