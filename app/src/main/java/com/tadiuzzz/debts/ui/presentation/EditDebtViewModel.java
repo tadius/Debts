@@ -1,7 +1,6 @@
 package com.tadiuzzz.debts.ui.presentation;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,22 +8,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.tadiuzzz.debts.data.DebtRepository;
-import com.tadiuzzz.debts.domain.entity.Category;
-import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.Calendar;
-import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -45,6 +36,8 @@ public class EditDebtViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfExpirationDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfEndDialog = new SingleLiveEvent<>();
+
+    private final SingleLiveEvent<Boolean> showEndDateContainer = new SingleLiveEvent<>();
 
     private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
 
@@ -76,6 +69,10 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public SingleLiveEvent showPickDateOfEndDialog() {
         return showPickDateOfEndDialog;
+    }
+
+    public SingleLiveEvent showEndDateContainer() {
+        return showEndDateContainer;
     }
 
     // ===================================
@@ -221,7 +218,18 @@ public class EditDebtViewModel extends AndroidViewModel {
     }
 
     public void isReturnedCheckChanged(boolean isChecked) {
-        debtRepository.getCachedDebtPOJO().getDebt().setReturned(isChecked);
+        DebtPOJO cachedDebtPojo = debtRepository.getCachedDebtPOJO();
+        if(isChecked) {
+            if(cachedDebtPojo.getDebt().getDateOfEnd() == 0) {
+                Calendar calendar = Calendar.getInstance();
+                cachedDebtPojo.getDebt().setDateOfEnd(calendar.getTimeInMillis());
+            }
+        } else {
+            cachedDebtPojo.getDebt().setDateOfEnd(0);
+        }
+        cachedDebtPojo.getDebt().setReturned(isChecked);
+        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
+        showEndDateContainer.callWithArgument(isChecked);
     }
 
 }

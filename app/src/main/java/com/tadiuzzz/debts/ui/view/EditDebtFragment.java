@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,8 @@ public class EditDebtFragment extends Fragment {
     EditText etEditDebtPersonNameAndSecondName;
     @BindView(R.id.cbIsReturned)
     CheckBox cbIsReturned;
+    @BindView(R.id.llDateOfEndContainer)
+    LinearLayout llDateOfEndContainer;
 
     @BindView(R.id.btnSaveDebt)
     Button btnSaveDebt;
@@ -165,6 +168,13 @@ public class EditDebtFragment extends Fragment {
             }
         });
 
+        editDebtViewModel.showEndDateContainer().observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showEndDateContainer((Boolean) o);
+            }
+        });
+
         etEditDebtAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -259,6 +269,14 @@ public class EditDebtFragment extends Fragment {
         DatePickerDialog dialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);
         dialog.getWindow();
         dialog.show();
+    }
+
+    private void showEndDateContainer(boolean visibly) {
+        if(visibly) {
+            llDateOfEndContainer.setVisibility(View.VISIBLE);
+        } else {
+            llDateOfEndContainer.setVisibility(View.GONE);
+        }
     }
 
     public String getStringDate(Calendar cal) {

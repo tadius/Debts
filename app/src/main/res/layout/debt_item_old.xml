@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llDebtItemContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp">
+
+        <LinearLayout
+            android:id="@+id/llDebtItemDateOfStartContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="left">
+            <TextView
+                android:id="@+id/tvLabelForDebtItemDateOfStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="с " />
+            <TextView
+                android:id="@+id/tvDebtItemDateOfStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="23.05.2019" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDebtItemDateOfExpirationContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/tvLabelForDebtItemDateOfExpiration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="до " />
+            <TextView
+                android:id="@+id/tvDebtItemDateOfExpiration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="23.05.2019" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDebtItemDateOfEndContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="right">
+            <TextView
+                android:id="@+id/tvLabelForDebtItemDateOfEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="факт " />
+            <TextView
+                android:id="@+id/tvDebtItemDateOfEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30.05.2019" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tvDebtItemPersonName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="Александр Петров" />
+
+            <TextView
+                android:id="@+id/tvDebtItemCategoryName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Деньги" />
+
+            <TextView
+                android:id="@+id/tvDebtItemAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="1500" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDebtItemDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="textEnd"
+            android:text="Заплатил за меня в ресторане 23 мая 2019 года, нужно отдать поскорее" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+</LinearLayout>

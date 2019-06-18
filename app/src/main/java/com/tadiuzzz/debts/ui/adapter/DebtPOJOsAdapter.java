@@ -3,6 +3,7 @@ package com.tadiuzzz.debts.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,13 +46,36 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        holder.tvDebtItemDateOfStart.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfStart())));
-        holder.tvDebtItemDateOfExpiration.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfEnd())));
-        holder.tvDebtItemDateOfEnd.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfExpiration())));
-        holder.tvDebtItemPersonName.setText(debtPOJO.getDebtPerson().getFirstName() + " " + debtPOJO.getDebtPerson().getSecondName());
+        holder.tvDebtItemPersonName.setText(String.format("%s %s", debtPOJO.getDebtPerson().getFirstName(), debtPOJO.getDebtPerson().getSecondName()));
         holder.tvDebtItemCategoryName.setText(String.valueOf(debtPOJO.getDebtCategory().getName()));
-        holder.tvDebtItemAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
         holder.tvDebtItemDescription.setText(String.valueOf(debtPOJO.getDebt().getDescription()));
+        holder.tvDebtItemAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
+
+        if (debtPOJO.getDebt().getDateOfExpiration() != 0) {
+            holder.llDebtItemDateOfExpirationContainer.setVisibility(View.VISIBLE);
+            holder.tvDebtItemDateOfExpiration.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfExpiration())));
+        } else {
+            holder.llDebtItemDateOfExpirationContainer.setVisibility(View.INVISIBLE);
+        }
+        if (debtPOJO.getDebt().getDateOfStart() != 0) {
+            holder.llDebtItemDateOfStartContainer.setVisibility(View.VISIBLE);
+            holder.tvDebtItemDateOfStart.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfStart())));
+        } else {
+            holder.llDebtItemDateOfStartContainer.setVisibility(View.INVISIBLE);
+        }
+        if (debtPOJO.getDebt().getDateOfEnd() != 0) {
+            holder.llDebtItemDateOfEndContainer.setVisibility(View.VISIBLE);
+            holder.tvDebtItemDateOfEnd.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfEnd())));
+        } else {
+            holder.llDebtItemDateOfEndContainer.setVisibility(View.INVISIBLE);
+        }
+
+        holder.llDebtItemContainer.setBackgroundResource(R.color.debtItemBackground);
+
+        Date dateNow = new Date();
+        if (debtPOJO.getDebt().getDateOfExpiration() <= dateNow.getTime()) holder.llDebtItemContainer.setBackgroundResource(R.color.debtDateExpiredItemBackground);
+
+        if (debtPOJO.getDebt().isReturned()) holder.llDebtItemContainer.setBackgroundResource(R.color.debtReturnedItemBackground);
     }
 
     @Override
@@ -61,8 +85,12 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
 
     public class DebtPOJOViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.llDebtItemContainer) LinearLayout llDebtItemContainer;
+        @BindView(R.id.llDebtItemDateOfStartContainer) LinearLayout llDebtItemDateOfStartContainer;
         @BindView(R.id.tvDebtItemDateOfStart) TextView tvDebtItemDateOfStart;
+        @BindView(R.id.llDebtItemDateOfExpirationContainer) LinearLayout llDebtItemDateOfExpirationContainer;
         @BindView(R.id.tvDebtItemDateOfExpiration) TextView tvDebtItemDateOfExpiration;
+        @BindView(R.id.llDebtItemDateOfEndContainer) LinearLayout llDebtItemDateOfEndContainer;
         @BindView(R.id.tvDebtItemDateOfEnd) TextView tvDebtItemDateOfEnd;
         @BindView(R.id.tvDebtItemPersonName) TextView tvDebtItemPersonName;
         @BindView(R.id.tvDebtItemCategoryName) TextView tvDebtItemCategoryName;

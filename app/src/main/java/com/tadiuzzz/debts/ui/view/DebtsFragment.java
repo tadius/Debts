@@ -85,6 +85,8 @@ public class DebtsFragment extends Fragment {
             }
         });
 
+        debtsViewModel.viewLoaded();
+
         return view;
     }
 

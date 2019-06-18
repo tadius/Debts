@@ -73,6 +73,10 @@ public class DebtsViewModel extends AndroidViewModel {
         return liveDataDebtPOJOs;
     }
 
+    public void viewLoaded() {
+        loadAllDebtPOJOs();
+    }
+
     public void clickedOnDebtPOJO(DebtPOJO debtPOJO){
         debtRepository.putDebtPOJOtoCache(debtPOJO);
 
