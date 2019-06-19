@@ -1,7 +1,6 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +25,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
 public class PersonsFragment extends Fragment {
 
-    private PersonsViewModel personsViewModel;
+    private PersonsViewModel viewModel;
+    private PersonAdapter personAdapter;
     private boolean isPickingPerson;
     public static final String TAG = "logTag";
     @BindView(R.id.rvPersons)
@@ -51,54 +48,53 @@ public class PersonsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_persons, container, false);
 
         ButterKnife.bind(this, view);
 
         Bundle bundle = getArguments();
-        if(bundle != null){
-            isPickingPerson = bundle.getBoolean("pickPerson", false);
-        }
+        if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);
 
-        PersonAdapter personAdapter = new PersonAdapter();
+        viewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
+
+        setupRecyclerView();
+
+        subscribeOnData();
+
+        subscribeNavigationEvents();
+
+        setupFABanimation();
+
+        return view;
+    }
+
+    private void setupRecyclerView() {
+        personAdapter = new PersonAdapter();
         rvPersons.setAdapter(personAdapter);
-        personAdapter.setOnPersonClickListener(new PersonAdapter.OnPersonClickListener() {
-            @Override
-            public void onPersonClick(Person person) {
-                personsViewModel.clickedOnPerson(person, isPickingPerson);
-            }
-        });
-
         rvPersons.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        personsViewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
+        personAdapter.setOnPersonClickListener(person -> viewModel.clickedOnPerson(person, isPickingPerson));
+    }
 
-        personsViewModel.getLiveDataPersons().observe(this, new Observer<List<Person>>() {
-            @Override
-            public void onChanged(List<Person> persons) {
-                personAdapter.setData(persons);
-                personAdapter.notifyDataSetChanged();
-            }
+    private void subscribeOnData() {
+        viewModel.getLiveDataPersons().observe(this, persons -> {
+            personAdapter.setData(persons);
+            personAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void subscribeNavigationEvents() {
+        viewModel.navigateToEditPersonScreen().observe(this, o -> {
+            Person person = (Person) o;
+            Bundle bundle = new Bundle();
+            bundle.putInt("personId", person.getId());
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
         });
 
-        personsViewModel.navigateToEditPersonScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                Person person = (Person) o;
-                Bundle bundle = new Bundle();
-                bundle.putInt("personId", person.getId());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
-            }
-        });
+        viewModel.navigateToPreviousScreen().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+    }
 
-        personsViewModel.navigateToPreviousScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-            }
-        });
-
+    private void setupFABanimation() {
         //анимация FAB
         rvPersons.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -114,8 +110,5 @@ public class PersonsFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-
-        return view;
     }
-
 }
