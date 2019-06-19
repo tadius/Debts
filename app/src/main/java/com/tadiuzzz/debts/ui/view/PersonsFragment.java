@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,8 +18,6 @@ import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
 import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,16 +49,16 @@ public class PersonsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        viewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
+
         Bundle bundle = getArguments();
         if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);
-
-        viewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
 
         setupRecyclerView();
 
         subscribeOnData();
 
-        subscribeNavigationEvents();
+        subscribeOnNavigationEvents();
 
         setupFABanimation();
 
@@ -77,21 +74,21 @@ public class PersonsFragment extends Fragment {
     }
 
     private void subscribeOnData() {
-        viewModel.getLiveDataPersons().observe(this, persons -> {
+        viewModel.getPersons().observe(this, persons -> {
             personAdapter.setData(persons);
             personAdapter.notifyDataSetChanged();
         });
     }
 
-    private void subscribeNavigationEvents() {
-        viewModel.navigateToEditPersonScreen().observe(this, o -> {
+    private void subscribeOnNavigationEvents() {
+        viewModel.getNavigateToEditPersonScreenEvent().observe(this, o -> {
             Person person = (Person) o;
             Bundle bundle = new Bundle();
             bundle.putInt("personId", person.getId());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
         });
 
-        viewModel.navigateToPreviousScreen().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
     }
 
     private void setupFABanimation() {

@@ -41,42 +41,6 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
 
-    // ====== подписки для навигации и диалоговых окон
-
-    public SingleLiveEvent navigateToPreviousScreen() {
-        return navigateToPreviousScreen;
-    }
-
-    public SingleLiveEvent navigateToPickPersonScreen() {
-        return navigateToPersonsList;
-    }
-
-    public SingleLiveEvent navigateToPickCategoryScreen() {
-        return navigateToCategoryList;
-    }
-
-    public SingleLiveEvent showToast() {
-        return showToast;
-    }
-
-    public SingleLiveEvent showPickDateOfStartDialog() {
-        return showPickDateOfStartDialog;
-    }
-
-    public SingleLiveEvent showPickDateOfExpirationDialog() {
-        return showPickDateOfExpirationDialog;
-    }
-
-    public SingleLiveEvent showPickDateOfEndDialog() {
-        return showPickDateOfEndDialog;
-    }
-
-    public SingleLiveEvent showEndDateContainer() {
-        return showEndDateContainer;
-    }
-
-    // ===================================
-
     public EditDebtViewModel(@NonNull Application application) {
         super(application);
         debtRepository = new DebtRepository(application);
@@ -87,8 +51,40 @@ public class EditDebtViewModel extends AndroidViewModel {
         liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
     }
 
-    public LiveData<DebtPOJO> getLiveDataCachedDebtPOJO() { //Предоставляем объект LiveData View для подписки
+    public LiveData<DebtPOJO> getCachedDebtPOJO() {
         return liveDataCachedDebtPOJO;
+    }
+
+    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
+        return navigateToPreviousScreen;
+    }
+
+    public SingleLiveEvent getNavigateToPickPersonScreenEvent() {
+        return navigateToPersonsList;
+    }
+
+    public SingleLiveEvent getNavigateToPickCategoryScreenEvent() {
+        return navigateToCategoryList;
+    }
+
+    public SingleLiveEvent getShowToastEvent() {
+        return showToast;
+    }
+
+    public SingleLiveEvent getShowPickDateOfStartDialogEvent() {
+        return showPickDateOfStartDialog;
+    }
+
+    public SingleLiveEvent getShowPickDateOfExpirationDialogEvent() {
+        return showPickDateOfExpirationDialog;
+    }
+
+    public SingleLiveEvent getShowPickDateOfEndDialogEvent() {
+        return showPickDateOfEndDialog;
+    }
+
+    public SingleLiveEvent getShowEndDateContainerEvent() {
+        return showEndDateContainer;
     }
 
     public void pickPersonClicked() {
@@ -145,7 +141,6 @@ public class EditDebtViewModel extends AndroidViewModel {
         }
 
         liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
-
     }
 
     public void saveButtonClicked() {

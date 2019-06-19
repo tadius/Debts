@@ -62,32 +62,36 @@ public class EditCategoryFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        viewModel = ViewModelProviders.of(this).get(EditCategoryViewModel.class);
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int categoryId = bundle.getInt("categoryId");
             viewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
-        viewModel = ViewModelProviders.of(this).get(EditCategoryViewModel.class);
-
         subscribeOnData();
 
-        subscribeNavigationEvents();
+        subscribeOnNavigationEvents();
+
+        subscribeOnNotificationEvents();
 
         return view;
     }
 
-    private void subscribeNavigationEvents() {
-        viewModel.navigateToPreviousScreen().observe(this, o -> {
+    private void subscribeOnNotificationEvents() {
+        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+    }
+
+    private void subscribeOnNavigationEvents() {
+        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
             hideKeyboard(getActivity());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         });
-
-        viewModel.showToast().observe(this, message -> showToast((String) message));
     }
 
     private void subscribeOnData() {
-        viewModel.getLiveDataCategory().observe(this, category -> setFields(category));
+        viewModel.getCategory().observe(this, category -> setFields(category));
     }
 
     private void showToast(String text) {

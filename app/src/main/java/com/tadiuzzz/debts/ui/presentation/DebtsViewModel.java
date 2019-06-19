@@ -18,7 +18,6 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -34,10 +33,35 @@ public class DebtsViewModel extends AndroidViewModel {
     private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> showFilterDialog = new SingleLiveEvent<>();
 
-    private MutableLiveData<List<DebtPOJO>> liveDataDebtPOJOs = new MutableLiveData<>();
+    private MutableLiveData<List<DebtPOJO>> listOfDebtPOJOS = new MutableLiveData<>();
 
+    public DebtsViewModel(@NonNull Application application) {
+        super(application);
+        debtRepository = new DebtRepository(application);
+        loadAllDebtPOJOs();
+    }
 
-    // ====== подписки для навигации
+    private void loadAllDebtPOJOs() {
+        debtRepository.getAllDebtPOJOs()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                    @Override
+                    public void onNext(List<DebtPOJO> debtPOJOS) {
+                        listOfDebtPOJOS.setValue(debtPOJOS);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {}
+
+                    @Override
+                    public void onComplete() {}
+                });
+    }
+
+    public LiveData<List<DebtPOJO>> getListOfDebtPOJOS() { //Предоставляем объект LiveData View для подписки
+        return listOfDebtPOJOS;
+    }
 
     public SingleLiveEvent getNavigateToEditDebtScreenEvent(){
         return navigateToEditDebtScreen;
@@ -59,40 +83,6 @@ public class DebtsViewModel extends AndroidViewModel {
         return showFilterDialog;
     }
 
-    // ===============================
-
-    public DebtsViewModel(@NonNull Application application) {
-        super(application);
-        debtRepository = new DebtRepository(application);
-        loadAllDebtPOJOs();
-    }
-
-    private void loadAllDebtPOJOs() {
-        debtRepository.getAllDebtPOJOs()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
-                    @Override
-                    public void onNext(List<DebtPOJO> debtPOJOS) {
-                        liveDataDebtPOJOs.setValue(debtPOJOS);
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public LiveData<List<DebtPOJO>> getLiveDataDebtPOJOs() { //Предоставляем объект LiveData View для подписки
-        return liveDataDebtPOJOs;
-    }
-
     public void viewLoaded() {
         debtRepository.clearDebtPOJOCache();
         loadAllDebtPOJOs();
@@ -103,8 +93,6 @@ public class DebtsViewModel extends AndroidViewModel {
 
         navigateToEditDebtScreen.call();
     }
-
-    // *********************обработка кликов по меню********************
 
     public void clickedOnFilterMenu(){
         showFilterDialog.call();
@@ -120,22 +108,6 @@ public class DebtsViewModel extends AndroidViewModel {
 
     public void clickedOnAboutMenu(){
         navigateToAboutScreen.call();
-    }
-
-    // *********************************************************
-    // *********************тестовые методы*********************
-    // *********************************************************
-
-    public Completable insertDebt(Debt debt){
-        return debtRepository.insertDebt(debt);
-    }
-
-     public Completable insertPerson(Person person){
-        return debtRepository.insertPerson(person);
-    }
-
-    public Completable insertCategory(Category category){
-        return debtRepository.insertCategory(category);
     }
 
 }

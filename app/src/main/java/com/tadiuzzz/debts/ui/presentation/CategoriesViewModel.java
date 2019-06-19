@@ -7,19 +7,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
-import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -32,20 +27,8 @@ public class CategoriesViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private MutableLiveData<List<Category>> liveDataCategories = new MutableLiveData<>();
+    private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
 
-
-    // ====== подписки для навигации
-
-    public SingleLiveEvent navigateToPreviousScreen(){
-        return navigateToPreviousScreen;
-    }
-
-    public SingleLiveEvent navigateToEditCategoryScreen(){
-        return navigateToEditCategoryScreen;
-    }
-
-    // ===================================
 
     public CategoriesViewModel(@NonNull Application application) {
         super(application);
@@ -60,23 +43,27 @@ public class CategoriesViewModel extends AndroidViewModel {
                 .subscribe(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
-                        liveDataCategories.setValue(categories);
+                        listOfCategories.setValue(categories);
                     }
 
                     @Override
-                    public void onError(Throwable t) {
-
-                    }
+                    public void onError(Throwable t) {}
 
                     @Override
-                    public void onComplete() {
-
-                    }
+                    public void onComplete() {}
                 });
     }
 
-    public LiveData<List<Category>> getLiveDataCategories() { //Предоставляем объект LiveData View для подписки
-        return liveDataCategories;
+    public LiveData<List<Category>> getCategories() {
+        return listOfCategories;
+    }
+
+    public SingleLiveEvent getNavigateToPreviousScreenEvent(){
+        return navigateToPreviousScreen;
+    }
+
+    public SingleLiveEvent getNavigateToEditCategoryScreenEvent(){
+        return navigateToEditCategoryScreen;
     }
 
     public void clickedOnCategory(Category category, boolean isPicking) {

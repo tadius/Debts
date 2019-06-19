@@ -65,6 +65,8 @@ public class DebtsFragment extends Fragment {
 
         subscribeNavigationEvents();
 
+        subscribeOnDialogsEvents();
+
         setupFABanimation();
 
         viewModel.viewLoaded();
@@ -107,15 +109,18 @@ public class DebtsFragment extends Fragment {
     }
 
     private void subscribeOnData() {
-        viewModel.getLiveDataDebtPOJOs().observe(this, debtPOJOS -> {
+        viewModel.getListOfDebtPOJOS().observe(this, debtPOJOS -> {
             debtPOJOsAdapter.setData(debtPOJOS);
             debtPOJOsAdapter.notifyDataSetChanged();
         });
     }
 
+    private void subscribeOnDialogsEvents() {
+        viewModel.getShowFilterDialogEvent().observe(this, o -> showFilterDialog());
+    }
+
     private void subscribeNavigationEvents() {
         viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment));
-        viewModel.getShowFilterDialogEvent().observe(this, o -> showFilterDialog());
         viewModel.getNavigateToPersonsScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_personsFragment));
         viewModel.getNavigateToCategoriesScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_categoriesFragment));
         viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Toast.makeText(getActivity(), "ABOUT CLICKED", Toast.LENGTH_SHORT).show());

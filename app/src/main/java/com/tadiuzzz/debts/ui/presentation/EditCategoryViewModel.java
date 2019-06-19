@@ -29,17 +29,6 @@ public class EditCategoryViewModel extends AndroidViewModel {
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    // ====== подписки для навигации и тостов
-    public SingleLiveEvent showToast() {
-        return showToast;
-    }
-
-    public SingleLiveEvent navigateToPreviousScreen() {
-        return navigateToPreviousScreen;
-    }
-
-    // ===================================
-
     public EditCategoryViewModel(@NonNull Application application) {
         super(application);
         debtRepository = new DebtRepository(application);
@@ -57,18 +46,24 @@ public class EditCategoryViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override
                     public void onComplete() {
-
                     }
                 });
     }
 
-    public LiveData<Category> getLiveDataCategory() { //Предоставляем объект LiveData View для подписки
+    public LiveData<Category> getCategory() {
         return loadedLiveDataCategory;
+    }
+
+    public SingleLiveEvent getShowToastEvent() {
+        return showToast;
+    }
+
+    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
+        return navigateToPreviousScreen;
     }
 
     public void saveButtonClicked(String enteredCategoryName) {

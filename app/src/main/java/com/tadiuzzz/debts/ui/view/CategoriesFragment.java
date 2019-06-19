@@ -52,16 +52,16 @@ public class CategoriesFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+
         Bundle bundle = getArguments();
         if (bundle != null) isPickingCategory = bundle.getBoolean("pickCategory", false);
-
-        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
 
         setupRecyclerView();
 
         subscribeOnData();
 
-        subscribeNavigationEvents();
+        subscribeOnNavigationEvents();
 
         setupFABanimation();
 
@@ -79,7 +79,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void subscribeOnData() {
-        viewModel.getLiveDataCategories().observe(this, new Observer<List<Category>>() {
+        viewModel.getCategories().observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(List<Category> categories) {
                 categoryAdapter.setData(categories);
@@ -88,15 +88,15 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
-    private void subscribeNavigationEvents() {
-        viewModel.navigateToEditCategoryScreen().observe(this, o -> {
+    private void subscribeOnNavigationEvents() {
+        viewModel.getNavigateToEditCategoryScreenEvent().observe(this, o -> {
             Category category = (Category) o;
             Bundle bundle = new Bundle();
             bundle.putInt("categoryId", category.getId());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
         });
 
-        viewModel.navigateToPreviousScreen().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
     }
 
     private void setupFABanimation() {

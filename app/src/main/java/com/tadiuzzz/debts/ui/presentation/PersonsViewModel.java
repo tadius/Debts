@@ -8,17 +8,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.tadiuzzz.debts.data.DebtRepository;
-import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -31,19 +27,7 @@ public class PersonsViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Person> navigateToEditPersonScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private MutableLiveData<List<Person>> liveDataPersons = new MutableLiveData<>();
-
-    // ====== подписки для навигации
-
-    public SingleLiveEvent navigateToPreviousScreen(){
-        return navigateToPreviousScreen;
-    }
-
-    public SingleLiveEvent navigateToEditPersonScreen(){
-        return navigateToEditPersonScreen;
-    }
-
-    // ===================================
+    private MutableLiveData<List<Person>> listOfPersons = new MutableLiveData<>();
 
     public PersonsViewModel(@NonNull Application application) {
         super(application);
@@ -58,28 +42,30 @@ public class PersonsViewModel extends AndroidViewModel {
                 .subscribe(new DisposableSubscriber<List<Person>>() {
                     @Override
                     public void onNext(List<Person> persons) {
-                        liveDataPersons.setValue(persons);
+                        listOfPersons.setValue(persons);
                     }
+                    @Override
+                    public void onError(Throwable t) {}
 
                     @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
+                    public void onComplete() {}
                 });
     }
 
-    public LiveData<List<Person>> getLiveDataPersons() { //Предоставляем объект LiveData View для подписки
-        return liveDataPersons;
+    public LiveData<List<Person>> getPersons() {
+        return listOfPersons;
+    }
+
+    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
+        return navigateToPreviousScreen;
+    }
+
+    public SingleLiveEvent getNavigateToEditPersonScreenEvent() {
+        return navigateToEditPersonScreen;
     }
 
     public void clickedOnPerson(Person person, boolean isPicking) {
-        if(isPicking){
-
+        if (isPicking) {
             putPersonToCache(person);
             navigateToPreviousScreen.call();
         } else {
@@ -87,7 +73,7 @@ public class PersonsViewModel extends AndroidViewModel {
         }
     }
 
-    private void putPersonToCache(Person person){
+    private void putPersonToCache(Person person) {
         List<Person> persons = new ArrayList<>();
         persons.add(person);
         debtRepository.getCachedDebtPOJO().setPerson(persons);

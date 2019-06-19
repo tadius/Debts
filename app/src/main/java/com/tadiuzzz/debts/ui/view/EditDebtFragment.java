@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -44,9 +41,7 @@ import butterknife.OnClick;
  */
 public class EditDebtFragment extends Fragment {
 
-    private EditDebtViewModel editDebtViewModel;
-//    private DebtPOJO editingDebtPOJO;
-    private Calendar calendar;
+    private EditDebtViewModel viewModel;
 
     public static final String TAG = "logTag";
 
@@ -78,37 +73,37 @@ public class EditDebtFragment extends Fragment {
 
     @OnClick(R.id.etEditDebtDateOfStart)
     void onDateStartClick() {
-        editDebtViewModel.pickDateOfStartClicked();
+        viewModel.pickDateOfStartClicked();
     }
 
     @OnClick(R.id.etEditDebtDateOfExpiration)
     void onDateExpirationClick() {
-        editDebtViewModel.pickDateOfExpirationClicked();
+        viewModel.pickDateOfExpirationClicked();
     }
 
     @OnClick(R.id.etEditDebtDateOfEnd)
     void onDateEndClick() {
-        editDebtViewModel.pickDateOfEndClicked();
+        viewModel.pickDateOfEndClicked();
     }
 
     @OnClick(R.id.etEditDebtCategoryName)
     void onCategoryClick() {
-        editDebtViewModel.pickCategoryClicked();
+        viewModel.pickCategoryClicked();
     }
 
     @OnClick(R.id.etEditDebtPersonNameAndSecondName)
     void onPersonClick() {
-        editDebtViewModel.pickPersonClicked();
+        viewModel.pickPersonClicked();
     }
 
     @OnClick(R.id.btnSaveDebt)
     void onSaveClick() {
-        editDebtViewModel.saveButtonClicked();
+        viewModel.saveButtonClicked();
     }
 
     @OnClick(R.id.btnDeleteDebt)
     void onDeleteClick() {
-        editDebtViewModel.deleteButtonClicked();
+        viewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -117,68 +112,27 @@ public class EditDebtFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_debt, container, false);
 
         ButterKnife.bind(this, view);
-        editDebtViewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
 
-        // Подписываемся на состояние действия тоста
-        editDebtViewModel.showToast().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showToast((String) o);
-            }
-        });
+        viewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
 
-        editDebtViewModel.navigateToPreviousScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                hideKeyboard(getActivity());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-            }
-        });
+        setUpEditFieldsListeners();
 
-        editDebtViewModel.navigateToPickPersonScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("pickPerson", true);
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
-            }
-        });
-        editDebtViewModel.navigateToPickCategoryScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("pickCategory", true);
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);
-            }
-        });
-        editDebtViewModel.showPickDateOfStartDialog().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_START);
-            }
-        });
+        subscribeOnData();
 
-        editDebtViewModel.showPickDateOfExpirationDialog().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_EXPIRATION);
-            }
-        });
+        subscribeOnNavigationEvents();
 
-        editDebtViewModel.showPickDateOfEndDialog().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showDatePickerDialog((Calendar) o, editDebtViewModel.TYPE_OF_DATE_END);
-            }
-        });
+        subscribeOnDialogsEvents();
 
-        editDebtViewModel.showEndDateContainer().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showEndDateContainer((Boolean) o);
-            }
-        });
+        subscribeOnNotificationEvents();
 
+        return view;
+    }
+
+    private void subscribeOnData() {
+        viewModel.getCachedDebtPOJO().observe(this, debtPOJO -> setFields(debtPOJO));
+    }
+
+    private void setUpEditFieldsListeners() {
         etEditDebtAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -187,7 +141,7 @@ public class EditDebtFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editDebtViewModel.changedTextDebtAmount(String.valueOf(etEditDebtAmount.getText()));
+                viewModel.changedTextDebtAmount(String.valueOf(etEditDebtAmount.getText()));
             }
 
             @Override
@@ -204,7 +158,7 @@ public class EditDebtFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editDebtViewModel.changedTextDebtDescription(String.valueOf(etEditDebtDescription.getText()));
+                viewModel.changedTextDebtDescription(String.valueOf(etEditDebtDescription.getText()));
             }
 
             @Override
@@ -213,30 +167,42 @@ public class EditDebtFragment extends Fragment {
             }
         });
 
-        cbIsReturned.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editDebtViewModel.isReturnedCheckChanged(isChecked);
-            }
-        });
-
-        return view;
+        cbIsReturned.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.isReturnedCheckChanged(isChecked));
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        editDebtViewModel.getLiveDataCachedDebtPOJO().observe(this, new Observer<DebtPOJO>() {
-            @Override
-            public void onChanged(DebtPOJO debtPOJO) {
-                setFields(debtPOJO);
-            }
-        });
-
+    private void subscribeOnNotificationEvents() {
+        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
     }
 
-    void showToast(String text) {
+    private void subscribeOnDialogsEvents() {
+        viewModel.getShowPickDateOfStartDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_START));
+
+        viewModel.getShowPickDateOfExpirationDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_EXPIRATION));
+
+        viewModel.getShowPickDateOfEndDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_END));
+
+        viewModel.getShowEndDateContainerEvent().observe(this, o -> showEndDateContainer((Boolean) o));
+    }
+
+    private void subscribeOnNavigationEvents() {
+        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
+            hideKeyboard(getActivity());
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+        });
+
+        viewModel.getNavigateToPickPersonScreenEvent().observe(this, o -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("pickPerson", true);
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
+        });
+        viewModel.getNavigateToPickCategoryScreenEvent().observe(this, o -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("pickCategory", true);
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);
+        });
+    }
+
+    private void showToast(String text) {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
@@ -254,22 +220,14 @@ public class EditDebtFragment extends Fragment {
         etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFullName());
     }
 
-    public void showDatePickerDialog(Calendar calendar, int typeOfDate) {
+    private void showDatePickerDialog(Calendar calendar, int typeOfDate) {
 
-        // чтобы вызывался календарь с датой, которая была выбрана ранее, а не сбрасывалась
-//        if (dateOfPayment != 0) {
-//            calendar.setTimeInMillis(dateOfPayment);
-//        }
+        DatePickerDialog.OnDateSetListener onDateSetListener = (datePicker, year, month, day) -> viewModel.pickedDate(year, month, day, typeOfDate);
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                editDebtViewModel.pickedDate(year, month, day, typeOfDate);
-            }
-        };
         DatePickerDialog dialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);
         dialog.getWindow();
         dialog.show();
@@ -283,58 +241,10 @@ public class EditDebtFragment extends Fragment {
         }
     }
 
-    public String getStringDate(Calendar cal) {
-        String year = String.valueOf(cal.get(Calendar.YEAR));
-        String month = String.valueOf(cal.get(Calendar.MONTH) + 1);
-        String day = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-        if (day.length() <= 1) {
-            day = "0" + day;
-        }
-        if (month.length() <= 1) {
-            month = "0" + month;
-        }
-        String stringDate = day + "." + month + "." + year;
-        return stringDate;
-    }
-
-//    private void setFieldsFromDb(int debtId) {
-//        editDebtViewModel.getDebtPOJOByID(debtId)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new DisposableMaybeObserver<DebtPOJO>() {
-//                    @Override
-//                    public void onSuccess(DebtPOJO debtPOJO) {
-//                        Log.i(TAG, "onSuccess: " + debtPOJO.getDebt().getId());
-//                        editingDebtPOJO = debtPOJO;
-//                        CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
-//                        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
-//                        etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
-//                        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
-//                        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
-//                        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
-//                        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
-//                        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
-//                        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFirstName() + " " + debtPOJO.getDebtPerson().getSecondName());//TODO %s String format
-//                        cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Log.i(TAG, "onError: " + e.getLocalizedMessage());
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
-//    }
-
     private String getStringDate(long inputDate) {
         Date date = new Date(inputDate);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        String resultDate = simpleDateFormat.format(date);
-        return resultDate;
+        return simpleDateFormat.format(date);
     }
 
     private void hideKeyboard(Activity activity) {

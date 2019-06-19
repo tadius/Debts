@@ -3,7 +3,6 @@ package com.tadiuzzz.debts.ui.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,25 +21,19 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.presentation.EditPersonViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableMaybeObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
 public class EditPersonFragment extends Fragment {
 
-    private EditPersonViewModel editPersonViewModel;
-    private Person loadedPerson;
+    private EditPersonViewModel viewModel;
 
     public static final String TAG = "logTag";
     @BindView(R.id.tvEditPersonId)
@@ -59,12 +52,12 @@ public class EditPersonFragment extends Fragment {
         String enteredPersonFirstName = etPersonFirstName.getText().toString().trim();
         String enteredPersonSecondName = etPersonSecondName.getText().toString().trim();
 
-        editPersonViewModel.saveButtonClicked(enteredPersonFirstName, enteredPersonSecondName);
+        viewModel.saveButtonClicked(enteredPersonFirstName, enteredPersonSecondName);
     }
 
     @OnClick(R.id.btnDeletePerson)
     void onDeleteClick() {
-        editPersonViewModel.deleteButtonClicked();
+        viewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -74,42 +67,39 @@ public class EditPersonFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        editPersonViewModel = ViewModelProviders.of(this).get(EditPersonViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(EditPersonViewModel.class);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int personId = bundle.getInt("personId");
-            editPersonViewModel.gotPickedPerson(personId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
+            viewModel.gotPickedPerson(personId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
-        //Подписываемся на объект LiveData
-        editPersonViewModel.getLiveDataPerson().observe(this, new Observer<Person>() {
-            @Override
-            public void onChanged(Person person) {
-                setFields(person);
-            }
-        });
+        subscribeOnData();
 
-        // Подписываемся на состояние действия тоста
-        editPersonViewModel.showToast().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showToast((String) o);
-            }
-        });
+        subscribeOnNavigationEvents();
 
-        // Подписываемся на состояние действия навигации
-        editPersonViewModel.navigateToPreviousScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                hideKeyboard(getActivity());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-            }
-        });
+        subscribeOnNotificationEvents();
+
         return view;
     }
 
-    void showToast(String text) {
+    private void subscribeOnData() {
+        viewModel.getPerson().observe(this, person -> setFields(person));
+    }
+
+    private void subscribeOnNavigationEvents() {
+        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
+            hideKeyboard(getActivity());
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+        });
+    }
+
+    private void subscribeOnNotificationEvents() {
+        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+    }
+
+    private void showToast(String text) {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
