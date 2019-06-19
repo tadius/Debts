@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -33,7 +32,7 @@ import butterknife.OnClick;
  */
 public class EditCategoryFragment extends Fragment {
 
-    private EditCategoryViewModel editCategoryViewModel;
+    private EditCategoryViewModel viewModel;
 
     public static final String TAG = "logTag";
     @BindView(R.id.tvEditCategoryId)
@@ -48,12 +47,12 @@ public class EditCategoryFragment extends Fragment {
     @OnClick(R.id.btnSaveCategory)
     void onSaveClick() {
         String enteredCategoryName = etCategoryName.getText().toString().trim();
-        editCategoryViewModel.saveButtonClicked(enteredCategoryName);
+        viewModel.saveButtonClicked(enteredCategoryName);
     }
 
     @OnClick(R.id.btnDeleteCategory)
     void onDeleteClick() {
-        editCategoryViewModel.deleteButtonClicked();
+        viewModel.deleteButtonClicked();
     }
 
     @Nullable
@@ -63,43 +62,35 @@ public class EditCategoryFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        editCategoryViewModel = ViewModelProviders.of(this).get(EditCategoryViewModel.class);
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int categoryId = bundle.getInt("categoryId");
-            editCategoryViewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
+            viewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
-        //Подписываемся на объект LiveData
-        editCategoryViewModel.getLiveDataCategory().observe(this, new Observer<Category>() {
-            @Override
-            public void onChanged(Category category) {
-                setFields(category);
-            }
-        });
+        viewModel = ViewModelProviders.of(this).get(EditCategoryViewModel.class);
 
-        // Подписываемся на состояние действия тоста
-        editCategoryViewModel.showToast().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                showToast((String) o);
-            }
-        });
+        subscribeOnData();
 
-        // Подписываемся на состояние действия навигации
-        editCategoryViewModel.navigateToPreviousScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                hideKeyboard(getActivity());
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
-            }
-        });
+        subscribeNavigationEvents();
 
         return view;
     }
 
-    void showToast(String text) {
+    private void subscribeNavigationEvents() {
+        viewModel.navigateToPreviousScreen().observe(this, o -> {
+            hideKeyboard(getActivity());
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
+        });
+
+        viewModel.showToast().observe(this, message -> showToast((String) message));
+    }
+
+    private void subscribeOnData() {
+        viewModel.getLiveDataCategory().observe(this, category -> setFields(category));
+    }
+
+    private void showToast(String text) {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
@@ -120,5 +111,4 @@ public class EditCategoryFragment extends Fragment {
             inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-
 }
