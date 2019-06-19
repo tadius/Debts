@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Debts</string>
+    <string name="menu_filter">Фильтр</string>
+    <string name="menu_about">О приложении</string>
+    <string name="menu_person">Менеджер персон</string>
+    <string name="menu_categories">Менеджер категорий</string>
 </resources>

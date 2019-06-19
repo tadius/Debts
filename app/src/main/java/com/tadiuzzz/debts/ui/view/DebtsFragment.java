@@ -1,9 +1,10 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -11,38 +12,27 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.domain.entity.Category;
-import com.tadiuzzz.debts.domain.entity.Debt;
-import com.tadiuzzz.debts.domain.entity.DebtPOJO;
-import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
-
-import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
 public class DebtsFragment extends Fragment {
 
-    private DebtsViewModel debtsViewModel;
+    private DebtsViewModel viewModel;
+    private DebtPOJOsAdapter debtPOJOsAdapter;
     public static final String TAG = "logTag";
     @BindView(R.id.rvDebts)
     RecyclerView rvDebts;
@@ -54,47 +44,84 @@ public class DebtsFragment extends Fragment {
         Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_debts, container, false);
 
         ButterKnife.bind(this, view);
-//        CacheEditing.getInstance().clearCachedDebtPOJO();
 
-        DebtPOJOsAdapter debtPOJOsAdapter = new DebtPOJOsAdapter();
+        viewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
+
+        setupDataList();
+
+        subscribeOnData();
+
+        subscribeNavigationEvents();
+
+        setupFABanimation();
+
+        viewModel.viewLoaded();
+
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_filter:
+                viewModel.clickedOnFilterMenu();
+                return true;
+            case R.id.menu_persons:
+                viewModel.clickedOnPersonsMenu();
+                return true;
+            case R.id.menu_categories:
+                viewModel.clickedOnCategoriesMenu();
+                return true;
+            case R.id.menu_about:
+                viewModel.clickedOnAboutMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setupDataList() {
+        debtPOJOsAdapter = new DebtPOJOsAdapter();
+        rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDebts.setAdapter(debtPOJOsAdapter);
 
-        debtPOJOsAdapter.setOnDebtPOJOClickListener(new DebtPOJOsAdapter.OnDebtPOJOClickListener() {
-            @Override
-            public void onDebtPOJOClick(DebtPOJO debtPOJO) {
-                debtsViewModel.clickedOnDebtPOJO(debtPOJO);
-            }
+        debtPOJOsAdapter.setOnDebtPOJOClickListener(debtPOJO -> viewModel.clickedOnDebtPOJO(debtPOJO));
+    }
+
+    private void subscribeOnData() {
+        viewModel.getLiveDataDebtPOJOs().observe(this, debtPOJOS -> {
+            debtPOJOsAdapter.setData(debtPOJOS);
+            debtPOJOsAdapter.notifyDataSetChanged();
         });
+    }
 
-        rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
+    private void subscribeNavigationEvents() {
+        viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment));
+        viewModel.getShowFilterDialogEvent().observe(this, o -> showFilterDialog());
+        viewModel.getNavigateToPersonsScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_personsFragment));
+        viewModel.getNavigateToCategoriesScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_categoriesFragment));
+        viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Toast.makeText(getActivity(), "ABOUT CLICKED", Toast.LENGTH_SHORT).show());
+    }
 
-        debtsViewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
-
-        debtsViewModel.getLiveDataDebtPOJOs().observe(this, new Observer<List<DebtPOJO>>() {
-            @Override
-            public void onChanged(List<DebtPOJO> debtPOJOS) {
-                debtPOJOsAdapter.setData(debtPOJOS);
-                debtPOJOsAdapter.notifyDataSetChanged();
-            }
-        });
-
-        debtsViewModel.navigateToEditDebtScreen().observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
-            }
-        });
-
-        debtsViewModel.viewLoaded();
-
+    private void setupFABanimation() {
         //анимация FAB
         rvDebts.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -110,89 +137,10 @@ public class DebtsFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-
-        return view;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    // *********************************************************
-    // *********************тестовые методы*********************
-    // *********************************************************
-
-    private void addRandomPerson() {
-        Random random = new Random();
-        int i = random.nextInt(100);
-        Person person = new Person("Name" + i, "SecondName" + i);
-        debtsViewModel.insertPerson(person)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableCompletableObserver() {
-            @Override
-            public void onComplete() {
-                Log.i(TAG, "Person inserted!");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
+    private void showFilterDialog() {
+        Toast.makeText(getActivity(), "FILTER CLICKED", Toast.LENGTH_SHORT).show();
     }
 
-    private void addRandomCategory() {
-        Random random = new Random();
-        int i = random.nextInt(100);
-        Category category = new Category("Category" + i);
-        debtsViewModel.insertCategory(category)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableCompletableObserver() {
-            @Override
-            public void onComplete() {
-                Log.i(TAG, "Category inserted!");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-    private void addRandomDebt(int personId, int categoryId) {
-        Random random = new Random();
-        int i = random.nextInt(100);
-        String description = "Debt " + i;
-        long amount = 5000L + i;
-        long dateOfStart = 1343805819061L * i;
-        long dateOfEnd = 1380583119061L * i;
-        long dateOfExpiration = 1343128059061L * i;
-        boolean isReturned = false;
-        boolean isActive = true;
-        Debt debt = new Debt(description, amount, dateOfStart, dateOfEnd, dateOfExpiration, isReturned, isActive, categoryId, personId);
-
-        debtsViewModel.insertDebt(debt)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "Debt inserted! debtId: " + debt.getId());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-//                Log.i(TAG, "Error inserting! debtId: " + debt.getId());
-                        Log.i(TAG, "Error inserting! debtId: " + e.getLocalizedMessage());
-                    }
-                });
-    }
 }

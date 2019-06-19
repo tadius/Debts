@@ -29,14 +29,34 @@ public class DebtsViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> navigateToPersonsScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> navigateToCategoriesScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> showFilterDialog = new SingleLiveEvent<>();
 
     private MutableLiveData<List<DebtPOJO>> liveDataDebtPOJOs = new MutableLiveData<>();
 
 
     // ====== подписки для навигации
 
-    public SingleLiveEvent navigateToEditDebtScreen(){
+    public SingleLiveEvent getNavigateToEditDebtScreenEvent(){
         return navigateToEditDebtScreen;
+    }
+
+    public SingleLiveEvent getNavigateToPersonsScreenEvent(){
+        return navigateToPersonsScreen;
+    }
+
+    public SingleLiveEvent getNavigateToCategoriesScreenEvent(){
+        return navigateToCategoriesScreen;
+    }
+
+    public SingleLiveEvent getNavigateToAboutScreenEvent(){
+        return navigateToAboutScreen;
+    }
+
+    public SingleLiveEvent getShowFilterDialogEvent(){
+        return showFilterDialog;
     }
 
     // ===============================
@@ -84,10 +104,23 @@ public class DebtsViewModel extends AndroidViewModel {
         navigateToEditDebtScreen.call();
     }
 
+    // *********************обработка кликов по меню********************
 
+    public void clickedOnFilterMenu(){
+        showFilterDialog.call();
+    }
 
+    public void clickedOnPersonsMenu(){
+        navigateToPersonsScreen.call();
+    }
 
+    public void clickedOnCategoriesMenu(){
+        navigateToCategoriesScreen.call();
+    }
 
+    public void clickedOnAboutMenu(){
+        navigateToAboutScreen.call();
+    }
 
     // *********************************************************
     // *********************тестовые методы*********************
