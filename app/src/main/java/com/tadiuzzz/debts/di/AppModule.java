@@ -1,6 +1,5 @@
 package com.tadiuzzz.debts.di;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.tadiuzzz.debts.DebtsApplication;
@@ -8,7 +7,6 @@ import com.tadiuzzz.debts.data.DebtRepository;
 
 import javax.inject.Singleton;
 
-import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
@@ -17,6 +15,8 @@ import dagger.Provides;
  */
 @Module
 public class AppModule {
+
+    // к данным объектам будут иметь доступ абсолютно все
 
     @Provides
     Context provideContext(DebtsApplication application) {

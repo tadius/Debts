@@ -59,7 +59,7 @@ public class DebtsFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
 
-        setupDataList();
+        setupRecyclerView();
 
         subscribeOnData();
 
@@ -98,7 +98,7 @@ public class DebtsFragment extends Fragment {
         }
     }
 
-    private void setupDataList() {
+    private void setupRecyclerView() {
         debtPOJOsAdapter = new DebtPOJOsAdapter();
         rvDebts.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDebts.setAdapter(debtPOJOsAdapter);

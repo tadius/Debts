@@ -120,8 +120,4 @@ public class DebtRepository {
         CacheEditing.getInstance().clearCachedDebtPOJO();
     }
 
-    public String getStringTest() {
-        return "Dagger Works";
-    }
-
 }
