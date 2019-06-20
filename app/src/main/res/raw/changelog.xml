@@ -1,0 +1,14 @@
+<changelog>
+
+    <release versionCode="2" versionName="1.0.1" date="06.06.2019">
+        <info>Тестовая запись Тестовая запись Тестовая запись</info>
+        <info>Тестовая запись</info>
+        <info>Тестовая запись</info>
+    </release>
+
+    <release versionCode="1" versionName="1.0.1" date="06.06.2019">
+        <info>Тестовая запись Тестовая запись Тестовая запись</info>
+        <info>Тестовая запись</info>
+        <info>Тестовая запись</info>
+    </release>
+</changelog>

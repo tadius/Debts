@@ -73,4 +73,8 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+    //Changelog
+    implementation 'com.github.MFlisar:changelog:1.1.5'
+
 }
