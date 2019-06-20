@@ -15,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
 
     NavController navController;
 
+    public static final int REQUEST_CODE_PERMISSIONS = 2;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

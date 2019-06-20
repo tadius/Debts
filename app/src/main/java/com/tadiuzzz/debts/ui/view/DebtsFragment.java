@@ -123,7 +123,7 @@ public class DebtsFragment extends Fragment {
         viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment));
         viewModel.getNavigateToPersonsScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_personsFragment));
         viewModel.getNavigateToCategoriesScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_categoriesFragment));
-        viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Toast.makeText(getActivity(), "ABOUT CLICKED", Toast.LENGTH_SHORT).show());
+        viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.backupRestoreFragment));
     }
 
     private void setupFABanimation() {

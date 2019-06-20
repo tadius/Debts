@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvLastBackupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Last Backup" />
+
+    <Button
+        android:id="@+id/btnBackupDB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Backup" />
+
+    <Button
+        android:id="@+id/btnRestoreDB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restore" />
+</LinearLayout>

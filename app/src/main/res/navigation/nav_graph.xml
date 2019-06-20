@@ -74,4 +74,9 @@
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
     </fragment>
+    <fragment
+        android:id="@+id/backupRestoreFragment"
+        android:name="com.tadiuzzz.debts.ui.view.BackupRestoreFragment"
+        android:label="fragment_backup_restore_db"
+        tools:layout="@layout/fragment_backup_restore_db" />
 </navigation>
