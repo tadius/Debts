@@ -68,6 +68,8 @@ public class EditCategoryFragment extends Fragment {
             viewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
+        setupTitle();
+
         subscribeOnData();
 
         subscribeOnNavigationEvents();
@@ -77,19 +79,23 @@ public class EditCategoryFragment extends Fragment {
         return view;
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void subscribeOnNotificationEvents() {
-        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+        viewModel.getShowToastEvent().observe(getViewLifecycleOwner(), message -> showToast((String) message));
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> {
             hideKeyboard(getActivity());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         });
     }
 
     private void subscribeOnData() {
-        viewModel.getCategory().observe(this, category -> setFields(category));
+        viewModel.getCategory().observe(getViewLifecycleOwner(), category -> setFields(category));
     }
 
     private void showToast(String text) {

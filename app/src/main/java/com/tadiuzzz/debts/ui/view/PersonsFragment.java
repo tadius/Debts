@@ -54,6 +54,8 @@ public class PersonsFragment extends Fragment {
         Bundle bundle = getArguments();
         if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);
 
+        setupTitle();
+
         setupRecyclerView();
 
         subscribeOnData();
@@ -65,6 +67,10 @@ public class PersonsFragment extends Fragment {
         return view;
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void setupRecyclerView() {
         personAdapter = new PersonAdapter();
         rvPersons.setAdapter(personAdapter);
@@ -74,21 +80,21 @@ public class PersonsFragment extends Fragment {
     }
 
     private void subscribeOnData() {
-        viewModel.getPersons().observe(this, persons -> {
+        viewModel.getPersons().observe(getViewLifecycleOwner(), persons -> {
             personAdapter.setData(persons);
             personAdapter.notifyDataSetChanged();
         });
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToEditPersonScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToEditPersonScreenEvent().observe(getViewLifecycleOwner(), o -> {
             Person person = (Person) o;
             Bundle bundle = new Bundle();
             bundle.putInt("personId", person.getId());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editPersonFragment, bundle);
         });
 
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
     }
 
     private void setupFABanimation() {

@@ -23,13 +23,18 @@ public class EditPersonViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
 
-    private MutableLiveData<Person> loadedLiveDataPerson = new MutableLiveData<>();
-
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
+    private MutableLiveData<String> title = new MutableLiveData<>();
+    private MutableLiveData<Person> loadedLiveDataPerson = new MutableLiveData<>();
+
+
     public EditPersonViewModel(@NonNull Application application) {
         super(application);
+
+        title.setValue("Редактирование персоны");
+
         debtRepository = new DebtRepository(application);
     }
 
@@ -49,6 +54,10 @@ public class EditPersonViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {}
                 });
+    }
+
+    public LiveData<String> getTitle() {
+        return title;
     }
 
     public LiveData<Person> getPerson() {

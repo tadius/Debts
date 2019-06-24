@@ -57,6 +57,8 @@ public class CategoriesFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) isPickingCategory = bundle.getBoolean("pickCategory", false);
 
+        setupTitle();
+
         setupRecyclerView();
 
         subscribeOnData();
@@ -66,6 +68,10 @@ public class CategoriesFragment extends Fragment {
         setupFABanimation();
 
         return view;
+    }
+
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
     }
 
     private void setupRecyclerView() {
@@ -79,7 +85,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void subscribeOnData() {
-        viewModel.getCategories().observe(this, new Observer<List<Category>>() {
+        viewModel.getCategories().observe(getViewLifecycleOwner(), new Observer<List<Category>>() {
             @Override
             public void onChanged(List<Category> categories) {
                 categoryAdapter.setData(categories);
@@ -89,14 +95,14 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToEditCategoryScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToEditCategoryScreenEvent().observe(getViewLifecycleOwner(), o -> {
             Category category = (Category) o;
             Bundle bundle = new Bundle();
             bundle.putInt("categoryId", category.getId());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editCategoryFragment, bundle);
         });
 
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
     }
 
     private void setupFABanimation() {

@@ -69,6 +69,8 @@ public class EditPersonFragment extends Fragment {
             viewModel.gotPickedPerson(personId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
+        setupTitle();
+
         subscribeOnData();
 
         subscribeOnNavigationEvents();
@@ -78,19 +80,23 @@ public class EditPersonFragment extends Fragment {
         return view;
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void subscribeOnData() {
-        viewModel.getPerson().observe(this, person -> setFields(person));
+        viewModel.getPerson().observe(getViewLifecycleOwner(), person -> setFields(person));
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> {
             hideKeyboard(getActivity());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         });
     }
 
     private void subscribeOnNotificationEvents() {
-        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+        viewModel.getShowToastEvent().observe(getViewLifecycleOwner(), message -> showToast((String) message));
     }
 
     private void showToast(String text) {

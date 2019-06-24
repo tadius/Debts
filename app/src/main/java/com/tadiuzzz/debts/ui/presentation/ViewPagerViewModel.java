@@ -29,8 +29,16 @@ public class ViewPagerViewModel extends AndroidViewModel {
     private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> showFilterDialog = new SingleLiveEvent<>();
 
+    private MutableLiveData<String> title = new MutableLiveData<>();
+
     public ViewPagerViewModel(@NonNull Application application) {
         super(application);
+
+        title.setValue("Долги");
+    }
+
+    public LiveData<String> getTitle() {
+        return title;
     }
 
     public SingleLiveEvent getNavigateToEditDebtScreenEvent(){

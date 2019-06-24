@@ -24,13 +24,19 @@ import io.reactivex.schedulers.Schedulers;
 public class EditCategoryViewModel extends AndroidViewModel {
 
     DebtRepository debtRepository;
-    private MutableLiveData<Category> loadedLiveDataCategory = new MutableLiveData<>();
+
 
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
+    private MutableLiveData<String> title = new MutableLiveData<>();
+    private MutableLiveData<Category> loadedLiveDataCategory = new MutableLiveData<>();
+
     public EditCategoryViewModel(@NonNull Application application) {
         super(application);
+
+        title.setValue("Редактирование категории");
+
         debtRepository = new DebtRepository(application);
     }
 
@@ -52,6 +58,10 @@ public class EditCategoryViewModel extends AndroidViewModel {
                     public void onComplete() {
                     }
                 });
+    }
+
+    public LiveData<String> getTitle() {
+        return title;
     }
 
     public LiveData<Category> getCategory() {

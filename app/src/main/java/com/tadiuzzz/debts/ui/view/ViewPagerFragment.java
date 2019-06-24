@@ -55,6 +55,8 @@ public class ViewPagerFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        setupTitle();
+
         setupViewPager();
 
         subscribeOnNavigationEvents();
@@ -70,6 +72,10 @@ public class ViewPagerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void setupViewPager() {
         viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
@@ -78,15 +84,15 @@ public class ViewPagerFragment extends Fragment {
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
-        viewModel.getNavigateToPersonsScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_personsFragment));
-        viewModel.getNavigateToCategoriesScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_categoriesFragment));
-        viewModel.getNavigateToBackupRestoreScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_backupRestoreFragment));
-//        viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.backupRestoreFragment));
+        viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
+        viewModel.getNavigateToPersonsScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_personsFragment));
+        viewModel.getNavigateToCategoriesScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_categoriesFragment));
+        viewModel.getNavigateToBackupRestoreScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_backupRestoreFragment));
+//        viewModel.getNavigateToAboutScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.backupRestoreFragment));
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowFilterDialogEvent().observe(this, o -> showFilterDialog());
+        viewModel.getShowFilterDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterDialog());
     }
 
     @Override

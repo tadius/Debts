@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -66,6 +67,10 @@ public class BackupRestoreFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(BackupRestoreViewModel.class);
 
+        setupTitle();
+
+        setupTitle();
+
         subscribeOnData();
 
         subscribeOnNavigationEvents();
@@ -77,22 +82,26 @@ public class BackupRestoreFragment extends Fragment {
         return view;
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void subscribeOnData() {
-        viewModel.getListOfFiles().observe(this, list -> listOfFiles = list);
+        viewModel.getListOfFiles().observe(getViewLifecycleOwner(), list -> listOfFiles = list);
     }
 
     private void subscribeOnNotificationsEvents() {
-        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+        viewModel.getShowToastEvent().observe(getViewLifecycleOwner(), message -> showToast((String) message));
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowRequestPermissionsDialogEvent().observe(this, o -> showRequestPermissionsDialog());
-        viewModel.getShowSetNameOfBackupDialogEvent().observe(this, o -> showSetNameOfBackupDialog());
-        viewModel.getShowPickFileDialogEvent().observe(this, o -> showPickFileDialog());
+        viewModel.getShowRequestPermissionsDialogEvent().observe(getViewLifecycleOwner(), o -> showRequestPermissionsDialog());
+        viewModel.getShowSetNameOfBackupDialogEvent().observe(getViewLifecycleOwner(), o -> showSetNameOfBackupDialog());
+        viewModel.getShowPickFileDialogEvent().observe(getViewLifecycleOwner(), o -> showPickFileDialog());
     }
 
     private void showRequestPermissionsDialog() {

@@ -131,6 +131,8 @@ public class EditDebtFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
 
+        setupTitle();
+
         setUpEditFieldsListeners();
 
         subscribeOnData();
@@ -144,8 +146,12 @@ public class EditDebtFragment extends Fragment {
         return view;
     }
 
+    private void setupTitle() {
+        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+    }
+
     private void subscribeOnData() {
-        viewModel.getCachedDebtPOJO().observe(this, debtPOJO -> setFields(debtPOJO));
+        viewModel.getCachedDebtPOJO().observe(getViewLifecycleOwner(), debtPOJO -> setFields(debtPOJO));
     }
 
     private void setUpEditFieldsListeners() {
@@ -187,31 +193,31 @@ public class EditDebtFragment extends Fragment {
     }
 
     private void subscribeOnNotificationEvents() {
-        viewModel.getShowToastEvent().observe(this, message -> showToast((String) message));
+        viewModel.getShowToastEvent().observe(getViewLifecycleOwner(), message -> showToast((String) message));
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowPickDateOfStartDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_START));
+        viewModel.getShowPickDateOfStartDialogEvent().observe(getViewLifecycleOwner(), o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_START));
 
-        viewModel.getShowPickDateOfExpirationDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_EXPIRATION));
+        viewModel.getShowPickDateOfExpirationDialogEvent().observe(getViewLifecycleOwner(), o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_EXPIRATION));
 
-        viewModel.getShowPickDateOfEndDialogEvent().observe(this, o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_END));
+        viewModel.getShowPickDateOfEndDialogEvent().observe(getViewLifecycleOwner(), o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_END));
 
-        viewModel.getShowEndDateContainerEvent().observe(this, o -> showEndDateContainer((Boolean) o));
+        viewModel.getShowEndDateContainerEvent().observe(getViewLifecycleOwner(), o -> showEndDateContainer((Boolean) o));
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToPreviousScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> {
             hideKeyboard(getActivity());
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         });
 
-        viewModel.getNavigateToPickPersonScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToPickPersonScreenEvent().observe(getViewLifecycleOwner(), o -> {
             Bundle bundle = new Bundle();
             bundle.putBoolean("pickPerson", true);
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
         });
-        viewModel.getNavigateToPickCategoryScreenEvent().observe(this, o -> {
+        viewModel.getNavigateToPickCategoryScreenEvent().observe(getViewLifecycleOwner(), o -> {
             Bundle bundle = new Bundle();
             bundle.putBoolean("pickCategory", true);
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);

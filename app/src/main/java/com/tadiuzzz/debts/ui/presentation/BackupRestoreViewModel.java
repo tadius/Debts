@@ -47,19 +47,24 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     private Context context;
 
+    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<List<String>> listOfFiles = new MutableLiveData<>();
 
 
     public BackupRestoreViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
-//        filesRepository = new FilesRepository(application);
         pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + application.getResources().getString(R.string.app_name);
 
+        title.setValue("Резервное копирование");
     }
 
     private void loadListOfFiles() {
         listOfFiles.setValue(FileUtils.getListOfFiles(pathToSdCardAppFolder));
+    }
+
+    public LiveData<String> getTitle() {
+        return title;
     }
 
     public LiveData<List<String>> getListOfFiles() {

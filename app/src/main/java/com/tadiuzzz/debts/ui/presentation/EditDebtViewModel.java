@@ -39,16 +39,24 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     private final SingleLiveEvent<Boolean> showEndDateContainer = new SingleLiveEvent<>();
 
+    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
 
     public EditDebtViewModel(@NonNull Application application) {
         super(application);
+
+        title.setValue("Редактирование долга");
+
         debtRepository = new DebtRepository(application);
         loadCachedDebtPOJO();
     }
 
     private void loadCachedDebtPOJO() {
         liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
+    }
+
+    public LiveData<String> getTitle() {
+        return title;
     }
 
     public LiveData<DebtPOJO> getCachedDebtPOJO() {

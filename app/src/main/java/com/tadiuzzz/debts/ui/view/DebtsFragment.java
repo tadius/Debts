@@ -77,21 +77,21 @@ public class DebtsFragment extends Fragment {
     }
 
     private void subscribeOnDataIAmCreditor() {
-        viewModel.getListOfDebtPOJOSIAmCreditor().observe(this, debtPOJOS -> {
+        viewModel.getListOfDebtPOJOSIAmCreditor().observe(getViewLifecycleOwner(), debtPOJOS -> {
             debtPOJOsAdapter.setData(debtPOJOS);
             debtPOJOsAdapter.notifyDataSetChanged();
         });
     }
 
     private void subscribeOnDataIAmBorrower() {
-        viewModel.getListOfDebtPOJOSIAmBorrower().observe(this, debtPOJOS -> {
+        viewModel.getListOfDebtPOJOSIAmBorrower().observe(getViewLifecycleOwner(), debtPOJOS -> {
             debtPOJOsAdapter.setData(debtPOJOS);
             debtPOJOsAdapter.notifyDataSetChanged();
         });
     }
 
     private void subscribeNavigationEvents() {
-        viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
+        viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
     }
 
 
