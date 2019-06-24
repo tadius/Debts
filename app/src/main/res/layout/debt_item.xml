@@ -105,7 +105,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:textAlignment="textEnd"
-                    android:text="факт" />
+                    android:text="возвращено" />
 
                 <TextView
                     android:id="@+id/tvDebtItemDateOfEnd"

@@ -228,17 +228,36 @@ public class EditDebtFragment extends Fragment {
         tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
         if (debtPOJO.getDebt().amIBorrower()) {
             rbIAmBorrower.setChecked(true);
+            rbIAmBorrower.jumpDrawablesToCurrentState(); //skip toggle animation
+            rbIAmCreditor.jumpDrawablesToCurrentState();
+
         } else {
             rbIAmCreditor.setChecked(true);
+            rbIAmBorrower.jumpDrawablesToCurrentState(); //skip toggle animation
+            rbIAmCreditor.jumpDrawablesToCurrentState();
         }
         etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
-        etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
-        etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
-        etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
-        etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
+        if (debtPOJO.getDebt().getAmount() != 0) {
+            etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
+        }
+        if (debtPOJO.getDebt().getDateOfStart() != 0) {
+            etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));
+        }
+        if (debtPOJO.getDebt().getDateOfExpiration() != 0) {
+            etEditDebtDateOfExpiration.setText(getStringDate(debtPOJO.getDebt().getDateOfExpiration()));
+        }
+        if (debtPOJO.getDebt().getDateOfEnd() != 0) {
+            etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
+        }
+
         cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
-        etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
-        etEditDebtPersonName.setText(debtPOJO.getDebtPerson().getName());
+        cbIsReturned.jumpDrawablesToCurrentState(); //skip toggle animation
+        if (debtPOJO.getDebtCategory().getId() != 0) {
+            etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
+        }
+        if (debtPOJO.getDebtPerson().getId() != 0) {
+            etEditDebtPersonName.setText(debtPOJO.getDebtPerson().getName());
+        }
     }
 
     private void showDatePickerDialog(Calendar calendar, int typeOfDate) {
@@ -255,7 +274,7 @@ public class EditDebtFragment extends Fragment {
     }
 
     private void showEndDateContainer(boolean visibly) {
-        if(visibly) {
+        if (visibly) {
             llDateOfEndContainer.setVisibility(View.VISIBLE);
         } else {
             llDateOfEndContainer.setVisibility(View.GONE);

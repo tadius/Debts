@@ -175,7 +175,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:focusable="false"
-                android:hint="Дата начала"
+                android:hint="С даты"
                 android:inputType="date"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
@@ -200,7 +200,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:focusable="false"
-                android:hint="Дата окончания (план)"
+                android:hint="До даты"
                 android:inputType="date"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
