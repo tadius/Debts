@@ -40,9 +40,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
     public void onBindViewHolder(@NonNull PersonViewHolder holder, int position) {
         Person person = persons.get(position);
 
-        holder.tvPersonItemID.setText(String.valueOf(person.getId()));
-        holder.tvPersonItemFirstName.setText(person.getFirstName());
-        holder.tvPersonItemSecondName.setText(person.getSecondName());
+        holder.tvPersonItemName.setText(person.getName());
     }
 
     @Override
@@ -52,9 +50,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
 
     public class PersonViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvPersonItemID) TextView tvPersonItemID;
-        @BindView(R.id.tvPersonItemFirstName) TextView tvPersonItemFirstName;
-        @BindView(R.id.tvPersonItemSecondName) TextView tvPersonItemSecondName;
+        @BindView(R.id.tvPersonItemName) TextView tvPersonItemName;
 
         public PersonViewHolder(@NonNull View itemView) {
             super(itemView);

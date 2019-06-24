@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 
 import java.text.SimpleDateFormat;
@@ -46,7 +45,7 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        holder.tvDebtItemPersonName.setText(String.format("%s %s", debtPOJO.getDebtPerson().getFirstName(), debtPOJO.getDebtPerson().getSecondName()));
+        holder.tvDebtItemPersonName.setText(debtPOJO.getDebtPerson().getName());
         holder.tvDebtItemCategoryName.setText(String.valueOf(debtPOJO.getDebtCategory().getName()));
         holder.tvDebtItemDescription.setText(String.valueOf(debtPOJO.getDebt().getDescription()));
         holder.tvDebtItemAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));

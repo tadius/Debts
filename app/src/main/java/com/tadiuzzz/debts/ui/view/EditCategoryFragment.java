@@ -35,8 +35,6 @@ public class EditCategoryFragment extends Fragment {
     private EditCategoryViewModel viewModel;
 
     public static final String TAG = "logTag";
-    @BindView(R.id.tvEditCategoryId)
-    TextView tvEditCategoryId;
     @BindView(R.id.etCategoryName)
     EditText etCategoryName;
     @BindView(R.id.btnSaveCategory)
@@ -101,7 +99,6 @@ public class EditCategoryFragment extends Fragment {
     }
 
     private void setFields(Category category) {
-        tvEditCategoryId.setText(String.valueOf(category.getId()));
         etCategoryName.setText(category.getName());
     }
 

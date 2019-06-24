@@ -59,8 +59,8 @@ public class EditDebtFragment extends Fragment {
     EditText etEditDebtDateOfEnd;
     @BindView(R.id.etEditDebtCategoryName)
     EditText etEditDebtCategoryName;
-    @BindView(R.id.etEditDebtPersonNameAndSecondName)
-    EditText etEditDebtPersonNameAndSecondName;
+    @BindView(R.id.etEditDebtPersonName)
+    EditText etEditDebtPersonName;
     @BindView(R.id.cbIsReturned)
     CheckBox cbIsReturned;
     @BindView(R.id.llDateOfEndContainer)
@@ -91,7 +91,7 @@ public class EditDebtFragment extends Fragment {
         viewModel.pickCategoryClicked();
     }
 
-    @OnClick(R.id.etEditDebtPersonNameAndSecondName)
+    @OnClick(R.id.etEditDebtPersonName)
     void onPersonClick() {
         viewModel.pickPersonClicked();
     }
@@ -217,7 +217,7 @@ public class EditDebtFragment extends Fragment {
         etEditDebtDateOfEnd.setText(getStringDate(debtPOJO.getDebt().getDateOfEnd()));
         cbIsReturned.setChecked(debtPOJO.getDebt().isReturned());
         etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
-        etEditDebtPersonNameAndSecondName.setText(debtPOJO.getDebtPerson().getFullName());
+        etEditDebtPersonName.setText(debtPOJO.getDebtPerson().getName());
     }
 
     private void showDatePickerDialog(Calendar calendar, int typeOfDate) {

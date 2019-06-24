@@ -35,7 +35,7 @@ public class DebtPOJO {
         if (!person.isEmpty()) {
             return person.get(0);
         } else {
-            return new Person("Неизвестная", "Персона");
+            return new Person();
         }
 
     }
@@ -44,7 +44,7 @@ public class DebtPOJO {
         if (!category.isEmpty()) {
             return category.get(0);
         } else {
-            return new Category("Неизвестная категория");
+            return new Category();
         }
     }
 

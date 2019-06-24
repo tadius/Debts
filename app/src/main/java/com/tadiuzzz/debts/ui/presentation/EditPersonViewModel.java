@@ -11,8 +11,6 @@ import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
-import io.reactivex.Completable;
-import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -65,15 +63,14 @@ public class EditPersonViewModel extends AndroidViewModel {
         return navigateToPreviousScreen;
     }
 
-    public void saveButtonClicked(String enteredPersonFirstName, String enteredPersonSecondName) {
+    public void saveButtonClicked(String enteredPersonName) {
         if (loadedLiveDataPerson.getValue() != null) {
-            if (loadedLiveDataPerson.getValue().getFirstName().equals(enteredPersonFirstName) && loadedLiveDataPerson.getValue().getSecondName().equals(enteredPersonSecondName)) {
-                showToast.callWithArgument("Имя и фамилия не изменились!");
-            } else if (enteredPersonFirstName.isEmpty() || enteredPersonSecondName.isEmpty()) {
-                showToast.callWithArgument("Введите имя и фамилию!");
+            if (loadedLiveDataPerson.getValue().getName().equals(enteredPersonName)) {
+                showToast.callWithArgument("Имя не изменилось!");
+            } else if (enteredPersonName.isEmpty()) {
+                showToast.callWithArgument("Введите имя!");
             } else {
-                loadedLiveDataPerson.getValue().setFirstName(enteredPersonFirstName);
-                loadedLiveDataPerson.getValue().setSecondName(enteredPersonSecondName);
+                loadedLiveDataPerson.getValue().setName(enteredPersonName);
                 debtRepository.updatePerson(loadedLiveDataPerson.getValue())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -91,8 +88,8 @@ public class EditPersonViewModel extends AndroidViewModel {
                         });
             }
         } else {
-            if (!enteredPersonFirstName.isEmpty() && !enteredPersonSecondName.isEmpty()) {
-                debtRepository.insertPerson(new Person(enteredPersonFirstName, enteredPersonSecondName))
+            if (!enteredPersonName.isEmpty()) {
+                debtRepository.insertPerson(new Person(enteredPersonName))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new DisposableCompletableObserver() {

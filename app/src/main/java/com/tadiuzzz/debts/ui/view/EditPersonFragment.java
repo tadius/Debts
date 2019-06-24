@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -36,12 +35,8 @@ public class EditPersonFragment extends Fragment {
     private EditPersonViewModel viewModel;
 
     public static final String TAG = "logTag";
-    @BindView(R.id.tvEditPersonId)
-    TextView tvEditPersonId;
-    @BindView(R.id.etPersonFirstName)
-    EditText etPersonFirstName;
-    @BindView(R.id.etPersonSecondName)
-    EditText etPersonSecondName;
+    @BindView(R.id.etPersonName)
+    EditText etPersonName;
     @BindView(R.id.btnSavePerson)
     Button btnSavePerson;
     @BindView(R.id.btnDeletePerson)
@@ -49,10 +44,9 @@ public class EditPersonFragment extends Fragment {
 
     @OnClick(R.id.btnSavePerson)
     void onSaveClick() {
-        String enteredPersonFirstName = etPersonFirstName.getText().toString().trim();
-        String enteredPersonSecondName = etPersonSecondName.getText().toString().trim();
+        String enteredPersonName = etPersonName.getText().toString().trim();
 
-        viewModel.saveButtonClicked(enteredPersonFirstName, enteredPersonSecondName);
+        viewModel.saveButtonClicked(enteredPersonName);
     }
 
     @OnClick(R.id.btnDeletePerson)
@@ -106,10 +100,7 @@ public class EditPersonFragment extends Fragment {
     }
 
     private void setFields(Person person) {
-        tvEditPersonId.setText(String.valueOf(person.getId()));
-        etPersonFirstName.setText(person.getFirstName());
-        etPersonSecondName.setText(person.getSecondName());
-
+        etPersonName.setText(person.getName());
     }
 
     private void hideKeyboard(Activity activity) {

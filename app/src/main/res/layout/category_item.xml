@@ -4,32 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvCategoryItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="16dp">
-
-
-        <TextView
-            android:id="@+id/tvCategoryItemID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:text="25" />
-
-        <TextView
-            android:id="@+id/tvCategoryItemName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:layout_weight="1"
-            android:text="Категория" />
-    </LinearLayout>
-
+        android:paddingBottom="16dp"
+        android:text="Категория" />
 
     <View
         android:layout_width="match_parent"

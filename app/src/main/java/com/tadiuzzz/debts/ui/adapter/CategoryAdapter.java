@@ -40,7 +40,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         Category category = categories.get(position);
 
-        holder.tvCategoryItemID.setText(String.valueOf(category.getId()));
         holder.tvCategoryItemName.setText(category.getName());
     }
 
@@ -51,7 +50,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public class CategoryViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvCategoryItemID) TextView tvCategoryItemID;
         @BindView(R.id.tvCategoryItemName) TextView tvCategoryItemName;
 
         public CategoryViewHolder(@NonNull View itemView) {

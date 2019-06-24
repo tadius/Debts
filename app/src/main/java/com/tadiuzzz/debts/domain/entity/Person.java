@@ -11,18 +11,15 @@ import androidx.room.PrimaryKey;
 public class Person {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String firstName;
-    private String secondName;
+    private String name;
 
     @Ignore
     public Person() {
-        this.firstName = "Неизвестная";
-        this.secondName = "персона";
+        this.name = "Неизвестная персона";
     }
 
-    public Person(String firstName, String secondName) {
-        this.firstName = firstName;
-        this.secondName = secondName;
+    public Person(String name) {
+        this.name = name;
     }
 
     public void setId(int id) {
@@ -33,23 +30,12 @@ public class Person {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getFullName() {
-        return this.getFirstName() + " " + this.getSecondName();
-    }
 }
