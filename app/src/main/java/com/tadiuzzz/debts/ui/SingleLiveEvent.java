@@ -38,9 +38,9 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
     }
 
     @MainThread
-    public void setValue(@Nullable T t) {
+    public void postValue(@Nullable T t) {
         mPending.set(true);
-        super.setValue(t);
+        super.postValue(t);
     }
 
     /**
@@ -48,11 +48,11 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
      */
     @MainThread
     public void call() {
-        setValue(null);
+        postValue(null);
     }
 
     @MainThread
     public void callWithArgument(T t) {
-        setValue(t);
+        postValue(t);
     }
 }
