@@ -227,4 +227,9 @@ public class EditDebtViewModel extends AndroidViewModel {
         showEndDateContainer.callWithArgument(isChecked);
     }
 
+    public void amIBorrowerClicked(boolean amIBorrower) {
+        DebtPOJO cachedDebtPojo = debtRepository.getCachedDebtPOJO();
+        cachedDebtPojo.getDebt().setIAmBorrower(amIBorrower);
+        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
+    }
 }

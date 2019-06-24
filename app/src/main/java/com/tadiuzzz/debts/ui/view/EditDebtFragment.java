@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,10 @@ public class EditDebtFragment extends Fragment {
 
     @BindView(R.id.tvEditDebtId)
     TextView tvEditDebtId;
+    @BindView(R.id.rbIAmCreditor)
+    RadioButton rbIAmCreditor;
+    @BindView(R.id.rbIAmBorrower)
+    RadioButton rbIAmBorrower;
     @BindView(R.id.etEditDebtDescription)
     EditText etEditDebtDescription;
     @BindView(R.id.etEditDebtAmount)
@@ -70,6 +76,16 @@ public class EditDebtFragment extends Fragment {
     Button btnSaveDebt;
     @BindView(R.id.btnDeleteDebt)
     Button btnDeleteDebt;
+
+    @OnClick(R.id.rbIAmCreditor)
+    void onIAmCreditorClick() {
+        viewModel.amIBorrowerClicked(rbIAmBorrower.isChecked());
+    }
+
+    @OnClick(R.id.rbIAmBorrower)
+    void onIAmBorrowerClick() {
+        viewModel.amIBorrowerClicked(rbIAmBorrower.isChecked());
+    }
 
     @OnClick(R.id.etEditDebtDateOfStart)
     void onDateStartClick() {
@@ -210,6 +226,11 @@ public class EditDebtFragment extends Fragment {
 
     private void setFields(DebtPOJO debtPOJO) {
         tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
+        if (debtPOJO.getDebt().amIBorrower()) {
+            rbIAmBorrower.setChecked(true);
+        } else {
+            rbIAmCreditor.setChecked(true);
+        }
         etEditDebtDescription.setText(debtPOJO.getDebt().getDescription());
         etEditDebtAmount.setText(String.valueOf(debtPOJO.getDebt().getAmount()));
         etEditDebtDateOfStart.setText(getStringDate(debtPOJO.getDebt().getDateOfStart()));

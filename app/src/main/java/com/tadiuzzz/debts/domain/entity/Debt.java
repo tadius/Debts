@@ -19,6 +19,7 @@ public class Debt {
     private long dateOfExpiration;
     private boolean isReturned;
     private boolean isActive;
+    private boolean amIBorrower;
     private int categoryId;
     private int personId;
 
@@ -34,6 +35,7 @@ public class Debt {
                 long dateOfExpiration,
                 boolean isReturned,
                 boolean isActive,
+                boolean amIBorrower,
                 int categoryId,
                 int personId) {
 
@@ -44,6 +46,7 @@ public class Debt {
         this.dateOfExpiration = dateOfExpiration;
         this.isReturned = isReturned;
         this.isActive = isActive;
+        this.amIBorrower = amIBorrower;
         this.categoryId = categoryId;
         this.personId = personId;
     }
@@ -110,6 +113,14 @@ public class Debt {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean amIBorrower() {
+        return amIBorrower;
+    }
+
+    public void setIAmBorrower(boolean amIBorrower) {
+        this.amIBorrower = amIBorrower;
     }
 
     public int getCategoryId() {
