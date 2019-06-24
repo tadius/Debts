@@ -2,9 +2,6 @@ package com.tadiuzzz.debts.ui.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -17,14 +14,12 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -36,19 +31,6 @@ public class DebtsFragment extends Fragment {
     public static final String TAG = "logTag";
     @BindView(R.id.rvDebts)
     RecyclerView rvDebts;
-    @BindView(R.id.fbAddDebt)
-    FloatingActionButton fbAddDebt;
-
-    @OnClick(R.id.fbAddDebt)
-    void onAddButtonClick() {
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
     @Nullable
     @Override
@@ -59,45 +41,31 @@ public class DebtsFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(DebtsViewModel.class);
 
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            int position = bundle.getInt("position");
+            switch (position) {
+                case 1:
+                    subscribeOnDataIAmCreditor();
+                    break;
+                case 2:
+                    subscribeOnDataIAmBorrower();
+                    break;
+            }
+        }
+
+
         setupRecyclerView();
 
-        subscribeOnData();
+//        subscribeOnData();
 
         subscribeNavigationEvents();
 
-        subscribeOnDialogsEvents();
-
-        setupFABanimation();
+//        setupFABanimation();
 
         viewModel.viewLoaded();
 
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_filter:
-                viewModel.clickedOnFilterMenu();
-                return true;
-            case R.id.menu_persons:
-                viewModel.clickedOnPersonsMenu();
-                return true;
-            case R.id.menu_categories:
-                viewModel.clickedOnCategoriesMenu();
-                return true;
-            case R.id.menu_about:
-                viewModel.clickedOnAboutMenu();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void setupRecyclerView() {
@@ -108,44 +76,23 @@ public class DebtsFragment extends Fragment {
         debtPOJOsAdapter.setOnDebtPOJOClickListener(debtPOJO -> viewModel.clickedOnDebtPOJO(debtPOJO));
     }
 
-    private void subscribeOnData() {
-        viewModel.getListOfDebtPOJOS().observe(this, debtPOJOS -> {
+    private void subscribeOnDataIAmCreditor() {
+        viewModel.getListOfDebtPOJOSIAmCreditor().observe(this, debtPOJOS -> {
             debtPOJOsAdapter.setData(debtPOJOS);
             debtPOJOsAdapter.notifyDataSetChanged();
         });
     }
 
-    private void subscribeOnDialogsEvents() {
-        viewModel.getShowFilterDialogEvent().observe(this, o -> showFilterDialog());
-    }
-
-    private void subscribeNavigationEvents() {
-        viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_editDebtFragment));
-        viewModel.getNavigateToPersonsScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_personsFragment));
-        viewModel.getNavigateToCategoriesScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_debtsFragment_to_categoriesFragment));
-        viewModel.getNavigateToAboutScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.backupRestoreFragment));
-    }
-
-    private void setupFABanimation() {
-        //анимация FAB
-        rvDebts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy < 0 && !fbAddDebt.isShown())
-                    fbAddDebt.show();
-                else if (dy > 0 && fbAddDebt.isShown())
-                    fbAddDebt.hide();
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+    private void subscribeOnDataIAmBorrower() {
+        viewModel.getListOfDebtPOJOSIAmBorrower().observe(this, debtPOJOS -> {
+            debtPOJOsAdapter.setData(debtPOJOS);
+            debtPOJOsAdapter.notifyDataSetChanged();
         });
     }
 
-    private void showFilterDialog() {
-        Toast.makeText(getActivity(), "FILTER CLICKED", Toast.LENGTH_SHORT).show();
+    private void subscribeNavigationEvents() {
+        viewModel.getNavigateToEditDebtScreenEvent().observe(this, o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
     }
+
 
 }

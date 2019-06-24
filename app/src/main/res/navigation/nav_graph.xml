@@ -3,29 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/debtsFragment">
+    app:startDestination="@id/viewPagerFragment">
 
     <fragment
         android:id="@+id/debtsFragment"
         android:name="com.tadiuzzz.debts.ui.view.DebtsFragment"
         android:label="fragment_debts"
-        tools:layout="@layout/fragment_debts" >
-        <action
-            android:id="@+id/action_debtsFragment_to_editDebtFragment"
-            app:destination="@id/editDebtFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_debtsFragment_to_personsFragment"
-            app:destination="@id/personsFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_debtsFragment_to_categoriesFragment"
-            app:destination="@id/categoriesFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-    </fragment>
+        tools:layout="@layout/fragment_debts" />
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.tadiuzzz.debts.ui.view.CategoriesFragment"
@@ -79,4 +63,30 @@
         android:name="com.tadiuzzz.debts.ui.view.BackupRestoreFragment"
         android:label="fragment_backup_restore_db"
         tools:layout="@layout/fragment_backup_restore_db" />
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        android:name="com.tadiuzzz.debts.ui.view.ViewPagerFragment"
+        android:label="fragment_view_pager"
+        tools:layout="@layout/fragment_view_pager" >
+        <action
+            android:id="@+id/action_viewPagerFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_personsFragment"
+            app:destination="@id/personsFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_backupRestoreFragment"
+            app:destination="@id/backupRestoreFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
 </navigation>
