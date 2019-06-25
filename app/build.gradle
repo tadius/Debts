@@ -55,6 +55,7 @@ dependencies {
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment:$navigation_version"
+    implementation "androidx.navigation:navigation-ui:$navigation_version"
 
     //Butterknife
     implementation 'com.jakewharton:butterknife:10.1.0'

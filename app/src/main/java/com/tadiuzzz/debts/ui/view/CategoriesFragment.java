@@ -58,8 +58,6 @@ public class CategoriesFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) isPickingCategory = bundle.getBoolean("pickCategory", false);
 
-        setupTitle();
-
         setupRecyclerView();
 
         subscribeOnData();
@@ -69,12 +67,6 @@ public class CategoriesFragment extends Fragment {
         setupFABanimation();
 
         return view;
-    }
-
-    private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void setupRecyclerView() {

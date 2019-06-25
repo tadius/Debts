@@ -48,20 +48,11 @@ public class AboutAppFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        setupTitleBar();
-
         subscribeToNavigationChanges();
 
         subscribeToData();
 
         return view;
-    }
-
-    private void setupTitleBar() {
-        viewModel.getTitleBarName().observe(this, titleBarName -> getActivity().setTitle(titleBarName));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-
     }
 
     private void subscribeToNavigationChanges() {

@@ -12,7 +12,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.tadiuzzz.debts.FileUtils;
+import com.tadiuzzz.debts.utils.FileUtils;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
@@ -47,24 +47,16 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     private Context context;
 
-    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<List<String>> listOfFiles = new MutableLiveData<>();
-
 
     public BackupRestoreViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
         pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + application.getResources().getString(R.string.app_name);
-
-        title.setValue("Резервное копирование");
     }
 
     private void loadListOfFiles() {
         listOfFiles.setValue(FileUtils.getListOfFiles(pathToSdCardAppFolder));
-    }
-
-    public LiveData<String> getTitle() {
-        return title;
     }
 
     public LiveData<List<String>> getListOfFiles() {

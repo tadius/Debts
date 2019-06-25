@@ -69,8 +69,6 @@ public class EditCategoryFragment extends Fragment {
             viewModel.gotPickedCategory(categoryId); //передаем id объекта во ViewModel, который пришел в Bundle для инициализации LiveData
         }
 
-        setupTitle();
-
         subscribeOnData();
 
         subscribeOnNavigationEvents();
@@ -78,12 +76,6 @@ public class EditCategoryFragment extends Fragment {
         subscribeOnNotificationEvents();
 
         return view;
-    }
-
-    private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void subscribeOnNotificationEvents() {

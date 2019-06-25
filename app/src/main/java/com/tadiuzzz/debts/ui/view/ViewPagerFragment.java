@@ -75,10 +75,8 @@ public class ViewPagerFragment extends Fragment {
     }
 
     private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+        //убираем тень между actionbar и tablayout
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
     }
 
     private void setupViewPager() {

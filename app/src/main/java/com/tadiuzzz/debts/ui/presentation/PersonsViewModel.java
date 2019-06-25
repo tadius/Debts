@@ -27,13 +27,10 @@ public class PersonsViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Person> navigateToEditPersonScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<List<Person>> listOfPersons = new MutableLiveData<>();
 
     public PersonsViewModel(@NonNull Application application) {
         super(application);
-
-        title.setValue("Менеджер персон");
 
         debtRepository = new DebtRepository(application);
         loadAllPersons();
@@ -54,10 +51,6 @@ public class PersonsViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {}
                 });
-    }
-
-    public LiveData<String> getTitle() {
-        return title;
     }
 
     public LiveData<List<Person>> getPersons() {

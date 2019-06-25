@@ -19,8 +19,6 @@ public class AboutAppViewModel extends AndroidViewModel {
     private final MutableLiveData<String> appVersion = new MutableLiveData<>();
     private final MutableLiveData<String> emailAuthor = new MutableLiveData<>();
 
-    private final MutableLiveData<String> titleBarName = new MutableLiveData<>();
-
     public AboutAppViewModel(@NonNull Application application) {
         super(application);
 
@@ -30,11 +28,9 @@ public class AboutAppViewModel extends AndroidViewModel {
     private void initData() {
         String version = BuildConfig.VERSION_NAME;
         String email = "tadiuzzz@gmail.com";
-        String title = "О программе";
 
         appVersion.setValue(version);
         emailAuthor.setValue(email);
-        titleBarName.setValue(title);
     }
 
     public SingleLiveEvent<String> getNavigateSendEmailAppEvent() {
@@ -47,10 +43,6 @@ public class AboutAppViewModel extends AndroidViewModel {
 
     public LiveData<String> getEmailAuthor() {
         return emailAuthor;
-    }
-
-    public LiveData<String> getTitleBarName() {
-        return titleBarName;
     }
 
     public void clickedOnAuthorEmail() {

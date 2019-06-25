@@ -68,10 +68,6 @@ public class BackupRestoreFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(BackupRestoreViewModel.class);
 
-        setupTitle();
-
-        setupTitle();
-
         subscribeOnData();
 
         subscribeOnNavigationEvents();
@@ -81,12 +77,6 @@ public class BackupRestoreFragment extends Fragment {
         subscribeOnNotificationsEvents();
 
         return view;
-    }
-
-    private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void subscribeOnData() {

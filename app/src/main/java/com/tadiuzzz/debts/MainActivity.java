@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.michaelflisar.changelog.ChangelogBuilder;
 import com.michaelflisar.changelog.internal.ChangelogDialogFragment;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         showChangelog();
+
+        NavigationUI.setupActionBarWithNavController(this, navController);
     }
 
     private void showChangelog() {

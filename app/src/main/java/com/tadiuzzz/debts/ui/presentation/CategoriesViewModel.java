@@ -27,14 +27,11 @@ public class CategoriesViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
 
 
     public CategoriesViewModel(@NonNull Application application) {
         super(application);
-
-        title.setValue("Менеджер категорий");
 
         debtRepository = new DebtRepository(application);
         loadAllCategories();
@@ -56,10 +53,6 @@ public class CategoriesViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {}
                 });
-    }
-
-    public LiveData<String> getTitle() {
-        return title;
     }
 
     public LiveData<List<Category>> getCategories() {

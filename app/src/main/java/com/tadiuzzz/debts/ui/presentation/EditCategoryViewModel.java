@@ -11,8 +11,6 @@ import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
-import io.reactivex.Completable;
-import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -29,13 +27,10 @@ public class EditCategoryViewModel extends AndroidViewModel {
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private MutableLiveData<String> title = new MutableLiveData<>();
     private MutableLiveData<Category> loadedLiveDataCategory = new MutableLiveData<>();
 
     public EditCategoryViewModel(@NonNull Application application) {
         super(application);
-
-        title.setValue("Редактирование категории");
 
         debtRepository = new DebtRepository(application);
     }
@@ -58,10 +53,6 @@ public class EditCategoryViewModel extends AndroidViewModel {
                     public void onComplete() {
                     }
                 });
-    }
-
-    public LiveData<String> getTitle() {
-        return title;
     }
 
     public LiveData<Category> getCategory() {

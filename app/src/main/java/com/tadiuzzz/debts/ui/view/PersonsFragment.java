@@ -55,8 +55,6 @@ public class PersonsFragment extends Fragment {
         Bundle bundle = getArguments();
         if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);
 
-        setupTitle();
-
         setupRecyclerView();
 
         subscribeOnData();
@@ -66,12 +64,6 @@ public class PersonsFragment extends Fragment {
         setupFABanimation();
 
         return view;
-    }
-
-    private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void setupRecyclerView() {

@@ -13,8 +13,8 @@
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.tadiuzzz.debts.ui.view.CategoriesFragment"
-        android:label="fragment_categories"
-        tools:layout="@layout/fragment_categories" >
+        android:label="Менеджер категорий"
+        tools:layout="@layout/fragment_categories">
         <action
             android:id="@+id/action_categoriesFragment_to_editCategoryFragment"
             app:destination="@+id/editCategoryFragment"
@@ -24,13 +24,13 @@
     <fragment
         android:id="@+id/editCategoryFragment"
         android:name="com.tadiuzzz.debts.ui.view.EditCategoryFragment"
-        android:label="fragment_edit_category"
+        android:label="Редактирование категории"
         tools:layout="@layout/fragment_edit_category" />
     <fragment
         android:id="@+id/personsFragment"
         android:name="com.tadiuzzz.debts.ui.view.PersonsFragment"
-        android:label="fragment_persons"
-        tools:layout="@layout/fragment_persons" >
+        android:label="Менеджер персон"
+        tools:layout="@layout/fragment_persons">
         <action
             android:id="@+id/action_personsFragment_to_editPersonFragment"
             app:destination="@id/editPersonFragment"
@@ -45,8 +45,8 @@
     <fragment
         android:id="@+id/editDebtFragment"
         android:name="com.tadiuzzz.debts.ui.view.EditDebtFragment"
-        android:label="fragment_edit_debt"
-        tools:layout="@layout/fragment_edit_debt" >
+        android:label="Редактирование долга"
+        tools:layout="@layout/fragment_edit_debt">
         <action
             android:id="@+id/action_editDebtFragment_to_categoriesFragment"
             app:destination="@id/categoriesFragment"
@@ -61,13 +61,13 @@
     <fragment
         android:id="@+id/backupRestoreFragment"
         android:name="com.tadiuzzz.debts.ui.view.BackupRestoreFragment"
-        android:label="fragment_backup_restore_db"
+        android:label="Резервное копирование"
         tools:layout="@layout/fragment_backup_restore_db" />
     <fragment
         android:id="@+id/viewPagerFragment"
         android:name="com.tadiuzzz.debts.ui.view.ViewPagerFragment"
-        android:label="fragment_view_pager"
-        tools:layout="@layout/fragment_view_pager" >
+        android:label="Долги"
+        tools:layout="@layout/fragment_view_pager">
         <action
             android:id="@+id/action_viewPagerFragment_to_editDebtFragment"
             app:destination="@id/editDebtFragment"
@@ -97,6 +97,6 @@
     <fragment
         android:id="@+id/aboutAppFragment"
         android:name="com.tadiuzzz.debts.ui.view.AboutAppFragment"
-        android:label="fragment_about_app"
+        android:label="О приложении"
         tools:layout="@layout/fragment_about_app" />
 </navigation>

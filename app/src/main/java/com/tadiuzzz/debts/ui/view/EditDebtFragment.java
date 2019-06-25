@@ -132,8 +132,6 @@ public class EditDebtFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
 
-        setupTitle();
-
         setUpEditFieldsListeners();
 
         subscribeOnData();
@@ -145,12 +143,6 @@ public class EditDebtFragment extends Fragment {
         subscribeOnNotificationEvents();
 
         return view;
-    }
-
-    private void setupTitle() {
-        viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void subscribeOnData() {
