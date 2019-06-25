@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         app:tabGravity="fill"
+        android:elevation="4dp"
         app:tabIndicatorColor="@color/colorTabActive"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"

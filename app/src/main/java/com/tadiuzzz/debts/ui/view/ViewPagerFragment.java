@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
@@ -74,11 +76,15 @@ public class ViewPagerFragment extends Fragment {
 
     private void setupTitle() {
         viewModel.getTitle().observe(getViewLifecycleOwner(), title -> getActivity().setTitle(title));
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
     }
 
     private void setupViewPager() {
         viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
 
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -128,21 +134,9 @@ public class ViewPagerFragment extends Fragment {
         Toast.makeText(getActivity(), "FILTER CLICKED", Toast.LENGTH_SHORT).show();
     }
 
-//    private void setupFABanimation() {
-//        //анимация FAB
-//        rvDebts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                if (dy < 0 && !fbAddDebt.isShown())
-//                    fbAddDebt.show();
-//                else if (dy > 0 && fbAddDebt.isShown())
-//                    fbAddDebt.hide();
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//        });
-//    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(8);
+    }
 }

@@ -5,7 +5,7 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorTabActive">#FFFFFF</color>
-    <color name="colorTabPassive">#8D8D8D</color>
+    <color name="colorTabPassive">#C9C9C9</color>
 
     <color name="debtItemBackground">#FFFFFF</color>
     <color name="debtReturnedItemBackground">#E8F5E9</color>

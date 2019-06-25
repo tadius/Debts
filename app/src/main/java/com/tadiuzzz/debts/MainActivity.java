@@ -3,6 +3,7 @@ package com.tadiuzzz.debts;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -30,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         showChangelog();
-
     }
 
     private void showChangelog() {
@@ -45,5 +45,11 @@ public class MainActivity extends AppCompatActivity {
                 .withOkButtonLabel("ОК") // provide a custom ok button text if desired, default one is "OK"
                 .withRateButtonLabel("Поставить оценку") // provide a custom rate button text if desired, default one is "Rate"
                 .buildAndShowDialog(this, false); // second parameter defines, if the dialog has a dark or light theme
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
