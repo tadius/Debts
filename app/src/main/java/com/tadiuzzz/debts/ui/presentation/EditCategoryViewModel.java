@@ -12,6 +12,7 @@ import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -21,8 +22,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class EditCategoryViewModel extends AndroidViewModel {
 
-    DebtRepository debtRepository;
+    private CompositeDisposable disposables;
 
+    DebtRepository debtRepository;
 
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
@@ -32,14 +34,20 @@ public class EditCategoryViewModel extends AndroidViewModel {
     public EditCategoryViewModel(@NonNull Application application) {
         super(application);
 
+        disposables = new CompositeDisposable();
+
         debtRepository = new DebtRepository(application);
     }
 
     public void gotPickedCategory(int categoryId) { //Подгружаем из базы выбранную категорию в объект LiveData
-        debtRepository.getCategoryByID(categoryId)
+        loadData(categoryId);
+    }
+
+    private void loadData(int categoryId) {
+        disposables.add(debtRepository.getCategoryByID(categoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<Category>() {
+                .subscribeWith(new DisposableMaybeObserver<Category>() {
                     @Override
                     public void onSuccess(Category category) {
                         loadedLiveDataCategory.setValue(category);
@@ -52,7 +60,7 @@ public class EditCategoryViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {
                     }
-                });
+                }));
     }
 
     public LiveData<Category> getCategory() {
@@ -75,65 +83,82 @@ public class EditCategoryViewModel extends AndroidViewModel {
                 showToast.callWithArgument("Введите название категории!");
             } else {
                 loadedLiveDataCategory.getValue().setName(enteredCategoryName);
-                debtRepository.updateCategory(loadedLiveDataCategory.getValue())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                showToast.callWithArgument("Категория обновлена!");
-                                navigateToPreviousScreen.call();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                showToast.callWithArgument("Ошибка при сохранении!");
-                            }
-                        });
+                updateCategory(enteredCategoryName);
             }
         } else {
             if (!enteredCategoryName.isEmpty()) {
-                debtRepository.insertCategory(new Category(enteredCategoryName))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                showToast.callWithArgument("Категория сохранена!");
-                                navigateToPreviousScreen.call();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                showToast.callWithArgument("Ошибка при сохранении!");
-                            }
-                        });
+                insertCategory(enteredCategoryName);
             } else {
                 showToast.callWithArgument("Введите название категории!");
             }
         }
     }
 
+    private void updateCategory(String enteredCategoryName) {
+        disposables.add(debtRepository.updateCategory(loadedLiveDataCategory.getValue())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Категория обновлена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при сохранении!");
+                    }
+                }));
+    }
+
+    private void insertCategory(String enteredCategoryName) {
+        disposables.add(debtRepository.insertCategory(new Category(enteredCategoryName))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Категория сохранена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при сохранении!");
+                    }
+                }));
+    }
+
     public void deleteButtonClicked() {
         if (loadedLiveDataCategory.getValue() != null) {
-            debtRepository.deleteCategory(loadedLiveDataCategory.getValue())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableCompletableObserver() {
-                        @Override
-                        public void onComplete() {
-                            showToast.callWithArgument("Категория удалена!");
-                            navigateToPreviousScreen.call();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            showToast.callWithArgument("Ошибка при удалении!");
-                        }
-                    });
+            deleteCategory();
         } else {
             showToast.callWithArgument("Такой категории не существует!");
         }
     }
 
+    private void deleteCategory() {
+        disposables.add(debtRepository.deleteCategory(loadedLiveDataCategory.getValue())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Категория удалена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при удалении!");
+                    }
+                }));
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
+    }
 }

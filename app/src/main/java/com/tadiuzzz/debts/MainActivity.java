@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        navController.popBackStack();
         return true;
     }
 }

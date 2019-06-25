@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -22,6 +23,8 @@ import io.reactivex.subscribers.DisposableSubscriber;
  * Created by Simonov.vv on 31.05.2019.
  */
 public class PersonsViewModel extends AndroidViewModel {
+
+    CompositeDisposable disposables;
 
     DebtRepository debtRepository;
     private final SingleLiveEvent<Person> navigateToEditPersonScreen = new SingleLiveEvent<>();
@@ -32,15 +35,17 @@ public class PersonsViewModel extends AndroidViewModel {
     public PersonsViewModel(@NonNull Application application) {
         super(application);
 
+        disposables = new CompositeDisposable();
+
         debtRepository = new DebtRepository(application);
         loadAllPersons();
     }
 
     private void loadAllPersons() {
-        debtRepository.getAllPersons()
+        disposables.add(debtRepository.getAllPersons()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Person>>() {
+                .subscribeWith(new DisposableSubscriber<List<Person>>() {
                     @Override
                     public void onNext(List<Person> persons) {
                         listOfPersons.setValue(persons);
@@ -50,7 +55,7 @@ public class PersonsViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {}
-                });
+                }));
     }
 
     public LiveData<List<Person>> getPersons() {
@@ -81,4 +86,9 @@ public class PersonsViewModel extends AndroidViewModel {
         debtRepository.getCachedDebtPOJO().getDebt().setPersonId(person.getId());
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
+    }
 }

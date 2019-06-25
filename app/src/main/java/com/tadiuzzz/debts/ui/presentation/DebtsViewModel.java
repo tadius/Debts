@@ -14,6 +14,7 @@ import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -21,6 +22,8 @@ import io.reactivex.subscribers.DisposableSubscriber;
  * Created by Simonov.vv on 31.05.2019.
  */
 public class DebtsViewModel extends AndroidViewModel {
+
+    private CompositeDisposable disposables;
 
     DebtRepository debtRepository;
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
@@ -31,58 +34,67 @@ public class DebtsViewModel extends AndroidViewModel {
 
     public DebtsViewModel(@NonNull Application application) {
         super(application);
+
+        disposables = new CompositeDisposable();
+
         debtRepository = new DebtRepository(application);
         loadAllDebtPOJOs();
     }
 
     private void loadAllDebtPOJOs() {
-        debtRepository.getAllDebtPOJOs()
+        disposables.add(debtRepository.getAllDebtPOJOs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                .subscribeWith(new DisposableSubscriber<List<DebtPOJO>>() {
                     @Override
                     public void onNext(List<DebtPOJO> debtPOJOS) {
                         listOfDebtPOJOS.setValue(debtPOJOS);
                     }
 
                     @Override
-                    public void onError(Throwable t) {}
+                    public void onError(Throwable t) {
+                    }
 
                     @Override
-                    public void onComplete() {}
-                });
+                    public void onComplete() {
+                    }
+                }));
 
-        debtRepository.getAllDebtPOJOsIAmCreditor()
+        disposables.add(debtRepository.getAllDebtPOJOsIAmCreditor()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                .subscribeWith(new DisposableSubscriber<List<DebtPOJO>>() {
                     @Override
                     public void onNext(List<DebtPOJO> debtPOJOS) {
                         listOfDebtPOJOSIAmCreditor.setValue(debtPOJOS);
                     }
 
                     @Override
-                    public void onError(Throwable t) {}
+                    public void onError(Throwable t) {
+                    }
 
                     @Override
-                    public void onComplete() {}
-                });
+                    public void onComplete() {
+                    }
+                }));
 
-        debtRepository.getAllDebtPOJOsIAmBorrower()
+        disposables.add(debtRepository.getAllDebtPOJOsIAmBorrower()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<DebtPOJO>>() {
+                .subscribeWith(new DisposableSubscriber<List<DebtPOJO>>() {
                     @Override
                     public void onNext(List<DebtPOJO> debtPOJOS) {
                         listOfDebtPOJOSIAmBorrower.setValue(debtPOJOS);
                     }
 
                     @Override
-                    public void onError(Throwable t) {}
+                    public void onError(Throwable t) {
+                    }
 
                     @Override
-                    public void onComplete() {}
-                });
+                    public void onComplete() {
+                    }
+                }));
     }
 
     public LiveData<List<DebtPOJO>> getListOfDebtPOJOS() { //Предоставляем объект LiveData View для подписки
@@ -97,7 +109,7 @@ public class DebtsViewModel extends AndroidViewModel {
         return listOfDebtPOJOSIAmBorrower;
     }
 
-    public SingleLiveEvent getNavigateToEditDebtScreenEvent(){
+    public SingleLiveEvent getNavigateToEditDebtScreenEvent() {
         return navigateToEditDebtScreen;
     }
 
@@ -106,9 +118,15 @@ public class DebtsViewModel extends AndroidViewModel {
         loadAllDebtPOJOs();
     }
 
-    public void clickedOnDebtPOJO(DebtPOJO debtPOJO){
+    public void clickedOnDebtPOJO(DebtPOJO debtPOJO) {
         debtRepository.putDebtPOJOtoCache(debtPOJO);
 
         navigateToEditDebtScreen.call();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
     }
 }

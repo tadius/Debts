@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,7 +38,9 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     private final String DATABASE_NAME_SHM = "debts_database-shm";
     private final String DATABASE_NAME_WAL = "debts_database-wal";
 
-//    FilesRepository filesRepository;
+    private CompositeDisposable disposables;
+
+    //    FilesRepository filesRepository;
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> showPickFileDialog = new SingleLiveEvent<>();
@@ -52,6 +55,7 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     public BackupRestoreViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
+        disposables = new CompositeDisposable();
         pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + application.getResources().getString(R.string.app_name);
     }
 
@@ -94,7 +98,7 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     public void clickedOnRestoreButton() {
         if (checkPermissions()) {
             loadListOfFiles();
-            if(listOfFiles.getValue().isEmpty()){
+            if (listOfFiles.getValue().isEmpty()) {
                 showToast.callWithArgument("Не найдено ни одной резервной копии");
             } else {
                 showPickFileDialog.call();
@@ -113,48 +117,57 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     }
 
     public void enteredBackupName(String backupName) {
-
         String date = new SimpleDateFormat("_ddMMyyyyHHmmss", Locale.getDefault()).format(new Date());
         String fullPath = pathToSdCardAppFolder + File.separator + backupName + date + File.separator;
 
-        Completable.fromAction(() -> FileUtils.createFoldersForBackup(fullPath))
+        prepareForBackup(fullPath);
+    }
+
+    private void prepareForBackup(String fullPath) {
+        disposables.add(Completable.fromAction(() -> FileUtils.createFoldersForBackup(fullPath))
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
+                .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        Completable.fromAction(() -> backupDB(fullPath))
-                                .observeOn(Schedulers.io())
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new DisposableCompletableObserver() {
-                                    @Override
-                                    public void onComplete() {
-                                        showToast.callWithArgument("Резервная копия сохранена!");
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        showToast.callWithArgument("Ошибка создания резервной копии!");
-                                    }
-                                });
-
+                        performBackup(fullPath);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         showToast.callWithArgument("Невозможно создать папку для резервных копий. Проверьте разрешения.");
                     }
-                });
+                }));
+    }
 
+    private void performBackup(String fullPath) {
+        disposables.add(Completable.fromAction(() -> backupDB(fullPath))
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Резервная копия сохранена!");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка создания резервной копии!");
+                    }
+                }));
     }
 
     public void pickedFileToRestore(String nameOfBackupFolder) {
         String fullPath = pathToSdCardAppFolder + File.separator + nameOfBackupFolder + File.separator;
 
-        Completable.fromAction(() -> restoreDB(fullPath))
+        performRestore(fullPath);
+    }
+
+    private void performRestore(String fullPath) {
+        disposables.add(Completable.fromAction(() -> restoreDB(fullPath))
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
+                .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Резервная копия восстановлена!");
@@ -164,7 +177,7 @@ public class BackupRestoreViewModel extends AndroidViewModel {
                     public void onError(Throwable e) {
                         showToast.callWithArgument("Ошибка восстановления резервной копии!");
                     }
-                });
+                }));
     }
 
     private void backupDB(String pathToBackupSave) throws IOException {
@@ -198,5 +211,9 @@ public class BackupRestoreViewModel extends AndroidViewModel {
         }
     }
 
-
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
+    }
 }

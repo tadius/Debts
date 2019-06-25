@@ -12,6 +12,7 @@ import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -20,6 +21,8 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Simonov.vv on 31.05.2019.
  */
 public class EditPersonViewModel extends AndroidViewModel {
+
+    private CompositeDisposable disposables;
 
     DebtRepository debtRepository;
 
@@ -32,14 +35,20 @@ public class EditPersonViewModel extends AndroidViewModel {
     public EditPersonViewModel(@NonNull Application application) {
         super(application);
 
+        disposables = new CompositeDisposable();
+
         debtRepository = new DebtRepository(application);
     }
 
     public void gotPickedPerson(int personId) { //Подгружаем из базы выбранную персону в объект LiveData
-        debtRepository.getPersonByID(personId)
+        loadPerson(personId);
+    }
+
+    private void loadPerson(int personId) {
+        disposables.add(debtRepository.getPersonByID(personId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableMaybeObserver<Person>() {
+                .subscribeWith(new DisposableMaybeObserver<Person>() {
                     @Override
                     public void onSuccess(Person person) {
                         loadedLiveDataPerson.setValue(person);
@@ -50,7 +59,7 @@ public class EditPersonViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {}
-                });
+                }));
     }
 
     public LiveData<Person> getPerson() {
@@ -73,65 +82,82 @@ public class EditPersonViewModel extends AndroidViewModel {
                 showToast.callWithArgument("Введите имя!");
             } else {
                 loadedLiveDataPerson.getValue().setName(enteredPersonName);
-                debtRepository.updatePerson(loadedLiveDataPerson.getValue())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                showToast.callWithArgument("Персона обновлена!");
-                                navigateToPreviousScreen.call();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                showToast.callWithArgument("Ошибка при сохранении!");
-                            }
-                        });
+                updatePerson();
             }
         } else {
             if (!enteredPersonName.isEmpty()) {
-                debtRepository.insertPerson(new Person(enteredPersonName))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                showToast.callWithArgument("Персона сохранена!");
-                                navigateToPreviousScreen.call();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                showToast.callWithArgument("Ошибка при сохранении!");
-                            }
-                        });
+                insertPerson(enteredPersonName);
             } else {
                 showToast.callWithArgument("Введите имя и фамилию!");
             }
         }
     }
 
+    private void insertPerson(String enteredPersonName) {
+        disposables.add(debtRepository.insertPerson(new Person(enteredPersonName))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Персона сохранена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при сохранении!");
+                    }
+                }));
+    }
+
+    private void updatePerson() {
+        disposables.add(debtRepository.updatePerson(loadedLiveDataPerson.getValue())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Персона обновлена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при сохранении!");
+                    }
+                }));
+    }
+
     public void deleteButtonClicked() {
         if (loadedLiveDataPerson.getValue() != null) {
-            debtRepository.deletePerson(loadedLiveDataPerson.getValue())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableCompletableObserver() {
-                        @Override
-                        public void onComplete() {
-                            showToast.callWithArgument("Персона удалена!");
-                            navigateToPreviousScreen.call();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            showToast.callWithArgument("Ошибка при удалении!");
-                        }
-                    });
+            deletePerson();
         } else {
             showToast.callWithArgument("Такой персоны не существует!");
         }
     }
 
+    private void deletePerson() {
+        disposables.add(debtRepository.deletePerson(loadedLiveDataPerson.getValue())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Персона удалена!");
+                        navigateToPreviousScreen.call();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка при удалении!");
+                    }
+                }));
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
+    }
 }

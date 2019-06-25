@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -22,6 +23,8 @@ import io.reactivex.subscribers.DisposableSubscriber;
  * Created by Simonov.vv on 31.05.2019.
  */
 public class CategoriesViewModel extends AndroidViewModel {
+
+    private CompositeDisposable disposables;
 
     DebtRepository debtRepository;
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
@@ -33,42 +36,46 @@ public class CategoriesViewModel extends AndroidViewModel {
     public CategoriesViewModel(@NonNull Application application) {
         super(application);
 
+        disposables = new CompositeDisposable();
+
         debtRepository = new DebtRepository(application);
         loadAllCategories();
     }
 
     private void loadAllCategories() {
-        debtRepository.getAllCategories()
+        disposables.add(debtRepository.getAllCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSubscriber<List<Category>>() {
+                .subscribeWith(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
                         listOfCategories.setValue(categories);
                     }
 
                     @Override
-                    public void onError(Throwable t) {}
+                    public void onError(Throwable t) {
+                    }
 
                     @Override
-                    public void onComplete() {}
-                });
+                    public void onComplete() {
+                    }
+                }));
     }
 
     public LiveData<List<Category>> getCategories() {
         return listOfCategories;
     }
 
-    public SingleLiveEvent getNavigateToPreviousScreenEvent(){
+    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
         return navigateToPreviousScreen;
     }
 
-    public SingleLiveEvent getNavigateToEditCategoryScreenEvent(){
+    public SingleLiveEvent getNavigateToEditCategoryScreenEvent() {
         return navigateToEditCategoryScreen;
     }
 
     public void clickedOnCategory(Category category, boolean isPicking) {
-        if(isPicking){
+        if (isPicking) {
             putCategoryToCache(category);
             navigateToPreviousScreen.call();
         } else {
@@ -76,11 +83,16 @@ public class CategoriesViewModel extends AndroidViewModel {
         }
     }
 
-    private void putCategoryToCache(Category category){
+    private void putCategoryToCache(Category category) {
         List<Category> categories = new ArrayList<>();
         categories.add(category);
         debtRepository.getCachedDebtPOJO().setCategory(categories);
         debtRepository.getCachedDebtPOJO().getDebt().setCategoryId(category.getId());
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposables.clear();
+    }
 }

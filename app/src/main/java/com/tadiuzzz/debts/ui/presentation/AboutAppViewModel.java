@@ -48,4 +48,9 @@ public class AboutAppViewModel extends AndroidViewModel {
     public void clickedOnAuthorEmail() {
         navigateSendEmailApp.callWithArgument(getEmailAuthor().getValue());
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+    }
 }
