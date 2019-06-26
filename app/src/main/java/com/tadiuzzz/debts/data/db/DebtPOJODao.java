@@ -21,12 +21,6 @@ public interface DebtPOJODao {
     @Transaction @Query("SELECT * FROM debt_table ORDER BY dateOfEnd") //в обратном порядке добавить в конце DESC
     Flowable<List<DebtPOJO>> getAllDebtPOJOs();
 
-    @Transaction @Query("SELECT * FROM debt_table WHERE amIBorrower = 1 ORDER BY dateOfEnd") //в обратном порядке добавить в конце DESC
-    Flowable<List<DebtPOJO>> getAllDebtPOJOsIAmBorrower();
-
-    @Transaction @Query("SELECT * FROM debt_table WHERE amIBorrower = 0 ORDER BY dateOfEnd") //в обратном порядке добавить в конце DESC
-    Flowable<List<DebtPOJO>> getAllDebtPOJOsIAmCreditor();
-
     @Transaction @Query("SELECT * FROM debt_table WHERE id = :id")
     Maybe<DebtPOJO> getDebtPOJOById(int id);
 

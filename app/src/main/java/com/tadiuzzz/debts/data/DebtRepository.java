@@ -31,8 +31,6 @@ public class DebtRepository {
     private Flowable<List<Person>> allPersons;
     private Flowable<List<Category>> allCategories;
     private Flowable<List<DebtPOJO>> allDebtPOJOs;
-    private Flowable<List<DebtPOJO>> allDebtPOJOsIAmCreditor;
-    private Flowable<List<DebtPOJO>> allDebtPOJOsIAmBorrower;
 
     private DebtPOJO cachedDebtPOJO;
 
@@ -44,9 +42,6 @@ public class DebtRepository {
         debtPOJODao = database.debtWithPersonAndCategoryDao();
 
         allDebtPOJOs = debtPOJODao.getAllDebtPOJOs();
-        allDebtPOJOsIAmCreditor = debtPOJODao.getAllDebtPOJOsIAmCreditor();
-        allDebtPOJOsIAmBorrower = debtPOJODao.getAllDebtPOJOsIAmBorrower();
-
         allPersons = personDao.getAllPersons();
         allCategories = categoryDao.getAllCategories();
 
@@ -55,14 +50,6 @@ public class DebtRepository {
 
     public Flowable<List<DebtPOJO>> getAllDebtPOJOs() {
         return allDebtPOJOs;
-    }
-
-    public Flowable<List<DebtPOJO>> getAllDebtPOJOsIAmCreditor() {
-        return allDebtPOJOsIAmCreditor;
-    }
-
-    public Flowable<List<DebtPOJO>> getAllDebtPOJOsIAmBorrower() {
-        return allDebtPOJOsIAmBorrower;
     }
 
     public Flowable<List<Person>> getAllPersons() {

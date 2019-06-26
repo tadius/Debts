@@ -46,22 +46,19 @@ public class DebtsFragment extends Fragment {
             int position = bundle.getInt("position");
             switch (position) {
                 case 1:
-                    subscribeOnDataIAmCreditor();
+                    viewModel.setAmIBorrower(false);
                     break;
                 case 2:
-                    subscribeOnDataIAmBorrower();
+                    viewModel.setAmIBorrower(true);
                     break;
             }
         }
 
-
         setupRecyclerView();
 
-//        subscribeOnData();
+        subscribeOnData();
 
         subscribeNavigationEvents();
-
-//        setupFABanimation();
 
         viewModel.viewLoaded();
 
@@ -76,15 +73,8 @@ public class DebtsFragment extends Fragment {
         debtPOJOsAdapter.setOnDebtPOJOClickListener(debtPOJO -> viewModel.clickedOnDebtPOJO(debtPOJO));
     }
 
-    private void subscribeOnDataIAmCreditor() {
-        viewModel.getListOfDebtPOJOSIAmCreditor().observe(getViewLifecycleOwner(), debtPOJOS -> {
-            debtPOJOsAdapter.setData(debtPOJOS);
-            debtPOJOsAdapter.notifyDataSetChanged();
-        });
-    }
-
-    private void subscribeOnDataIAmBorrower() {
-        viewModel.getListOfDebtPOJOSIAmBorrower().observe(getViewLifecycleOwner(), debtPOJOS -> {
+    private void subscribeOnData() {
+        viewModel.getListOfDebtPOJOS().observe(getViewLifecycleOwner(), debtPOJOS -> {
             debtPOJOsAdapter.setData(debtPOJOS);
             debtPOJOsAdapter.notifyDataSetChanged();
         });
