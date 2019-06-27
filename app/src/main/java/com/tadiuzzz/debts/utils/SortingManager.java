@@ -55,7 +55,7 @@ public class SortingManager {
         refreshSortingComparator();
     }
 
-    private void refreshSortingComparator() {
+    public void refreshSortingComparator() {
         switch (sortBy) {
             case SORT_BY_DATE_OF_START:
                 sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO1.getDebt().getDateOfStart(), debtPOJO2.getDebt().getDateOfStart()));

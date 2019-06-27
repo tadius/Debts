@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.tadiuzzz.debts.utils.FileUtils;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
+import com.tadiuzzz.debts.utils.SortingManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -198,6 +199,8 @@ public class BackupRestoreViewModel extends AndroidViewModel {
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME, outFileName);
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME_SHM, outFileNameSHM);
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME_WAL, outFileNameWAL);
+
+        SortingManager.getInstance().refreshSortingComparator(); //для того, чтобы после восстановления список долгов обновился
     }
 
     private boolean checkPermissions() {
