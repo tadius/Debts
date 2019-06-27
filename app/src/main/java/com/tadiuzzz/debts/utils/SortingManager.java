@@ -28,12 +28,14 @@ public class SortingManager {
 
     private BehaviorSubject<Comparator<DebtPOJO>> changeObservable = BehaviorSubject.create();
     private BehaviorSubject<Integer> changeSortIcon = BehaviorSubject.create();
+    private BehaviorSubject<String> changeSortTitle = BehaviorSubject.create();
 
     private Comparator<DebtPOJO> sortingComparator;
 
     private int sortBy = 0;
 
     private Integer sortIcon = SORT_MENU_ICON;
+    private String sortTitle = "";
 
     private SortingManager(){
         refreshSortingComparator();
@@ -47,8 +49,9 @@ public class SortingManager {
         return sortBy;
     }
 
-    public void setSortBy(int sortBy) {
+    public void setSortBy(int sortBy, String sortTitle) {
         this.sortBy = sortBy;
+        this.sortTitle = sortTitle;
         refreshSortingComparator();
     }
 
@@ -93,6 +96,7 @@ public class SortingManager {
         }
         changeObservable.onNext(sortingComparator);
         changeSortIcon.onNext(sortIcon);
+        changeSortTitle.onNext(sortTitle);
     }
 
     public Observable<Comparator<DebtPOJO>> getComparator() {
@@ -101,6 +105,10 @@ public class SortingManager {
 
     public Observable<Integer> getSortIcon() {
         return changeSortIcon;
+    }
+
+    public Observable<String> getSortTitle() {
+        return changeSortTitle;
     }
 
 }

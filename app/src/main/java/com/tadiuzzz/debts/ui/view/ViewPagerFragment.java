@@ -26,10 +26,13 @@ import com.google.android.material.tabs.TabLayout;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.adapter.ViewPagerAdapter;
 import com.tadiuzzz.debts.ui.presentation.ViewPagerViewModel;
+import com.tadiuzzz.debts.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.tadiuzzz.debts.utils.Constants.*;
 
 public class ViewPagerFragment extends Fragment {
 
@@ -78,6 +81,7 @@ public class ViewPagerFragment extends Fragment {
     private void subscribeOnTitleChangeEvent() {
         //убираем тень между actionbar и tablayout
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
+        
         viewModel.getSortMenuTitle().observe(getViewLifecycleOwner(), title -> menu.findItem(R.id.menu_sort).setTitle(title));
         viewModel.getSortMenuIcon().observe(getViewLifecycleOwner(), icon -> menu.findItem(R.id.menu_sort).setIcon(icon));
 

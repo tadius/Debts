@@ -57,10 +57,34 @@ public class ViewPagerViewModel extends AndroidViewModel {
 
             }
         }));
+
+        disposables.add(SortingManager.getInstance().getSortTitle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<String>() {
+                    @Override
+                    public void onNext(String title) {
+                        sortMenuTitle.setValue(title);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                }));
     }
 
     public LiveData<String> getSortMenuTitle() {
         return sortMenuTitle;
+    }
+
+    public LiveData<Integer> getSortMenuIcon() {
+        return sortMenuIcon;
     }
 
     public SingleLiveEvent getNavigateToEditDebtScreenEvent(){
@@ -120,9 +144,7 @@ public class ViewPagerViewModel extends AndroidViewModel {
     }
 
     public void pickedSortBy(int sortBy, String sortTitle) {
-        SortingManager.getInstance().setSortBy(sortBy);
-        sortMenuTitle.setValue(sortTitle);
-
+        SortingManager.getInstance().setSortBy(sortBy, sortTitle);
     }
 
     @Override
@@ -131,7 +153,6 @@ public class ViewPagerViewModel extends AndroidViewModel {
         disposables.clear();
     }
 
-    public LiveData<Integer> getSortMenuIcon() {
-        return sortMenuIcon;
-    }
+
+
 }
