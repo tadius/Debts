@@ -1,8 +1,31 @@
 <resources>
     <string name="app_name">Debts</string>
+    <string name="menu_sort">Сортировка</string>
     <string name="menu_filter">Фильтр</string>
     <string name="menu_person">Менеджер персон</string>
     <string name="menu_categories">Менеджер категорий</string>
     <string name="menu_backup_restore">Резервное копирование</string>
     <string name="menu_about">О приложении</string>
+
+    <string-array name="sort_array">
+        <item>по дате начала</item>
+        <item>по дате начала</item>
+        <item>по дате ожидания</item>
+        <item>по дате ожидания</item>
+        <item>по дате возврата</item>
+        <item>по дате возврата</item>
+        <item>по сумме</item>
+        <item>по сумме</item>
+    </string-array>
+
+    <string-array name="sort_array_with_arrows">
+        <item>по дате начала ▲</item>
+        <item>по дате начала ▼</item>
+        <item>по дате ожидания ▲</item>
+        <item>по дате ожидания ▼</item>
+        <item>по дате возврата ▲</item>
+        <item>по дате возврата ▼</item>
+        <item>по сумме ▲</item>
+        <item>по сумме ▼</item>
+    </string-array>
 </resources>

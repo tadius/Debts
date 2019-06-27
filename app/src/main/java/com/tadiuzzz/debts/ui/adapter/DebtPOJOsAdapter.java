@@ -62,7 +62,7 @@ public class DebtPOJOsAdapter extends RecyclerView.Adapter<DebtPOJOsAdapter.Debt
         } else {
             holder.llDebtItemDateOfStartContainer.setVisibility(View.INVISIBLE);
         }
-        if (debtPOJO.getDebt().getDateOfEnd() != 0) {
+        if (debtPOJO.getDebt().isReturned()) {
             holder.llDebtItemDateOfEndContainer.setVisibility(View.VISIBLE);
             holder.tvDebtItemDateOfEnd.setText(simpleDateFormat.format(new Date(debtPOJO.getDebt().getDateOfEnd())));
         } else {

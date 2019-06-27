@@ -231,17 +231,15 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public void isReturnedCheckChanged(boolean isChecked) {
         DebtPOJO cachedDebtPojo = debtRepository.getCachedDebtPOJO();
-        if (isChecked) {
-            if (cachedDebtPojo.getDebt().getDateOfEnd() == 0) {
-                Calendar calendar = Calendar.getInstance();
-                cachedDebtPojo.getDebt().setDateOfEnd(calendar.getTimeInMillis());
-            }
-        } else {
-            cachedDebtPojo.getDebt().setDateOfEnd(0);
-        }
         cachedDebtPojo.getDebt().setReturned(isChecked);
-        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
         showEndDateContainer.callWithArgument(isChecked);
+        if (isChecked) {
+            Calendar calendar = Calendar.getInstance();
+            cachedDebtPojo.getDebt().setDateOfEnd(calendar.getTimeInMillis());
+        } else {
+            cachedDebtPojo.getDebt().setDateOfEnd(Calendar.getInstance().getTimeInMillis() * 2); // ставим значительно большую дату, чтобы при сортировке незавершенные были в конце
+        }
+        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
     }
 
     public void amIBorrowerClicked(boolean amIBorrower) {

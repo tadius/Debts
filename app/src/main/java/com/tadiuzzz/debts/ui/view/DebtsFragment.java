@@ -1,14 +1,22 @@
 package com.tadiuzzz.debts.ui.view;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,7 +39,7 @@ public class DebtsFragment extends Fragment {
 
     private DebtsViewModel viewModel;
     private DebtPOJOsAdapter debtPOJOsAdapter;
-    public static final String TAG = "logTag";
+
     @BindView(R.id.rvDebts)
     RecyclerView rvDebts;
 
@@ -61,11 +69,7 @@ public class DebtsFragment extends Fragment {
 
         subscribeOnData();
 
-        subscribeNavigationEvents();
-
-        viewModel.setSortingComparator(SORT_BY_DATE_OF_START);
-
-        viewModel.viewLoaded();
+        subscribeOnNavigationEvents();
 
         return view;
     }
@@ -85,9 +89,9 @@ public class DebtsFragment extends Fragment {
         });
     }
 
-    private void subscribeNavigationEvents() {
+    private void subscribeOnNavigationEvents() {
         viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
-    }
+       }
 
 
 }

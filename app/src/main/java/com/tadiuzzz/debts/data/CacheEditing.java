@@ -6,6 +6,7 @@ import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Observable;
 
@@ -41,6 +42,10 @@ public class CacheEditing {
     public void clearCachedDebtPOJO(){
         debtPOJO = new DebtPOJO();
         debtPOJO.setDebt(new Debt());
+
+        debtPOJO.getDebt().setDateOfStart(Calendar.getInstance().getTimeInMillis());
+        debtPOJO.getDebt().setDateOfExpiration(Calendar.getInstance().getTimeInMillis());
+        debtPOJO.getDebt().setDateOfEnd(Calendar.getInstance().getTimeInMillis() * 2);
 
         List<Category> categories = new ArrayList<>();
         Category category = new Category();

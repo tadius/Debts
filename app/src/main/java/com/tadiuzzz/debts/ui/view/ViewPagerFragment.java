@@ -8,16 +8,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,6 +37,8 @@ public class ViewPagerFragment extends Fragment {
 
     private ViewPagerAdapter viewPagerAdapter;
 
+    private Menu menu;
+
     @BindView(R.id.viewPager)
     ViewPager viewPager;
     @BindView(R.id.tabs)
@@ -52,18 +55,17 @@ public class ViewPagerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
+        setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this).get(ViewPagerViewModel.class);
 
         ButterKnife.bind(this, view);
 
-        setupTitle();
-
         setupViewPager();
 
-        subscribeOnNavigationEvents();
-
         subscribeOnDialogsEvents();
+
+        subscribeOnNavigationEvents();
 
         return view;
     }
@@ -71,20 +73,14 @@ public class ViewPagerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
-    private void setupTitle() {
+    private void subscribeOnTitleChangeEvent() {
         //убираем тень между actionbar и tablayout
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
-    }
+        viewModel.getSortMenuTitle().observe(getViewLifecycleOwner(), title -> menu.findItem(R.id.menu_sort).setTitle(title));
+        viewModel.getSortMenuIcon().observe(getViewLifecycleOwner(), icon -> menu.findItem(R.id.menu_sort).setIcon(icon));
 
-    private void setupViewPager() {
-        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(2);
-
-        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void subscribeOnNavigationEvents() {
@@ -97,17 +93,31 @@ public class ViewPagerFragment extends Fragment {
 
     private void subscribeOnDialogsEvents() {
         viewModel.getShowFilterDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterDialog());
+        viewModel.getShowSortDialogEvent().observe(getViewLifecycleOwner(), sortBy -> showSortDialog((Integer) sortBy));
+    }
+
+    private void setupViewPager() {
+        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
+
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
+        subscribeOnTitleChangeEvent();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_sort:
+                viewModel.clickedOnSortMenu();
+                return true;
             case R.id.menu_filter:
                 viewModel.clickedOnFilterMenu();
                 return true;
@@ -126,6 +136,27 @@ public class ViewPagerFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showSortDialog(Integer sortBy) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Сортировка");
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
+
+        arrayAdapter.addAll(getResources().getStringArray(R.array.sort_array_with_arrows));
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
+
+        builderSingle.setSingleChoiceItems(arrayAdapter, sortBy, (dialog, position) -> {
+
+            String title = getResources().getStringArray(R.array.sort_array)[position];
+
+            viewModel.pickedSortBy(position, title);
+
+            dialog.dismiss();
+        });
+        builderSingle.show();
     }
 
     private void showFilterDialog() {
