@@ -11,13 +11,17 @@ import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
+import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
+
+import static com.tadiuzzz.debts.utils.Constants.*;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -25,6 +29,8 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class DebtsViewModel extends AndroidViewModel {
 
     private CompositeDisposable disposables;
+
+    private Comparator<DebtPOJO> sortingComparator;
 
     DebtRepository debtRepository;
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
@@ -38,6 +44,8 @@ public class DebtsViewModel extends AndroidViewModel {
         disposables = new CompositeDisposable();
 
         debtRepository = new DebtRepository(application);
+
+        setSortingComparator(SORT_BY_DATE_OF_EXPIRATION);
     }
 
     private void loadAllDebtPOJOs() {
@@ -45,7 +53,7 @@ public class DebtsViewModel extends AndroidViewModel {
         disposables.add(debtRepository.getAllDebtPOJOs()
                 .flatMap(debtPOJOS -> Flowable.fromIterable(debtPOJOS)
                         .filter(debtPOJO -> debtPOJO.getDebt().amIBorrower() == amIBorrower)
-                        .toList()
+                        .toSortedList(sortingComparator)
                         .toFlowable()
                 )
                 .subscribeOn(Schedulers.io())
@@ -95,4 +103,37 @@ public class DebtsViewModel extends AndroidViewModel {
     public void setAmIBorrower(boolean amIBorrower) {
         this.amIBorrower = amIBorrower;
     }
+
+    public void setSortingComparator(int sortBy) {
+        switch (sortBy) {
+            case SORT_BY_DATE_OF_EXPIRATION:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO1.getDebt().getDateOfExpiration(), debtPOJO2.getDebt().getDateOfExpiration()));
+                break;
+            case SORT_BY_DATE_OF_EXPIRATION_DESC:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO2.getDebt().getDateOfExpiration(), debtPOJO1.getDebt().getDateOfExpiration()));
+                break;
+            case SORT_BY_DATE_OF_START:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO1.getDebt().getDateOfStart(), debtPOJO2.getDebt().getDateOfStart()));
+                break;
+            case SORT_BY_DATE_OF_START_DESC:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO2.getDebt().getDateOfStart(), debtPOJO1.getDebt().getDateOfStart()));
+                break;
+            case SORT_BY_DATE_OF_END:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO1.getDebt().getDateOfEnd(), debtPOJO2.getDebt().getDateOfEnd()));
+                break;
+            case SORT_BY_DATE_OF_END_DESC:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO2.getDebt().getDateOfEnd(), debtPOJO1.getDebt().getDateOfEnd()));
+                break;
+            case SORT_BY_AMOUNT:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Double.compare(debtPOJO1.getDebt().getAmount(), debtPOJO2.getDebt().getAmount()));
+                break;
+            case SORT_BY_AMOUNT_DESC:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Double.compare(debtPOJO2.getDebt().getAmount(), debtPOJO1.getDebt().getAmount()));
+                break;
+            default:
+                sortingComparator = (debtPOJO1, debtPOJO2) -> (Long.compare(debtPOJO1.getDebt().getDateOfExpiration(), debtPOJO2.getDebt().getDateOfExpiration()));
+                break;
+        }
+    }
+
 }

@@ -17,9 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.adapter.DebtPOJOsAdapter;
+import com.tadiuzzz.debts.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.tadiuzzz.debts.utils.Constants.*;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -59,6 +62,8 @@ public class DebtsFragment extends Fragment {
         subscribeOnData();
 
         subscribeNavigationEvents();
+
+        viewModel.setSortingComparator(SORT_BY_DATE_OF_START);
 
         viewModel.viewLoaded();
 
