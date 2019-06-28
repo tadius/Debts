@@ -2,6 +2,7 @@ package com.tadiuzzz.debts.ui.view;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
@@ -95,6 +96,42 @@ public class BackupRestoreFragment extends Fragment {
         viewModel.getShowRequestPermissionsDialogEvent().observe(getViewLifecycleOwner(), o -> showRequestPermissionsDialog());
         viewModel.getShowSetNameOfBackupDialogEvent().observe(getViewLifecycleOwner(), o -> showSetNameOfBackupDialog());
         viewModel.getShowPickFileDialogEvent().observe(getViewLifecycleOwner(), o -> showPickFileDialog());
+        viewModel.getShowConfirmRestoreDialogEvent().observe(getViewLifecycleOwner(), pathToFile -> showConfirmRestoreDialog((String)pathToFile));
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), pathToFile -> showConfirmDeleteDialog((String)pathToFile));
+    }
+
+    private void showConfirmRestoreDialog(String pathToFile) {
+
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Подтверждение восстановления");
+        builderSingle.setMessage(String.format("%s \nПосле восстановления резервной копии, текущие данные будут удалены. Восстановить? ", pathToFile));
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
+            viewModel.clickedOnRestoreButton();
+        });
+
+        builderSingle.setPositiveButton("Восстановить", (dialog, which) -> {
+            viewModel.confirmedFileRestore(pathToFile);
+        });
+
+        builderSingle.show();
+    }
+
+    private void showConfirmDeleteDialog(String pathToFile) {
+
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Подтверждение удаления");
+        builderSingle.setMessage(String.format("%s \nВы действительно хотите удалить резервную копию? ", pathToFile));
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
+            viewModel.clickedOnRestoreButton();
+        });
+
+        builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
+            viewModel.confirmedFileDelete(pathToFile);
+        });
+
+        builderSingle.show();
     }
 
     private void showRequestPermissionsDialog() {
@@ -126,13 +163,25 @@ public class BackupRestoreFragment extends Fragment {
     }
 
     private void showPickFileDialog() {
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_item);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
         arrayAdapter.addAll(listOfFiles);
 
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
         builderSingle.setTitle("Резервная копия для восстановления:");
+        builderSingle.setSingleChoiceItems(arrayAdapter, 0, (dialog, which) -> {});
+
         builderSingle.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
-        builderSingle.setAdapter(arrayAdapter, (dialog, position) -> viewModel.pickedFileToRestore(listOfFiles.get(position)));
+
+        builderSingle.setPositiveButton("Восстановить", (dialog, which) -> {
+            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+            viewModel.pickedFileToRestore(listOfFiles.get(selectedPosition));
+        });
+
+        builderSingle.setNeutralButton("Удалить", (dialog, which) -> {
+            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+            viewModel.pickedFileToDelete(listOfFiles.get(selectedPosition));
+        });
+
         builderSingle.show();
     }
 

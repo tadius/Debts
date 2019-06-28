@@ -24,19 +24,17 @@ public class FileUtils {
             //сортируем в обратном порядке по дате (сначала новые)
             Arrays.sort(files, (file1, file2) -> Long.compare(file2.lastModified(), file1.lastModified()));
 
-        ArrayList<String> allFilesNames = new ArrayList<>();
+            ArrayList<String> allFilesNames = new ArrayList<>();
 
-        for (File file : files) {
-            allFilesNames.add(file.getName());
+            for (File file : files) {
+                allFilesNames.add(file.getName());
+            }
+            listOfFiles = allFilesNames;
+        } else {
+            listOfFiles = new ArrayList<>();
         }
-        listOfFiles = allFilesNames;
-    } else
-
-    {
-        listOfFiles = new ArrayList<>();
-    }
         return listOfFiles;
-}
+    }
 
     public static void createFoldersForBackup(String fullPath) {
         File namedFolder = new File(fullPath);
@@ -60,6 +58,23 @@ public class FileUtils {
         outputStream.flush();
         outputStream.close();
         inputStream.close();
+    }
+
+    public static void deleteFile(String fileLocation) throws IOException {
+        File file = new File(fileLocation);
+        deleteRecursive(file);
+    }
+
+    private static void deleteRecursive(File fileOrDirectory) throws IOException {
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+        if(!fileOrDirectory.delete()) {
+            throw new IOException();
+        }
+
     }
 
 }

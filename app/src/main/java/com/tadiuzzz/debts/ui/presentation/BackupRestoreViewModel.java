@@ -47,6 +47,9 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Void> showPickFileDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> showSetNameOfBackupDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> showRequestPermissionsDialog = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> showConfirmRestoreDialog = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> showConfirmDeleteDialog = new SingleLiveEvent<>();
+
     private String pathToSdCardAppFolder = "";
 
     private Context context;
@@ -86,6 +89,14 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     public SingleLiveEvent getShowRequestPermissionsDialogEvent() {
         return showRequestPermissionsDialog;
+    }
+
+    public SingleLiveEvent getShowConfirmRestoreDialogEvent() {
+        return showConfirmRestoreDialog;
+    }
+
+    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+        return showConfirmDeleteDialog;
     }
 
     public void clickedOnBackupButton() {
@@ -160,7 +171,10 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     public void pickedFileToRestore(String nameOfBackupFolder) {
         String fullPath = pathToSdCardAppFolder + File.separator + nameOfBackupFolder + File.separator;
+        showConfirmRestoreDialog.callWithArgument(fullPath);
+    }
 
+    public void confirmedFileRestore(String fullPath) {
         performRestore(fullPath);
     }
 
@@ -201,6 +215,36 @@ public class BackupRestoreViewModel extends AndroidViewModel {
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME_WAL, outFileNameWAL);
 
         SortingManager.getInstance().refreshSortingComparator(); //для того, чтобы после восстановления список долгов обновился
+    }
+
+    public void pickedFileToDelete(String nameOfBackupFolder) {
+        String fullPath = pathToSdCardAppFolder + File.separator + nameOfBackupFolder;
+        showConfirmDeleteDialog.callWithArgument(fullPath);
+    }
+
+    public void confirmedFileDelete(String fullPath) {
+        performDelete(fullPath);
+    }
+
+    private void performDelete(String fullPath) {
+        disposables.add(Completable.fromAction(() -> deleteBackupFile(fullPath))
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        showToast.callWithArgument("Резервная копия удалена!");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast.callWithArgument("Ошибка удаления резервной копии!");
+                    }
+                }));
+    }
+
+    private void deleteBackupFile(String pathToBackupLocation) throws IOException {
+        FileUtils.deleteFile(pathToBackupLocation);
     }
 
     private boolean checkPermissions() {
