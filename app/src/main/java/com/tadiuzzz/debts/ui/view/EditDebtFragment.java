@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -199,6 +200,8 @@ public class EditDebtFragment extends Fragment {
         viewModel.getShowPickDateOfEndDialogEvent().observe(getViewLifecycleOwner(), o -> showDatePickerDialog((Calendar) o, viewModel.TYPE_OF_DATE_END));
 
         viewModel.getShowEndDateContainerEvent().observe(getViewLifecycleOwner(), o -> showEndDateContainer((Boolean) o));
+
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), o -> showConfirmDeleteDialog());
     }
 
     private void subscribeOnNavigationEvents() {
@@ -223,6 +226,21 @@ public class EditDebtFragment extends Fragment {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    private void showConfirmDeleteDialog() {
+
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Подтверждение удаления");
+        builderSingle.setMessage("Вы действительно хотите удалить эту запись? ");
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {dialog.dismiss();});
+
+        builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
+            viewModel.confirmedDebtDelete();
+        });
+
+        builderSingle.show();
     }
 
     private void setFields(DebtPOJO debtPOJO) {

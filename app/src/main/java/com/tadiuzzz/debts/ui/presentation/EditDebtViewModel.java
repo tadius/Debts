@@ -39,6 +39,7 @@ public class EditDebtViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfExpirationDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfEndDialog = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> showConfirmDeleteDialog = new SingleLiveEvent<>();
 
     private final SingleLiveEvent<Boolean> showEndDateContainer = new SingleLiveEvent<>();
 
@@ -91,6 +92,9 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public SingleLiveEvent getShowEndDateContainerEvent() {
         return showEndDateContainer;
+    }
+    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+        return showConfirmDeleteDialog;
     }
 
     public void pickPersonClicked() {
@@ -152,13 +156,13 @@ public class EditDebtViewModel extends AndroidViewModel {
     public void saveButtonClicked() {
         //возможно нужно будет сделать проверки на пустые поля?
         if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
-            saveDebt();
+            updateDebt();
         } else {
             insertDebt();
         }
     }
 
-    private void saveDebt() {
+    private void updateDebt() {
         disposables.add(debtRepository.updateDebt(debtRepository.getCachedDebtPOJO().getDebt())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -166,6 +170,7 @@ public class EditDebtViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно обновлена!");
+                        debtRepository.clearDebtPOJOCache();
                         navigateToPreviousScreen.call();
                     }
 
@@ -184,6 +189,7 @@ public class EditDebtViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно сохранена!");
+                        debtRepository.clearDebtPOJOCache();
                         navigateToPreviousScreen.call();
                     }
 
@@ -196,9 +202,15 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public void deleteButtonClicked() {
         if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
-            deleteDebt();
+            showConfirmDeleteDialog.call();
         } else {
             showToast.callWithArgument("Такой записи не существует!");
+        }
+    }
+
+    public void confirmedDebtDelete() {
+        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+            deleteDebt();
         }
     }
 
@@ -210,6 +222,7 @@ public class EditDebtViewModel extends AndroidViewModel {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно удалена!");
+                        debtRepository.clearDebtPOJOCache();
                         navigateToPreviousScreen.call();
                     }
 
@@ -253,4 +266,5 @@ public class EditDebtViewModel extends AndroidViewModel {
         super.onCleared();
         disposables.clear();
     }
+
 }
