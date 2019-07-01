@@ -29,6 +29,8 @@ public class EditCategoryViewModel extends AndroidViewModel {
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
+    private final SingleLiveEvent<Void> showConfirmDeleteDialog = new SingleLiveEvent<>();
+
     private MutableLiveData<Category> loadedLiveDataCategory = new MutableLiveData<>();
 
     public EditCategoryViewModel(@NonNull Application application) {
@@ -73,6 +75,10 @@ public class EditCategoryViewModel extends AndroidViewModel {
 
     public SingleLiveEvent getNavigateToPreviousScreenEvent() {
         return navigateToPreviousScreen;
+    }
+
+    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+        return showConfirmDeleteDialog;
     }
 
     public void saveButtonClicked(String enteredCategoryName) {
@@ -132,9 +138,17 @@ public class EditCategoryViewModel extends AndroidViewModel {
 
     public void deleteButtonClicked() {
         if (loadedLiveDataCategory.getValue() != null) {
-            deleteCategory();
+            showConfirmDeleteDialog.call();
         } else {
             showToast.callWithArgument("Такой категории не существует!");
+        }
+    }
+
+
+
+    public void confirmedDebtDelete() {
+        if (loadedLiveDataCategory.getValue() != null) {
+            deleteCategory();
         }
     }
 

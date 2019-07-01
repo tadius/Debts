@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -75,6 +76,8 @@ public class EditCategoryFragment extends Fragment {
 
         subscribeOnNotificationEvents();
 
+        subscribeOnDialogsEvents();
+
         return view;
     }
 
@@ -89,6 +92,10 @@ public class EditCategoryFragment extends Fragment {
         });
     }
 
+    private void subscribeOnDialogsEvents() {
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), o -> showConfirmDeleteDialog());
+    }
+
     private void subscribeOnData() {
         viewModel.getCategory().observe(getViewLifecycleOwner(), category -> setFields(category));
     }
@@ -97,6 +104,21 @@ public class EditCategoryFragment extends Fragment {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    private void showConfirmDeleteDialog() {
+
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Подтверждение удаления");
+        builderSingle.setMessage("Вы действительно хотите удалить эту категорию? ");
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {dialog.dismiss();});
+
+        builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
+            viewModel.confirmedDebtDelete();
+        });
+
+        builderSingle.show();
     }
 
     private void setFields(Category category) {
