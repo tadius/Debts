@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -96,8 +97,12 @@ public class BackupRestoreFragment extends Fragment {
         viewModel.getShowRequestPermissionsDialogEvent().observe(getViewLifecycleOwner(), o -> showRequestPermissionsDialog());
         viewModel.getShowSetNameOfBackupDialogEvent().observe(getViewLifecycleOwner(), o -> showSetNameOfBackupDialog());
         viewModel.getShowPickFileDialogEvent().observe(getViewLifecycleOwner(), o -> showPickFileDialog());
-        viewModel.getShowConfirmRestoreDialogEvent().observe(getViewLifecycleOwner(), pathToFile -> showConfirmRestoreDialog((String)pathToFile));
-        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), pathToFile -> showConfirmDeleteDialog((String)pathToFile));
+        viewModel.getShowConfirmRestoreDialogEvent().observe(getViewLifecycleOwner(), stringBooleanPair -> {
+            if (stringBooleanPair.second) showConfirmRestoreDialog(stringBooleanPair.first);
+        });
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), stringBooleanPair -> {
+            if (stringBooleanPair.second) showConfirmDeleteDialog(stringBooleanPair.first);
+        });
     }
 
     private void showConfirmRestoreDialog(String pathToFile) {
@@ -107,7 +112,7 @@ public class BackupRestoreFragment extends Fragment {
         builderSingle.setMessage(String.format("%s \nПосле восстановления резервной копии, текущие данные будут удалены. Восстановить? ", pathToFile));
 
         builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
-            viewModel.clickedOnRestoreButton();
+            viewModel.canceledRestore();
         });
 
         builderSingle.setPositiveButton("Восстановить", (dialog, which) -> {
@@ -124,7 +129,7 @@ public class BackupRestoreFragment extends Fragment {
         builderSingle.setMessage(String.format("%s \nВы действительно хотите удалить резервную копию? ", pathToFile));
 
         builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
-            viewModel.clickedOnRestoreButton();
+            viewModel.canceledDelete();
         });
 
         builderSingle.setPositiveButton("Удалить", (dialog, which) -> {

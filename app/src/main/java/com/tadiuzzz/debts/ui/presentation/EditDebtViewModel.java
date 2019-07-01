@@ -39,7 +39,7 @@ public class EditDebtViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfExpirationDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Calendar> showPickDateOfEndDialog = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Void> showConfirmDeleteDialog = new SingleLiveEvent<>();
+    private final MutableLiveData<Boolean> showConfirmDeleteDialog = new MutableLiveData<>();
 
     private final SingleLiveEvent<Boolean> showEndDateContainer = new SingleLiveEvent<>();
 
@@ -93,7 +93,7 @@ public class EditDebtViewModel extends AndroidViewModel {
     public SingleLiveEvent getShowEndDateContainerEvent() {
         return showEndDateContainer;
     }
-    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+    public LiveData<Boolean> getShowConfirmDeleteDialogEvent() {
         return showConfirmDeleteDialog;
     }
 
@@ -202,15 +202,20 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     public void deleteButtonClicked() {
         if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
-            showConfirmDeleteDialog.call();
+            showConfirmDeleteDialog.postValue(true);
         } else {
             showToast.callWithArgument("Такой записи не существует!");
         }
     }
 
+    public void canceledDelete() {
+        showConfirmDeleteDialog.postValue(false);
+    }
+
     public void confirmedDebtDelete() {
         if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
             deleteDebt();
+            showConfirmDeleteDialog.postValue(false);
         }
     }
 

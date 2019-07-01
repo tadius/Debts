@@ -29,7 +29,7 @@ public class EditPersonViewModel extends AndroidViewModel {
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
-    private final SingleLiveEvent<Void> showConfirmDeleteDialog = new SingleLiveEvent<>();
+    private final MutableLiveData<Boolean> showConfirmDeleteDialog = new MutableLiveData<>();
 
     private MutableLiveData<Person> loadedLiveDataPerson = new MutableLiveData<>();
 
@@ -76,7 +76,7 @@ public class EditPersonViewModel extends AndroidViewModel {
         return navigateToPreviousScreen;
     }
 
-    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+    public LiveData<Boolean> getShowConfirmDeleteDialogEvent() {
         return showConfirmDeleteDialog;
     }
 
@@ -137,15 +137,20 @@ public class EditPersonViewModel extends AndroidViewModel {
 
     public void deleteButtonClicked() {
         if (loadedLiveDataPerson.getValue() != null) {
-            showConfirmDeleteDialog.call();
+            showConfirmDeleteDialog.postValue(true);
         } else {
             showToast.callWithArgument("Такой персоны не существует!");
         }
     }
 
-    public void confirmedDebtDelete() {
+    public void canceledDelete() {
+        showConfirmDeleteDialog.postValue(false);
+    }
+
+    public void confirmedDelete() {
         if (loadedLiveDataPerson.getValue() != null) {
             deletePerson();
+            showConfirmDeleteDialog.postValue(false);
         }
     }
 

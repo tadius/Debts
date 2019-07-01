@@ -201,7 +201,7 @@ public class EditDebtFragment extends Fragment {
 
         viewModel.getShowEndDateContainerEvent().observe(getViewLifecycleOwner(), o -> showEndDateContainer((Boolean) o));
 
-        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), o -> showConfirmDeleteDialog());
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), show -> {if (show) showConfirmDeleteDialog();});
     }
 
     private void subscribeOnNavigationEvents() {
@@ -234,7 +234,10 @@ public class EditDebtFragment extends Fragment {
         builderSingle.setTitle("Подтверждение удаления");
         builderSingle.setMessage("Вы действительно хотите удалить эту запись? ");
 
-        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {dialog.dismiss();});
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
+            viewModel.canceledDelete();
+            dialog.dismiss();
+        });
 
         builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
             viewModel.confirmedDebtDelete();

@@ -10,13 +10,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
@@ -94,7 +92,7 @@ public class EditPersonFragment extends Fragment {
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), o -> showConfirmDeleteDialog());
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), show -> {if (show) showConfirmDeleteDialog();});
     }
 
     private void subscribeOnNotificationEvents() {
@@ -113,10 +111,13 @@ public class EditPersonFragment extends Fragment {
         builderSingle.setTitle("Подтверждение удаления");
         builderSingle.setMessage("Вы действительно хотите удалить эту персону? ");
 
-        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {dialog.dismiss();});
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {
+            viewModel.canceledDelete();
+            dialog.dismiss();
+        });
 
         builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
-            viewModel.confirmedDebtDelete();
+            viewModel.confirmedDelete();
         });
 
         builderSingle.show();

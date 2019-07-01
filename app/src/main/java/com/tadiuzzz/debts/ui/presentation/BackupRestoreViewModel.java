@@ -8,6 +8,7 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -47,8 +48,8 @@ public class BackupRestoreViewModel extends AndroidViewModel {
     private final SingleLiveEvent<Void> showPickFileDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> showSetNameOfBackupDialog = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> showRequestPermissionsDialog = new SingleLiveEvent<>();
-    private final SingleLiveEvent<String> showConfirmRestoreDialog = new SingleLiveEvent<>();
-    private final SingleLiveEvent<String> showConfirmDeleteDialog = new SingleLiveEvent<>();
+    private final MutableLiveData<Pair<String, Boolean>> showConfirmRestoreDialog = new MutableLiveData<>();
+    private final MutableLiveData<Pair<String, Boolean>> showConfirmDeleteDialog = new MutableLiveData<>();
 
     private String pathToSdCardAppFolder = "";
 
@@ -91,11 +92,11 @@ public class BackupRestoreViewModel extends AndroidViewModel {
         return showRequestPermissionsDialog;
     }
 
-    public SingleLiveEvent getShowConfirmRestoreDialogEvent() {
+    public LiveData<Pair<String, Boolean>> getShowConfirmRestoreDialogEvent() {
         return showConfirmRestoreDialog;
     }
 
-    public SingleLiveEvent getShowConfirmDeleteDialogEvent() {
+    public LiveData<Pair<String, Boolean>>  getShowConfirmDeleteDialogEvent() {
         return showConfirmDeleteDialog;
     }
 
@@ -171,11 +172,17 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     public void pickedFileToRestore(String nameOfBackupFolder) {
         String fullPath = pathToSdCardAppFolder + File.separator + nameOfBackupFolder + File.separator;
-        showConfirmRestoreDialog.callWithArgument(fullPath);
+        showConfirmRestoreDialog.postValue(new Pair(fullPath, true));
+    }
+
+    public void canceledRestore() {
+        showConfirmRestoreDialog.postValue(new Pair("", false));
+        clickedOnRestoreButton();
     }
 
     public void confirmedFileRestore(String fullPath) {
         performRestore(fullPath);
+        showConfirmRestoreDialog.postValue(new Pair("", false));
     }
 
     private void performRestore(String fullPath) {
@@ -219,11 +226,17 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     public void pickedFileToDelete(String nameOfBackupFolder) {
         String fullPath = pathToSdCardAppFolder + File.separator + nameOfBackupFolder;
-        showConfirmDeleteDialog.callWithArgument(fullPath);
+        showConfirmDeleteDialog.postValue(new Pair(fullPath, true));
+    }
+
+    public void canceledDelete() {
+        showConfirmDeleteDialog.postValue(new Pair("", false));
+        clickedOnRestoreButton();
     }
 
     public void confirmedFileDelete(String fullPath) {
         performDelete(fullPath);
+        showConfirmDeleteDialog.postValue(new Pair("", false));
     }
 
     private void performDelete(String fullPath) {
@@ -263,4 +276,7 @@ public class BackupRestoreViewModel extends AndroidViewModel {
         super.onCleared();
         disposables.clear();
     }
+
+
+
 }
