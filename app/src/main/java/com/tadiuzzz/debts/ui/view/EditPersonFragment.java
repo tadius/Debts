@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -76,6 +77,8 @@ public class EditPersonFragment extends Fragment {
 
         subscribeOnNotificationEvents();
 
+        subscribeOnDialogsEvents();
+
         return view;
     }
 
@@ -90,6 +93,10 @@ public class EditPersonFragment extends Fragment {
         });
     }
 
+    private void subscribeOnDialogsEvents() {
+        viewModel.getShowConfirmDeleteDialogEvent().observe(getViewLifecycleOwner(), o -> showConfirmDeleteDialog());
+    }
+
     private void subscribeOnNotificationEvents() {
         viewModel.getShowToastEvent().observe(getViewLifecycleOwner(), message -> showToast((String) message));
     }
@@ -98,6 +105,21 @@ public class EditPersonFragment extends Fragment {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    private void showConfirmDeleteDialog() {
+
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Подтверждение удаления");
+        builderSingle.setMessage("Вы действительно хотите удалить эту персону? ");
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> {dialog.dismiss();});
+
+        builderSingle.setPositiveButton("Удалить", (dialog, which) -> {
+            viewModel.confirmedDebtDelete();
+        });
+
+        builderSingle.show();
     }
 
     private void setFields(Person person) {
