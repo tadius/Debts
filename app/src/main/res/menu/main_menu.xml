@@ -5,7 +5,38 @@
         android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort"
         android:title="@string/menu_sort"
-        app:showAsAction="always|withText" />
+        app:showAsAction="ifRoom|withText">
+        <menu>
+            <group
+                android:id="@+id/group_sort"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/byDateOfStart"
+                    android:title="по дате начала ▲" />
+                <item
+                    android:id="@+id/byDateOfStartDesc"
+                    android:title="по дате начала ▼" />
+                <item
+                    android:id="@+id/byDateOfExpiration"
+                    android:title="по дате ожидания ▲" />
+                <item
+                    android:id="@+id/byDateOfExpirationDesc"
+                    android:title="по дате ожидания ▼" />
+                <item
+                    android:id="@+id/byDateOfEnd"
+                    android:title="по дате возврата ▲" />
+                <item
+                    android:id="@+id/byDateOfEndDesc"
+                    android:title="по дате возврата ▼" />
+                <item
+                    android:id="@+id/byAmount"
+                    android:title="по сумме ▲" />
+                <item
+                    android:id="@+id/byAmountDesc"
+                    android:title="по сумме ▼" />
+            </group>
+        </menu>
+    </item>
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter"

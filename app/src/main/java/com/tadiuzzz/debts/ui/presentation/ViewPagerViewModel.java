@@ -28,8 +28,9 @@ public class ViewPagerViewModel extends AndroidViewModel {
     private SingleLiveEvent<Void> navigateToBackupRestoreScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> showFilterDialog = new SingleLiveEvent<>();
-    private SingleLiveEvent<Integer> showSortDialog = new SingleLiveEvent<>();
 
+
+    private MutableLiveData<Integer> sortMenuCheckedItem = new MutableLiveData<>();
     private MutableLiveData<String> sortMenuTitle = new MutableLiveData<>();
     private MutableLiveData<Integer> sortMenuIcon = new MutableLiveData<>();
 
@@ -83,6 +84,10 @@ public class ViewPagerViewModel extends AndroidViewModel {
         return sortMenuTitle;
     }
 
+    public LiveData<Integer> getSortMenuCheckedItem() {
+        return sortMenuCheckedItem;
+    }
+
     public LiveData<Integer> getSortMenuIcon() {
         return sortMenuIcon;
     }
@@ -107,16 +112,8 @@ public class ViewPagerViewModel extends AndroidViewModel {
         return navigateToAboutScreen;
     }
 
-    public SingleLiveEvent getShowSortDialogEvent() {
-        return showSortDialog;
-    }
-
     public SingleLiveEvent getShowFilterDialogEvent() {
         return showFilterDialog;
-    }
-
-    public void clickedOnSortMenu() {
-        showSortDialog.callWithArgument(SortingManager.getInstance().getSortBy());
     }
 
     public void clickedOnFilterMenu() {
@@ -144,6 +141,7 @@ public class ViewPagerViewModel extends AndroidViewModel {
     }
 
     public void pickedSortBy(int sortBy, String sortTitle) {
+        sortMenuCheckedItem.setValue(sortBy);
         SortingManager.getInstance().setSortBy(sortBy, sortTitle);
     }
 
@@ -152,7 +150,5 @@ public class ViewPagerViewModel extends AndroidViewModel {
         super.onCleared();
         disposables.clear();
     }
-
-
 
 }
