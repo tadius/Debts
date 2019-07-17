@@ -44,6 +44,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dagger.android.support.DaggerFragment;
 
+import static android.app.AlertDialog.*;
 import static com.tadiuzzz.debts.utils.Constants.*;
 
 public class ViewPagerFragment extends DaggerFragment {
@@ -56,9 +57,7 @@ public class ViewPagerFragment extends DaggerFragment {
     private ViewPagerAdapter viewPagerAdapter;
 
     private Menu menu;
-
-    private List<Category> listOfCategories = new ArrayList<>();
-
+    
     @BindView(R.id.viewPager)
     ViewPager viewPager;
     @BindView(R.id.tabs)
@@ -83,8 +82,6 @@ public class ViewPagerFragment extends DaggerFragment {
 
         setupViewPager();
 
-        subscribeOnData();
-
         subscribeOnDialogsEvents();
 
         subscribeOnNavigationEvents();
@@ -95,10 +92,6 @@ public class ViewPagerFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    private void subscribeOnData() {
-        viewModel.getListOfCategories().observe(getViewLifecycleOwner(), categories -> listOfCategories = categories);
     }
 
     private void subscribeOnTitleChangeEvent() {
@@ -128,57 +121,45 @@ public class ViewPagerFragment extends DaggerFragment {
 
     private void showFilterCategoryDialog(List<Category> filteredCategories) {
 
+        viewModel.getListOfCategories().observe(getViewLifecycleOwner(), listOfCategories -> {
+
+
+
         ArrayList<Category> selectedCategories = new ArrayList<>();
         String[] allCategories = new String[listOfCategories.size()];
         boolean[] checkedCategories = new boolean[listOfCategories.size()];
 
+        //Заполняем массив checkedCategories исходя из переданного списка фильтрованных категорий (чтобы установить галочки)
         for (int i = 0; i < listOfCategories.size(); i++) {
             for (Category filteredCategory : filteredCategories) {
-                if(filteredCategory.getId() == listOfCategories.get(i).getId())
+                if (filteredCategory.getId() == listOfCategories.get(i).getId())
                     checkedCategories[i] = true;
             }
         }
 
+        //Приводим список объектов Категория к списку названий категорий
         for (int i = 0; i < listOfCategories.size(); i++) {
             allCategories[i] = listOfCategories.get(i).getName();
-
         }
 
-//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_multichoice);
-//        arrayAdapter.addAll(allCategories);
+        Builder builder = new Builder(getActivity())
+                .setTitle("Фильтр по категориям:")
+                .setMultiChoiceItems(allCategories, checkedCategories, (dialog, which, isChecked) -> checkedCategories[which] = isChecked)
+                .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("ОК", (dialog, which) -> {
+                    for (int i = 0; i < checkedCategories.length; i++) {
+                        if (checkedCategories[i]) {
+                            selectedCategories.add(listOfCategories.get(i));
+                        }
+                    }
+                    viewModel.selectedFilteredCategories(selectedCategories);
+                })
+                .setNeutralButton("Отметить все", (dialog, which) -> {
+                    viewModel.clearCategoriesFilter();
+                });
 
-        android.app.AlertDialog.Builder builderSingle = new android.app.AlertDialog.Builder(getActivity());
-        builderSingle.setTitle("Фильтр по категориям:");
-        builderSingle.setMultiChoiceItems(allCategories, checkedCategories, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                checkedCategories[which] = isChecked;
-            }
+        builder.show();
         });
-
-        //        builderSingle.setAdapter(arrayAdapter, null);
-
-        builderSingle.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
-
-        builderSingle.setPositiveButton("ОК", (dialog, which) -> {
-            for (int i = 0; i < checkedCategories.length; i++) {
-                if(checkedCategories[i]) {
-                    selectedCategories.add(listOfCategories.get(i));
-                }
-            }
-            viewModel.selectedFilteredCategories(selectedCategories);
-//            int selectedPosition = ((android.app.AlertDialog)dialog).getListView().getCheckedItemPosition();
-//            viewModel.pickedFileToRestore(listOfFiles.get(selectedPosition));
-        });
-
-        builderSingle.setNeutralButton("Сбросить", (dialog, which) -> {
-            viewModel.clearCategoriesFilter();
-//            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
-//            viewModel.pickedFileToDelete(listOfFiles.get(selectedPosition));
-        });
-
-
-        builderSingle.show();
     }
 
     private void setupViewPager() {

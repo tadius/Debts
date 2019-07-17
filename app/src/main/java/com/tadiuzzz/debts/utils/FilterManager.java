@@ -16,21 +16,16 @@ import io.reactivex.subjects.BehaviorSubject;
  */
 public class FilterManager {
 
-    private DebtRepository debtRepository;
-
     private List<Category> filteredCategories;
 
     @Inject
-    public FilterManager(DebtRepository debtRepository) {
-        this.debtRepository = debtRepository;
+    public FilterManager() {
         filteredCategories = new ArrayList<>();
-//        filteredCategories = debtRepository.getAllCategories().observeOn()
     }
 
     public List<Category> getFilteredCategories() {
         return filteredCategories;
     }
-
 
     public void setFilteredCategories(List<Category> selectedCategories) {
         filteredCategories = selectedCategories;

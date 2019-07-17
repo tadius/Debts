@@ -36,8 +36,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    FilterManager provideFilterManager(DebtRepository debtRepository) {
-        return new FilterManager(debtRepository);
+    FilterManager provideFilterManager() {
+        return new FilterManager();
     }
 
     @Singleton

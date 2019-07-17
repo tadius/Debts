@@ -209,7 +209,7 @@ public class ViewPagerViewModel extends ViewModel {
     }
 
 
-    public void selectedFilteredCategories(ArrayList<Category> selectedCategories) {
+    public void selectedFilteredCategories(List<Category> selectedCategories) {
         filterManager.setFilteredCategories(selectedCategories);
         sortingManager.refreshSortingComparator();
     }
