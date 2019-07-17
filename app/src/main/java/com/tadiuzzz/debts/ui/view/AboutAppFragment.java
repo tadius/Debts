@@ -11,23 +11,28 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 25.06.2019.
  */
-public class AboutAppFragment extends Fragment {
+public class AboutAppFragment extends DaggerFragment {
 
     private AboutAppViewModel viewModel;
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     @BindView(R.id.tvAppVersion)
     TextView tvAppVersion;
@@ -44,7 +49,7 @@ public class AboutAppFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about_app, container, false);
 
-        viewModel = ViewModelProviders.of(this).get(AboutAppViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(AboutAppViewModel.class);
 
         ButterKnife.bind(this, view);
 

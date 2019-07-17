@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.di;
 
 import com.tadiuzzz.debts.MainActivity;
+import com.tadiuzzz.debts.di.main.MainFragmentBuildersModule;
 import com.tadiuzzz.debts.di.main.MainViewModelsModule;
 
 import dagger.Module;
@@ -14,7 +15,10 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector(
-            modules = {MainViewModelsModule.class}
+            modules = {
+                    MainViewModelsModule.class,
+                    MainFragmentBuildersModule.class
+            }
     )
     abstract MainActivity contributeMainActivity();
 

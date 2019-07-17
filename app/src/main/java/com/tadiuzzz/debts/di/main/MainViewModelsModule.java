@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.MainViewModel;
 import com.tadiuzzz.debts.di.ViewModelKey;
+import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -19,4 +20,9 @@ public abstract class MainViewModelsModule {
     @IntoMap
     @ViewModelKey(MainViewModel.class)
     public abstract ViewModel bindMainViewModel(MainViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AboutAppViewModel.class)
+    public abstract ViewModel bindAboutAppViewModel(AboutAppViewModel viewModel);
 }
