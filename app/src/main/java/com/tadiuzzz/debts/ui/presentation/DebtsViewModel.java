@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
@@ -16,6 +17,8 @@ import com.tadiuzzz.debts.utils.SortingManager;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -30,22 +33,23 @@ import static com.tadiuzzz.debts.utils.Constants.*;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class DebtsViewModel extends AndroidViewModel {
+public class DebtsViewModel extends ViewModel {
 
     private CompositeDisposable disposables;
 
-    DebtRepository debtRepository;
+    private DebtRepository debtRepository;
+
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<DebtPOJO>> listOfDebtPOJOS = new MutableLiveData<>();
     private boolean amIBorrower;
 
-    public DebtsViewModel(@NonNull Application application) {
-        super(application);
+    @Inject
+    public DebtsViewModel(DebtRepository debtRepository) {
+
+        this.debtRepository = debtRepository;
 
         disposables = new CompositeDisposable();
-
-        debtRepository = new DebtRepository(application);
 
         disposables.add(SortingManager.getInstance().getComparator().subscribeWith(new DisposableObserver<Comparator<DebtPOJO>>() {
             @Override
