@@ -2,6 +2,7 @@ package com.tadiuzzz.debts.di.main;
 
 import com.tadiuzzz.debts.ui.view.AboutAppFragment;
 import com.tadiuzzz.debts.ui.view.BackupRestoreFragment;
+import com.tadiuzzz.debts.ui.view.CategoriesFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -17,4 +18,7 @@ public abstract class MainFragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract BackupRestoreFragment contributeBackupRestoreFragment();
+
+    @ContributesAndroidInjector
+    abstract CategoriesFragment contributeCategoriesFragment();
 }

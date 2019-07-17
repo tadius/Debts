@@ -1,11 +1,13 @@
 package com.tadiuzzz.debts.ui.presentation;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
@@ -13,6 +15,8 @@ import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -22,23 +26,25 @@ import io.reactivex.subscribers.DisposableSubscriber;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class CategoriesViewModel extends AndroidViewModel {
+public class CategoriesViewModel extends ViewModel {
 
     private CompositeDisposable disposables;
 
-    DebtRepository debtRepository;
+    private DebtRepository debtRepository;
+
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
 
 
-    public CategoriesViewModel(@NonNull Application application) {
-        super(application);
+    @Inject
+    public CategoriesViewModel(DebtRepository debtRepository) {
+
+        this.debtRepository = debtRepository;
 
         disposables = new CompositeDisposable();
 
-        debtRepository = new DebtRepository(application);
         loadAllCategories();
     }
 

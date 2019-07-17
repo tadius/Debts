@@ -20,17 +20,24 @@ import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.adapter.CategoryAdapter;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class CategoriesFragment extends Fragment {
+public class CategoriesFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private CategoriesViewModel viewModel;
     private CategoryAdapter categoryAdapter;
@@ -53,7 +60,7 @@ public class CategoriesFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(CategoriesViewModel.class);
 
         Bundle bundle = getArguments();
         if (bundle != null) isPickingCategory = bundle.getBoolean("pickCategory", false);
