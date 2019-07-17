@@ -6,6 +6,7 @@ import android.content.Context;
 import com.tadiuzzz.debts.DebtsApplication;
 import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.utils.FilterManager;
 import com.tadiuzzz.debts.utils.SortingManager;
 
 import javax.inject.Singleton;
@@ -31,6 +32,12 @@ public class AppModule {
     @Provides
     SortingManager provideSortingManager() {
         return new SortingManager();
+    }
+
+    @Singleton
+    @Provides
+    FilterManager provideFilterManager(DebtRepository debtRepository) {
+        return new FilterManager(debtRepository);
     }
 
     @Singleton

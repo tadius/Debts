@@ -3,7 +3,10 @@ package com.tadiuzzz.debts.utils;
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -13,23 +16,23 @@ import io.reactivex.subjects.BehaviorSubject;
  */
 public class FilterManager {
 
-    private static final FilterManager INSTANCE = new FilterManager();
-    private BehaviorSubject<List<Category>> changeListOfCategories = BehaviorSubject.create();
-    private  DebtRepository repository;
+    private DebtRepository debtRepository;
 
-    public static FilterManager getInstance(){
-        return INSTANCE;
+    private List<Category> filteredCategories;
+
+    @Inject
+    public FilterManager(DebtRepository debtRepository) {
+        this.debtRepository = debtRepository;
+        filteredCategories = new ArrayList<>();
+//        filteredCategories = debtRepository.getAllCategories().observeOn()
     }
 
-    public void refreshListOfCategories() {
-//        DebtRepository
-//        changeListOfCategories.onNext(sortTitle);
-    }
-
-    public Observable<List<Category>> getListOfCategories() {
-        return changeListOfCategories;
+    public List<Category> getFilteredCategories() {
+        return filteredCategories;
     }
 
 
-
+    public void setFilteredCategories(List<Category> selectedCategories) {
+        filteredCategories = selectedCategories;
+    }
 }

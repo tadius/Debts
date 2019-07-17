@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
+import com.tadiuzzz.debts.utils.FilterManager;
 import com.tadiuzzz.debts.utils.SortingManager;
 
 import java.util.Comparator;
@@ -17,6 +19,7 @@ import javax.inject.Inject;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
@@ -30,6 +33,7 @@ public class DebtsViewModel extends ViewModel {
 
     private DebtRepository debtRepository;
     private SortingManager sortingManager;
+    private FilterManager filterManager;
 
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
@@ -37,10 +41,11 @@ public class DebtsViewModel extends ViewModel {
     private boolean amIBorrower;
 
     @Inject
-    public DebtsViewModel(DebtRepository debtRepository, SortingManager sortingManager) {
+    public DebtsViewModel(DebtRepository debtRepository, SortingManager sortingManager, FilterManager filterManager) {
 
         this.debtRepository = debtRepository;
         this.sortingManager = sortingManager;
+        this.filterManager = filterManager;
 
         disposables = new CompositeDisposable();
 
@@ -64,6 +69,12 @@ public class DebtsViewModel extends ViewModel {
         disposables.add(debtRepository.getAllDebtPOJOs()
                 .flatMap(debtPOJOS -> Flowable.fromIterable(debtPOJOS)
                         .filter(debtPOJO -> debtPOJO.getDebt().amIBorrower() == amIBorrower)
+                        .filter(debtPOJO -> {
+                            for (Category filteredCategory : filterManager.getFilteredCategories()) {
+                                if(filteredCategory.getId() == debtPOJO.getDebtCategory().getId()) return true;
+                            }
+                            return false;
+                        })
                         .toSortedList(comparator)
                         .toFlowable()
                 )

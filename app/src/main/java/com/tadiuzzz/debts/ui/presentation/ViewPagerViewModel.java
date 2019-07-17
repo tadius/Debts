@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import com.tadiuzzz.debts.utils.FilterManager;
@@ -23,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -30,6 +32,8 @@ import io.reactivex.schedulers.Schedulers;
 public class ViewPagerViewModel extends ViewModel {
 
     private SortingManager sortingManager;
+    private DebtRepository debtRepository;
+    private FilterManager filterManager;
 
     private CompositeDisposable disposables;
 
@@ -41,7 +45,7 @@ public class ViewPagerViewModel extends ViewModel {
 
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
 
-    private final MutableLiveData<Pair<ArrayList<Integer>, Boolean>> showFilterCategoryDialog = new MutableLiveData<>();
+    private final MutableLiveData<Pair<List<Category>, Boolean>> showFilterCategoryDialog = new MutableLiveData<>();
     private final MutableLiveData<Pair<String, Boolean>> showFilterPersonDialog = new MutableLiveData<>();
 
     private MutableLiveData<Integer> sortMenuCheckedItem = new MutableLiveData<>();
@@ -49,9 +53,11 @@ public class ViewPagerViewModel extends ViewModel {
     private MutableLiveData<Integer> sortMenuIcon = new MutableLiveData<>();
 
     @Inject
-    public ViewPagerViewModel(SortingManager sortingManager) {
+    public ViewPagerViewModel(DebtRepository debtRepository, SortingManager sortingManager, FilterManager filterManager) {
 
+        this.debtRepository = debtRepository;
         this.sortingManager = sortingManager;
+        this.filterManager = filterManager;
 
         disposables = new CompositeDisposable();
 
@@ -59,21 +65,21 @@ public class ViewPagerViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<Integer>() {
-            @Override
-            public void onNext(Integer integer) {
-                sortMenuIcon.setValue(integer);
-            }
+                    @Override
+                    public void onNext(Integer integer) {
+                        sortMenuIcon.setValue(integer);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
+                    @Override
+                    public void onError(Throwable e) {
 
-            }
+                    }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-            }
-        }));
+                    }
+                }));
 
         disposables.add(sortingManager.getSortTitle()
                 .subscribeOn(Schedulers.io())
@@ -95,23 +101,22 @@ public class ViewPagerViewModel extends ViewModel {
                     }
                 }));
 
-        disposables.add(FilterManager.getInstance().getListOfCategories()
+        disposables.add(debtRepository.getAllCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<List<Category>>() {
+                .subscribeWith(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
+                        filterManager.setFilteredCategories(categories);
                         listOfCategories.setValue(categories);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-
+                    public void onError(Throwable t) {
                     }
 
                     @Override
                     public void onComplete() {
-
                     }
                 }));
     }
@@ -132,7 +137,7 @@ public class ViewPagerViewModel extends ViewModel {
         return sortMenuIcon;
     }
 
-    public SingleLiveEvent getNavigateToEditDebtScreenEvent(){
+    public SingleLiveEvent getNavigateToEditDebtScreenEvent() {
         return navigateToEditDebtScreen;
     }
 
@@ -152,7 +157,7 @@ public class ViewPagerViewModel extends ViewModel {
         return navigateToAboutScreen;
     }
 
-    public LiveData<Pair<ArrayList<Integer>, Boolean>> getShowFilterCategoryDialogEvent() {
+    public LiveData<Pair<List<Category>, Boolean>> getShowFilterCategoryDialogEvent() {
         return showFilterCategoryDialog;
     }
 
@@ -165,7 +170,7 @@ public class ViewPagerViewModel extends ViewModel {
     }
 
     public void clickedOnFilterCategoryMenu() {
-//        showFilterCategoryDialog.postValue(FilterManager.getNumbersOfFilteredCategories(), true);
+        showFilterCategoryDialog.postValue(new Pair(filterManager.getFilteredCategories(), true));
     }
 
     public void clickedOnFilterPersonMenu() {
@@ -204,4 +209,29 @@ public class ViewPagerViewModel extends ViewModel {
     }
 
 
+    public void selectedFilteredCategories(ArrayList<Category> selectedCategories) {
+        filterManager.setFilteredCategories(selectedCategories);
+        sortingManager.refreshSortingComparator();
+    }
+
+    public void clearCategoriesFilter() {
+        disposables.add(debtRepository.getAllCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSubscriber<List<Category>>() {
+                    @Override
+                    public void onNext(List<Category> categories) {
+                        filterManager.setFilteredCategories(categories);
+                        sortingManager.refreshSortingComparator();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
+    }
 }

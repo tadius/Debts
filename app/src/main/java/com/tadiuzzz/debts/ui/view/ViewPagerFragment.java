@@ -1,6 +1,7 @@
 package com.tadiuzzz.debts.ui.view;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.MenuPopupWindow;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
@@ -26,10 +28,14 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.adapter.ViewPagerAdapter;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 import com.tadiuzzz.debts.ui.presentation.ViewPagerViewModel;
 import com.tadiuzzz.debts.utils.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -50,6 +56,8 @@ public class ViewPagerFragment extends DaggerFragment {
     private ViewPagerAdapter viewPagerAdapter;
 
     private Menu menu;
+
+    private List<Category> listOfCategories = new ArrayList<>();
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -90,7 +98,7 @@ public class ViewPagerFragment extends DaggerFragment {
     }
 
     private void subscribeOnData() {
-//        viewModel.getListOfCategories().observe;
+        viewModel.getListOfCategories().observe(getViewLifecycleOwner(), categories -> listOfCategories = categories);
     }
 
     private void subscribeOnTitleChangeEvent() {
@@ -112,29 +120,63 @@ public class ViewPagerFragment extends DaggerFragment {
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowFilterCategoryDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterCategoryDialog());
+        viewModel.getShowFilterCategoryDialogEvent().observe(getViewLifecycleOwner(), categoryBooleanPair -> {
+            if (categoryBooleanPair.second) showFilterCategoryDialog(categoryBooleanPair.first);
+        });
 //        viewModel.getShowFilterPersonDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterPersonDialog());
     }
 
-    private void showFilterCategoryDialog() {
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_multichoice);
-//        arrayAdapter.addAll(listOfFiles);
+    private void showFilterCategoryDialog(List<Category> filteredCategories) {
+
+        ArrayList<Category> selectedCategories = new ArrayList<>();
+        String[] allCategories = new String[listOfCategories.size()];
+        boolean[] checkedCategories = new boolean[listOfCategories.size()];
+
+        for (int i = 0; i < listOfCategories.size(); i++) {
+            for (Category filteredCategory : filteredCategories) {
+                if(filteredCategory.getId() == listOfCategories.get(i).getId())
+                    checkedCategories[i] = true;
+            }
+        }
+
+        for (int i = 0; i < listOfCategories.size(); i++) {
+            allCategories[i] = listOfCategories.get(i).getName();
+
+        }
+
+//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_multichoice);
+//        arrayAdapter.addAll(allCategories);
 
         android.app.AlertDialog.Builder builderSingle = new android.app.AlertDialog.Builder(getActivity());
-        builderSingle.setTitle("Резервная копия для восстановления:");
-        builderSingle.setSingleChoiceItems(arrayAdapter, 0, (dialog, which) -> {});
+        builderSingle.setTitle("Фильтр по категориям:");
+        builderSingle.setMultiChoiceItems(allCategories, checkedCategories, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                checkedCategories[which] = isChecked;
+            }
+        });
+
+        //        builderSingle.setAdapter(arrayAdapter, null);
 
         builderSingle.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
 
-        builderSingle.setPositiveButton("Восстановить", (dialog, which) -> {
-            int selectedPosition = ((android.app.AlertDialog)dialog).getListView().getCheckedItemPosition();
+        builderSingle.setPositiveButton("ОК", (dialog, which) -> {
+            for (int i = 0; i < checkedCategories.length; i++) {
+                if(checkedCategories[i]) {
+                    selectedCategories.add(listOfCategories.get(i));
+                }
+            }
+            viewModel.selectedFilteredCategories(selectedCategories);
+//            int selectedPosition = ((android.app.AlertDialog)dialog).getListView().getCheckedItemPosition();
 //            viewModel.pickedFileToRestore(listOfFiles.get(selectedPosition));
         });
 
-        builderSingle.setNeutralButton("Удалить", (dialog, which) -> {
-            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+        builderSingle.setNeutralButton("Сбросить", (dialog, which) -> {
+            viewModel.clearCategoriesFilter();
+//            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
 //            viewModel.pickedFileToDelete(listOfFiles.get(selectedPosition));
         });
+
 
         builderSingle.show();
     }
