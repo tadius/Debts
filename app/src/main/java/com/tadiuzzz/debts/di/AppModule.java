@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.tadiuzzz.debts.DebtsApplication;
+import com.tadiuzzz.debts.data.CacheEditing;
 import com.tadiuzzz.debts.data.DebtRepository;
 
 import javax.inject.Singleton;
@@ -27,7 +28,13 @@ public class AppModule {
 
     @Singleton
     @Provides
-    DebtRepository provideDebtRepository(Application application) {
-        return new DebtRepository(application);
+    CacheEditing provideCacheEditing() {
+        return new CacheEditing();
+    }
+
+    @Singleton
+    @Provides
+    DebtRepository provideDebtRepository(Application application, CacheEditing cacheEditing) {
+        return new DebtRepository(application, cacheEditing);
     }
 }

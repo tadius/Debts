@@ -31,19 +31,26 @@ import androidx.navigation.Navigation;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.presentation.EditDebtViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditDebtFragment extends Fragment {
+public class EditDebtFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private EditDebtViewModel viewModel;
 
@@ -131,7 +138,7 @@ public class EditDebtFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(EditDebtViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(EditDebtViewModel.class);
 
         setUpEditFieldsListeners();
 

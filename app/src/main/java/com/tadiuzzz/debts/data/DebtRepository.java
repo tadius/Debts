@@ -23,6 +23,8 @@ import io.reactivex.Maybe;
  */
 public class DebtRepository {
 
+    private CacheEditing cacheEditing;
+
     private DebtDao debtDao;
     private PersonDao personDao;
     private CategoryDao categoryDao;
@@ -32,9 +34,9 @@ public class DebtRepository {
     private Flowable<List<Category>> allCategories;
     private Flowable<List<DebtPOJO>> allDebtPOJOs;
 
-    private DebtPOJO cachedDebtPOJO;
+    public DebtRepository(Application application, CacheEditing cacheEditing) {
+        this.cacheEditing = cacheEditing;
 
-    public DebtRepository(Application application) {
         DebtsDatabase database = DebtsDatabase.getInstance(application);
         debtDao = database.debtDao();
         personDao = database.personDao();
@@ -44,8 +46,6 @@ public class DebtRepository {
         allDebtPOJOs = debtPOJODao.getAllDebtPOJOs();
         allPersons = personDao.getAllPersons();
         allCategories = categoryDao.getAllCategories();
-
-        cachedDebtPOJO = CacheEditing.getInstance().getCachedDebtPOJO();
     }
 
     public Flowable<List<DebtPOJO>> getAllDebtPOJOs() {
@@ -109,15 +109,15 @@ public class DebtRepository {
     }
 
     public DebtPOJO getCachedDebtPOJO(){
-        return cachedDebtPOJO;
+        return cacheEditing.getCachedDebtPOJO();
     }
 
     public void putDebtPOJOtoCache(DebtPOJO debtPOJO){
-        CacheEditing.getInstance().putDebtPOJOToCache(debtPOJO);
+        cacheEditing.putDebtPOJOToCache(debtPOJO);
     }
 
     public void clearDebtPOJOCache(){
-        CacheEditing.getInstance().clearCachedDebtPOJO();
+        cacheEditing.clearCachedDebtPOJO();
     }
 
 }

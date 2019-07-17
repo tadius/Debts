@@ -6,12 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.Calendar;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -21,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditDebtViewModel extends AndroidViewModel {
+public class EditDebtViewModel extends ViewModel {
     public static final String TAG = "logTag";
 
     public final int TYPE_OF_DATE_START = 100;
@@ -30,7 +33,8 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     private CompositeDisposable disposables;
 
-    DebtRepository debtRepository;
+    private DebtRepository debtRepository;
+
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPersonsList = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToCategoryList = new SingleLiveEvent<>();
@@ -45,12 +49,12 @@ public class EditDebtViewModel extends AndroidViewModel {
 
     private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
 
-    public EditDebtViewModel(@NonNull Application application) {
-        super(application);
+    @Inject
+    public EditDebtViewModel(DebtRepository debtRepository) {
+        this.debtRepository = debtRepository;
 
         disposables = new CompositeDisposable();
 
-        debtRepository = new DebtRepository(application);
         loadCachedDebtPOJO();
     }
 

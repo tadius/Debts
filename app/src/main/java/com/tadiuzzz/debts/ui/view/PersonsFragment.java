@@ -19,15 +19,22 @@ import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
 import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class PersonsFragment extends Fragment {
+public class PersonsFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private PersonsViewModel viewModel;
     private PersonAdapter personAdapter;
@@ -50,7 +57,7 @@ public class PersonsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(PersonsViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(PersonsViewModel.class);
 
         Bundle bundle = getArguments();
         if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);

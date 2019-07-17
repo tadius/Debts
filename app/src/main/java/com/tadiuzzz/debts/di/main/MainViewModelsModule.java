@@ -9,6 +9,9 @@ import com.tadiuzzz.debts.ui.presentation.BackupRestoreViewModel;
 import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
 import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
+import com.tadiuzzz.debts.ui.presentation.EditDebtViewModel;
+import com.tadiuzzz.debts.ui.presentation.EditPersonViewModel;
+import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -49,4 +52,19 @@ public abstract class MainViewModelsModule {
     @IntoMap
     @ViewModelKey(EditCategoryViewModel.class)
     public abstract ViewModel bindEditCategoryViewModel(EditCategoryViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditDebtViewModel.class)
+    public abstract ViewModel bindEditDebtViewModel(EditDebtViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditPersonViewModel.class)
+    public abstract ViewModel bindEditPersonViewModel(EditPersonViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PersonsViewModel.class)
+    public abstract ViewModel bindPersonsViewModel(PersonsViewModel viewModel);
 }

@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Observable;
 
+import javax.inject.Inject;
+
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 
@@ -18,17 +20,12 @@ import io.reactivex.Maybe;
  */
 public class CacheEditing {
 
-    private static final CacheEditing INSTANCE = new CacheEditing();
-
     private DebtPOJO debtPOJO;
 
-    private CacheEditing(){
+    @Inject
+    public CacheEditing(){
         // Создаем пустой объект кэша, чтобы не было NPE при заполнении полей до выбора категории, персоны
         clearCachedDebtPOJO();
-    }
-
-    public static CacheEditing getInstance(){
-        return INSTANCE;
     }
 
     public DebtPOJO getCachedDebtPOJO() {

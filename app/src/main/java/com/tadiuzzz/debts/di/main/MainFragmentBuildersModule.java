@@ -5,6 +5,9 @@ import com.tadiuzzz.debts.ui.view.BackupRestoreFragment;
 import com.tadiuzzz.debts.ui.view.CategoriesFragment;
 import com.tadiuzzz.debts.ui.view.DebtsFragment;
 import com.tadiuzzz.debts.ui.view.EditCategoryFragment;
+import com.tadiuzzz.debts.ui.view.EditDebtFragment;
+import com.tadiuzzz.debts.ui.view.EditPersonFragment;
+import com.tadiuzzz.debts.ui.view.PersonsFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -29,4 +32,13 @@ public abstract class MainFragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract EditCategoryFragment contributeEditCategoryFragment();
+
+    @ContributesAndroidInjector
+    abstract EditDebtFragment contributeEditDebtFragment();
+
+    @ContributesAndroidInjector
+    abstract EditPersonFragment contributeEditPersonFragment();
+
+    @ContributesAndroidInjector
+    abstract PersonsFragment contributePersonsFragment();
 }
