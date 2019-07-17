@@ -1,12 +1,7 @@
 package com.tadiuzzz.debts.ui.presentation;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
@@ -14,7 +9,6 @@ import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import com.tadiuzzz.debts.utils.SortingManager;
 
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
@@ -23,12 +17,9 @@ import javax.inject.Inject;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
-
-import static com.tadiuzzz.debts.utils.Constants.*;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
@@ -38,6 +29,7 @@ public class DebtsViewModel extends ViewModel {
     private CompositeDisposable disposables;
 
     private DebtRepository debtRepository;
+    private SortingManager sortingManager;
 
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
@@ -45,13 +37,14 @@ public class DebtsViewModel extends ViewModel {
     private boolean amIBorrower;
 
     @Inject
-    public DebtsViewModel(DebtRepository debtRepository) {
+    public DebtsViewModel(DebtRepository debtRepository, SortingManager sortingManager) {
 
         this.debtRepository = debtRepository;
+        this.sortingManager = sortingManager;
 
         disposables = new CompositeDisposable();
 
-        disposables.add(SortingManager.getInstance().getComparator().subscribeWith(new DisposableObserver<Comparator<DebtPOJO>>() {
+        disposables.add(sortingManager.getComparator().subscribeWith(new DisposableObserver<Comparator<DebtPOJO>>() {
             @Override
             public void onNext(Comparator<DebtPOJO> comparator) {
                 loadAllDebtPOJOs(comparator);

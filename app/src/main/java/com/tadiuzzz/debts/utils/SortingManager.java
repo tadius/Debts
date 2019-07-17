@@ -24,8 +24,6 @@ import static com.tadiuzzz.debts.utils.Constants.SORT_MENU_ICON_DESC;
  */
 public class SortingManager {
 
-    private static final SortingManager INSTANCE = new SortingManager();
-
     private BehaviorSubject<Comparator<DebtPOJO>> changeObservable = BehaviorSubject.create();
     private BehaviorSubject<Integer> changeSortIcon = BehaviorSubject.create();
     private BehaviorSubject<String> changeSortTitle = BehaviorSubject.create();
@@ -37,12 +35,8 @@ public class SortingManager {
     private Integer sortIcon = SORT_MENU_ICON;
     private String sortTitle = "";
 
-    private SortingManager(){
+    public SortingManager(){
         refreshSortingComparator();
-    }
-
-    public static SortingManager getInstance(){
-        return INSTANCE;
     }
 
     public Integer getSortBy() {

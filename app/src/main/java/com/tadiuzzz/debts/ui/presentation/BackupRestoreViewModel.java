@@ -43,6 +43,8 @@ public class BackupRestoreViewModel extends ViewModel {
     private final String DATABASE_NAME_SHM = "debts_database-shm";
     private final String DATABASE_NAME_WAL = "debts_database-wal";
 
+    private SortingManager sortingManager;
+
     private CompositeDisposable disposables;
 
     //    FilesRepository filesRepository;
@@ -61,8 +63,9 @@ public class BackupRestoreViewModel extends ViewModel {
     private MutableLiveData<List<String>> listOfFiles = new MutableLiveData<>();
 
     @Inject
-    public BackupRestoreViewModel(Context context) {
+    public BackupRestoreViewModel(Context context, SortingManager sortingManager) {
         this.context = context;
+        this.sortingManager = sortingManager;
         disposables = new CompositeDisposable();
         pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name);
     }
@@ -224,7 +227,7 @@ public class BackupRestoreViewModel extends ViewModel {
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME_SHM, outFileNameSHM);
         FileUtils.copyFile(pathToBackupLocation + DATABASE_NAME_WAL, outFileNameWAL);
 
-        SortingManager.getInstance().refreshSortingComparator(); //для того, чтобы после восстановления список долгов обновился
+        sortingManager.refreshSortingComparator(); //для того, чтобы после восстановления список долгов обновился
     }
 
     public void pickedFileToDelete(String nameOfBackupFolder) {

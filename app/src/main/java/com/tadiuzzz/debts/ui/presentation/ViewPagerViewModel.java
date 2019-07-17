@@ -29,6 +29,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ViewPagerViewModel extends ViewModel {
 
+    private SortingManager sortingManager;
+
     private CompositeDisposable disposables;
 
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
@@ -47,11 +49,13 @@ public class ViewPagerViewModel extends ViewModel {
     private MutableLiveData<Integer> sortMenuIcon = new MutableLiveData<>();
 
     @Inject
-    public ViewPagerViewModel() {
+    public ViewPagerViewModel(SortingManager sortingManager) {
+
+        this.sortingManager = sortingManager;
 
         disposables = new CompositeDisposable();
 
-        disposables.add(SortingManager.getInstance().getSortIcon()
+        disposables.add(sortingManager.getSortIcon()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<Integer>() {
@@ -71,7 +75,7 @@ public class ViewPagerViewModel extends ViewModel {
             }
         }));
 
-        disposables.add(SortingManager.getInstance().getSortTitle()
+        disposables.add(sortingManager.getSortTitle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<String>() {
@@ -190,7 +194,7 @@ public class ViewPagerViewModel extends ViewModel {
 
     public void pickedSortBy(int sortBy, String sortTitle) {
         sortMenuCheckedItem.setValue(sortBy);
-        SortingManager.getInstance().setSortBy(sortBy, sortTitle);
+        sortingManager.setSortBy(sortBy, sortTitle);
     }
 
     @Override
