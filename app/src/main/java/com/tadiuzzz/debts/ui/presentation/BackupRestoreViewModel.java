@@ -12,6 +12,7 @@ import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.utils.FileUtils;
 import com.tadiuzzz.debts.R;
@@ -25,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -34,7 +37,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class BackupRestoreViewModel extends AndroidViewModel {
+public class BackupRestoreViewModel extends ViewModel {
 
     private final String DATABASE_NAME = "debts_database";
     private final String DATABASE_NAME_SHM = "debts_database-shm";
@@ -57,11 +60,11 @@ public class BackupRestoreViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<String>> listOfFiles = new MutableLiveData<>();
 
-    public BackupRestoreViewModel(@NonNull Application application) {
-        super(application);
-        this.context = application.getApplicationContext();
+    @Inject
+    public BackupRestoreViewModel(Context context) {
+        this.context = context;
         disposables = new CompositeDisposable();
-        pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + application.getResources().getString(R.string.app_name);
+        pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name);
     }
 
     private void loadListOfFiles() {

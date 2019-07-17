@@ -26,20 +26,28 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
 import com.tadiuzzz.debts.ui.presentation.BackupRestoreViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class BackupRestoreFragment extends Fragment {
+public class BackupRestoreFragment extends DaggerFragment {
 
     private final int REQUEST_PERMISSION_CODE = 222;
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private BackupRestoreViewModel viewModel;
     private List<String> listOfFiles;
@@ -68,7 +76,7 @@ public class BackupRestoreFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(BackupRestoreViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(BackupRestoreViewModel.class);
 
         subscribeOnData();
 
