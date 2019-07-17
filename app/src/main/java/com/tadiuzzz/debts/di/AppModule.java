@@ -1,5 +1,6 @@
 package com.tadiuzzz.debts.di;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.tadiuzzz.debts.DebtsApplication;
@@ -18,14 +19,15 @@ public class AppModule {
 
     // к данным объектам будут иметь доступ абсолютно все
 
+    @Singleton
     @Provides
-    Context provideContext(DebtsApplication application) {
+    Context provideContext(Application application) {
         return application.getApplicationContext();
     }
 
     @Singleton
     @Provides
-    DebtRepository provideDebtRepository(DebtsApplication application) {
+    DebtRepository provideDebtRepository(Application application) {
         return new DebtRepository(application);
     }
 }

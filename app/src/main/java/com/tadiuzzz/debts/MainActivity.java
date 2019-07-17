@@ -1,39 +1,53 @@
 package com.tadiuzzz.debts;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.michaelflisar.changelog.ChangelogBuilder;
 import com.michaelflisar.changelog.internal.ChangelogDialogFragment;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
-import dagger.android.AndroidInjection;
+import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class MainActivity extends DaggerAppCompatActivity {
 
     NavController navController;
 
     public static final int REQUEST_CODE_PERMISSIONS = 2;
 
+    private MainViewModel viewModel;
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
+
+    @Inject
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //Dagger injection
-        AndroidInjection.inject(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        viewModel = ViewModelProviders.of(this, providerFactory).get(MainViewModel.class);
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         showChangelog();
 
         NavigationUI.setupActionBarWithNavController(this, navController);
+
+        Toast.makeText(context, "Context!!!", Toast.LENGTH_SHORT).show();
+
     }
 
     private void showChangelog() {
