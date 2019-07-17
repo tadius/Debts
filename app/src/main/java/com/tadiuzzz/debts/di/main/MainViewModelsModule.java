@@ -8,6 +8,7 @@ import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
 import com.tadiuzzz.debts.ui.presentation.BackupRestoreViewModel;
 import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.ui.presentation.DebtsViewModel;
+import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -43,4 +44,9 @@ public abstract class MainViewModelsModule {
     @IntoMap
     @ViewModelKey(DebtsViewModel.class)
     public abstract ViewModel bindDebtsViewModel(DebtsViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditCategoryViewModel.class)
+    public abstract ViewModel bindEditCategoryViewModel(EditCategoryViewModel viewModel);
 }

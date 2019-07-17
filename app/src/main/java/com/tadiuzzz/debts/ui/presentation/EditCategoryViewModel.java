@@ -6,10 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -20,11 +23,11 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditCategoryViewModel extends AndroidViewModel {
+public class EditCategoryViewModel extends ViewModel {
 
     private CompositeDisposable disposables;
 
-    DebtRepository debtRepository;
+    private DebtRepository debtRepository;
 
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
@@ -33,12 +36,12 @@ public class EditCategoryViewModel extends AndroidViewModel {
 
     private MutableLiveData<Category> loadedLiveDataCategory = new MutableLiveData<>();
 
-    public EditCategoryViewModel(@NonNull Application application) {
-        super(application);
+    @Inject
+    public EditCategoryViewModel(DebtRepository debtRepository) {
+        this.debtRepository = debtRepository;
 
         disposables = new CompositeDisposable();
 
-        debtRepository = new DebtRepository(application);
     }
 
     public void gotPickedCategory(int categoryId) { //Подгружаем из базы выбранную категорию в объект LiveData

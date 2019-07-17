@@ -22,15 +22,22 @@ import androidx.navigation.Navigation;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditCategoryFragment extends Fragment {
+public class EditCategoryFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private EditCategoryViewModel viewModel;
 
@@ -60,7 +67,7 @@ public class EditCategoryFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(EditCategoryViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(EditCategoryViewModel.class);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
