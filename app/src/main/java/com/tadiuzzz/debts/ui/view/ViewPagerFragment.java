@@ -1,5 +1,6 @@
 package com.tadiuzzz.debts.ui.view;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.MenuPopupWindow;
 import androidx.fragment.app.Fragment;
@@ -27,16 +27,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.ui.adapter.ViewPagerAdapter;
+import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 import com.tadiuzzz.debts.ui.presentation.ViewPagerViewModel;
 import com.tadiuzzz.debts.utils.Constants;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerFragment;
 
 import static com.tadiuzzz.debts.utils.Constants.*;
 
-public class ViewPagerFragment extends Fragment {
+public class ViewPagerFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
 
     private ViewPagerViewModel viewModel;
 
@@ -62,11 +69,13 @@ public class ViewPagerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
         setHasOptionsMenu(true);
 
-        viewModel = ViewModelProviders.of(this).get(ViewPagerViewModel.class);
+        viewModel = ViewModelProviders.of(this, providerFactory).get(ViewPagerViewModel.class);
 
         ButterKnife.bind(this, view);
 
         setupViewPager();
+
+        subscribeOnData();
 
         subscribeOnDialogsEvents();
 
@@ -78,6 +87,10 @@ public class ViewPagerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    private void subscribeOnData() {
+//        viewModel.getListOfCategories().observe;
     }
 
     private void subscribeOnTitleChangeEvent() {
@@ -99,7 +112,31 @@ public class ViewPagerFragment extends Fragment {
     }
 
     private void subscribeOnDialogsEvents() {
-        viewModel.getShowFilterDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterDialog());
+        viewModel.getShowFilterCategoryDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterCategoryDialog());
+//        viewModel.getShowFilterPersonDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterPersonDialog());
+    }
+
+    private void showFilterCategoryDialog() {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_multichoice);
+//        arrayAdapter.addAll(listOfFiles);
+
+        android.app.AlertDialog.Builder builderSingle = new android.app.AlertDialog.Builder(getActivity());
+        builderSingle.setTitle("Резервная копия для восстановления:");
+        builderSingle.setSingleChoiceItems(arrayAdapter, 0, (dialog, which) -> {});
+
+        builderSingle.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
+
+        builderSingle.setPositiveButton("Восстановить", (dialog, which) -> {
+            int selectedPosition = ((android.app.AlertDialog)dialog).getListView().getCheckedItemPosition();
+//            viewModel.pickedFileToRestore(listOfFiles.get(selectedPosition));
+        });
+
+        builderSingle.setNeutralButton("Удалить", (dialog, which) -> {
+            int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+//            viewModel.pickedFileToDelete(listOfFiles.get(selectedPosition));
+        });
+
+        builderSingle.show();
     }
 
     private void setupViewPager() {
@@ -126,8 +163,14 @@ public class ViewPagerFragment extends Fragment {
             return true;
         } else {
             switch (item.getItemId()) {
-                case R.id.menu_filter:
-                    viewModel.clickedOnFilterMenu();
+                case R.id.filter_active:
+                    viewModel.clickedOnFilterActiveMenu();
+                    return true;
+                case R.id.filter_category:
+                    viewModel.clickedOnFilterCategoryMenu();
+                    return true;
+                case R.id.filter_person:
+                    viewModel.clickedOnFilterPersonMenu();
                     return true;
                 case R.id.menu_persons:
                     viewModel.clickedOnPersonsMenu();
@@ -145,10 +188,6 @@ public class ViewPagerFragment extends Fragment {
                     return super.onOptionsItemSelected(item);
             }
         }
-    }
-
-    private void showFilterDialog() {
-        Toast.makeText(getActivity(), "FILTER CLICKED", Toast.LENGTH_SHORT).show();
     }
 
     @Override

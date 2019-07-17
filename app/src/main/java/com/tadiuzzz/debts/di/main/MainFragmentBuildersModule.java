@@ -8,6 +8,7 @@ import com.tadiuzzz.debts.ui.view.EditCategoryFragment;
 import com.tadiuzzz.debts.ui.view.EditDebtFragment;
 import com.tadiuzzz.debts.ui.view.EditPersonFragment;
 import com.tadiuzzz.debts.ui.view.PersonsFragment;
+import com.tadiuzzz.debts.ui.view.ViewPagerFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -41,4 +42,7 @@ public abstract class MainFragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract PersonsFragment contributePersonsFragment();
+
+    @ContributesAndroidInjector
+    abstract ViewPagerFragment contributeViewPagerFragment();
 }

@@ -12,6 +12,7 @@ import com.tadiuzzz.debts.ui.presentation.EditCategoryViewModel;
 import com.tadiuzzz.debts.ui.presentation.EditDebtViewModel;
 import com.tadiuzzz.debts.ui.presentation.EditPersonViewModel;
 import com.tadiuzzz.debts.ui.presentation.PersonsViewModel;
+import com.tadiuzzz.debts.ui.presentation.ViewPagerViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -67,4 +68,9 @@ public abstract class MainViewModelsModule {
     @IntoMap
     @ViewModelKey(PersonsViewModel.class)
     public abstract ViewModel bindPersonsViewModel(PersonsViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ViewPagerViewModel.class)
+    public abstract ViewModel bindViewPagerViewModel(ViewPagerViewModel viewModel);
 }

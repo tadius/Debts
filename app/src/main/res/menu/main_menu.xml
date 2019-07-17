@@ -11,28 +11,28 @@
                 android:id="@+id/group_sort"
                 android:checkableBehavior="single">
                 <item
-                    android:id="@+id/byDateOfStart"
+                    android:id="@+id/by_date_of_start"
                     android:title="по дате начала ▲" />
                 <item
-                    android:id="@+id/byDateOfStartDesc"
+                    android:id="@+id/by_date_of_start_desc"
                     android:title="по дате начала ▼" />
                 <item
-                    android:id="@+id/byDateOfExpiration"
+                    android:id="@+id/by_date_of_expiration"
                     android:title="по дате ожидания ▲" />
                 <item
-                    android:id="@+id/byDateOfExpirationDesc"
+                    android:id="@+id/by_date_of_expiration_desc"
                     android:title="по дате ожидания ▼" />
                 <item
-                    android:id="@+id/byDateOfEnd"
+                    android:id="@+id/by_date_of_end"
                     android:title="по дате возврата ▲" />
                 <item
-                    android:id="@+id/byDateOfEndDesc"
+                    android:id="@+id/by_date_of_end_desc"
                     android:title="по дате возврата ▼" />
                 <item
-                    android:id="@+id/byAmount"
+                    android:id="@+id/by_amount"
                     android:title="по сумме ▲" />
                 <item
-                    android:id="@+id/byAmountDesc"
+                    android:id="@+id/by_amount_desc"
                     android:title="по сумме ▼" />
             </group>
         </menu>
@@ -41,7 +41,21 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_filter"
-        app:showAsAction="always" />
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/filter_active"
+                android:checkable="true"
+                android:title="только активные" />
+            <item
+                android:id="@+id/filter_category"
+                android:title="фильтр по категориям..." />
+            <item
+                android:id="@+id/filter_person"
+                android:title="фильтр по персонам...">
+            </item>
+        </menu>
+    </item>
     <item
         android:id="@+id/menu_persons"
         android:title="@string/menu_person" />
