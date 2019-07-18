@@ -79,4 +79,7 @@ dependencies {
     //Changelog
     implementation 'com.github.MFlisar:changelog:1.1.5'
 
+    //WorkManager
+    implementation "android.arch.work:work-runtime:1.0.1"
+
 }

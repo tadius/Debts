@@ -8,10 +8,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.michaelflisar.changelog.ChangelogBuilder;
 import com.michaelflisar.changelog.internal.ChangelogDialogFragment;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
+import com.tadiuzzz.debts.utils.workers.BackupWorker;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -45,7 +51,13 @@ public class MainActivity extends DaggerAppCompatActivity {
         showChangelog();
 
         NavigationUI.setupActionBarWithNavController(this, navController);
-        
+
+        //This is the subclass of our WorkRequest
+        final PeriodicWorkRequest workRequest
+                = new PeriodicWorkRequest.Builder(BackupWorker.class, 3, TimeUnit.HOURS)
+                .build();
+        WorkManager.getInstance().enqueue(workRequest);
+
     }
 
     private void showChangelog() {
