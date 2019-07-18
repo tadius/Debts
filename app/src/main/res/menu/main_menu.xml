@@ -57,6 +57,10 @@
                 android:title="фильтр по персонам">
                 <menu></menu>
             </item>
+            <item
+                android:id="@+id/filter_clear"
+                android:title="сбросить фильтры">
+            </item>
         </menu>
     </item>
     <item

@@ -321,4 +321,10 @@ public class ViewPagerViewModel extends ViewModel {
     public void canceledFilterPersonDialog() {
         showFilterPersonDialog.setValue(new Pair(null, false));
     }
+
+    public void clickedOnFilterClearMenu() {
+        clearPersonsFilter();
+        clearCategoriesFilter();
+        clickedOnFilterActiveMenu(false);
+    }
 }

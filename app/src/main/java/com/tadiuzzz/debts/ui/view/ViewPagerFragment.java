@@ -246,6 +246,9 @@ public class ViewPagerFragment extends DaggerFragment {
                 case R.id.filter_person:
                     viewModel.clickedOnFilterPersonMenu();
                     return true;
+                    case R.id.filter_clear:
+                    viewModel.clickedOnFilterClearMenu();
+                    return true;
                 case R.id.menu_persons:
                     viewModel.clickedOnPersonsMenu();
                     return true;
