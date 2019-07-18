@@ -45,9 +45,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         showChangelog();
 
         NavigationUI.setupActionBarWithNavController(this, navController);
-
-        Toast.makeText(context, "Context!!!", Toast.LENGTH_SHORT).show();
-
+        
     }
 
     private void showChangelog() {

@@ -57,7 +57,7 @@ public class ViewPagerFragment extends DaggerFragment {
     private ViewPagerAdapter viewPagerAdapter;
 
     private Menu menu;
-    
+
     @BindView(R.id.viewPager)
     ViewPager viewPager;
     @BindView(R.id.tabs)
@@ -102,6 +102,8 @@ public class ViewPagerFragment extends DaggerFragment {
         viewModel.getSortMenuTitle().observe(getViewLifecycleOwner(), title -> menu.findItem(R.id.menu_sort).setTitle(title));
         viewModel.getSortMenuIcon().observe(getViewLifecycleOwner(), icon -> menu.findItem(R.id.menu_sort).setIcon(icon));
 
+        viewModel.getFilterMenuIcon().observe(getViewLifecycleOwner(), icon -> menu.findItem(R.id.menu_filter).setIcon(icon));
+
     }
 
     private void subscribeOnNavigationEvents() {
@@ -123,42 +125,41 @@ public class ViewPagerFragment extends DaggerFragment {
 
         viewModel.getListOfCategories().observe(getViewLifecycleOwner(), listOfCategories -> {
 
+            ArrayList<Category> selectedCategories = new ArrayList<>();
+            String[] allCategories = new String[listOfCategories.size()];
+            boolean[] checkedCategories = new boolean[listOfCategories.size()];
 
-
-        ArrayList<Category> selectedCategories = new ArrayList<>();
-        String[] allCategories = new String[listOfCategories.size()];
-        boolean[] checkedCategories = new boolean[listOfCategories.size()];
-
-        //Заполняем массив checkedCategories исходя из переданного списка фильтрованных категорий (чтобы установить галочки)
-        for (int i = 0; i < listOfCategories.size(); i++) {
-            for (Category filteredCategory : filteredCategories) {
-                if (filteredCategory.getId() == listOfCategories.get(i).getId())
-                    checkedCategories[i] = true;
+            //Заполняем массив checkedCategories исходя из переданного списка фильтрованных категорий (чтобы установить галочки)
+            for (int i = 0; i < listOfCategories.size(); i++) {
+                for (Category filteredCategory : filteredCategories) {
+                    if (filteredCategory.getId() == listOfCategories.get(i).getId())
+                        checkedCategories[i] = true;
+                }
             }
-        }
 
-        //Приводим список объектов Категория к списку названий категорий
-        for (int i = 0; i < listOfCategories.size(); i++) {
-            allCategories[i] = listOfCategories.get(i).getName();
-        }
+            //Приводим список объектов Категория к списку названий категорий
+            for (int i = 0; i < listOfCategories.size(); i++) {
+                allCategories[i] = listOfCategories.get(i).getName();
+            }
 
-        Builder builder = new Builder(getActivity())
-                .setTitle("Фильтр по категориям:")
-                .setMultiChoiceItems(allCategories, checkedCategories, (dialog, which, isChecked) -> checkedCategories[which] = isChecked)
-                .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("ОК", (dialog, which) -> {
-                    for (int i = 0; i < checkedCategories.length; i++) {
-                        if (checkedCategories[i]) {
-                            selectedCategories.add(listOfCategories.get(i));
+            Builder builder = new Builder(getActivity())
+                    .setTitle("Фильтр по категориям:")
+                    .setMultiChoiceItems(allCategories, checkedCategories, (dialog, which, isChecked) -> checkedCategories[which] = isChecked)
+                    .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("ОК", (dialog, which) -> {
+                        for (int i = 0; i < checkedCategories.length; i++) {
+                            if (checkedCategories[i]) {
+                                selectedCategories.add(listOfCategories.get(i));
+                            }
                         }
-                    }
-                    viewModel.selectedFilteredCategories(selectedCategories);
-                })
-                .setNeutralButton("Отметить все", (dialog, which) -> {
-                    viewModel.clearCategoriesFilter();
-                });
+                        viewModel.selectedFilteredCategories(selectedCategories);
+                    })
+                    .setNeutralButton("Отметить все", (dialog, which) -> {
+                        viewModel.clearCategoriesFilter();
+                    })
+                    .setOnDismissListener(dialog -> viewModel.canceledFilterCategoryDialog());
 
-        builder.show();
+            builder.show();
         });
     }
 

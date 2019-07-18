@@ -49,10 +49,13 @@
                 android:title="только активные" />
             <item
                 android:id="@+id/filter_category"
-                android:title="фильтр по категориям..." />
+                android:title="фильтр по категориям">
+                <menu></menu>
+            </item>
             <item
                 android:id="@+id/filter_person"
-                android:title="фильтр по персонам...">
+                android:title="фильтр по персонам">
+                <menu></menu>
             </item>
         </menu>
     </item>

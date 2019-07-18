@@ -1,21 +1,17 @@
 package com.tadiuzzz.debts.ui.presentation;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import com.tadiuzzz.debts.utils.FilterManager;
 import com.tadiuzzz.debts.utils.SortingManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +43,8 @@ public class ViewPagerViewModel extends ViewModel {
 
     private final MutableLiveData<Pair<List<Category>, Boolean>> showFilterCategoryDialog = new MutableLiveData<>();
     private final MutableLiveData<Pair<String, Boolean>> showFilterPersonDialog = new MutableLiveData<>();
+
+    private MutableLiveData<Integer> filterMenuIcon = new MutableLiveData<>();
 
     private MutableLiveData<Integer> sortMenuCheckedItem = new MutableLiveData<>();
     private MutableLiveData<String> sortMenuTitle = new MutableLiveData<>();
@@ -109,6 +107,7 @@ public class ViewPagerViewModel extends ViewModel {
                     public void onNext(List<Category> categories) {
                         filterManager.setFilteredCategories(categories);
                         listOfCategories.setValue(categories);
+                        filterMenuIcon.setValue(R.drawable.ic_filter);
                     }
 
                     @Override
@@ -135,6 +134,10 @@ public class ViewPagerViewModel extends ViewModel {
 
     public LiveData<Integer> getSortMenuIcon() {
         return sortMenuIcon;
+    }
+
+    public LiveData<Integer> getFilterMenuIcon() {
+        return filterMenuIcon;
     }
 
     public SingleLiveEvent getNavigateToEditDebtScreenEvent() {
@@ -210,11 +213,19 @@ public class ViewPagerViewModel extends ViewModel {
 
 
     public void selectedFilteredCategories(List<Category> selectedCategories) {
+        showFilterCategoryDialog.setValue(new Pair(null, false));
         filterManager.setFilteredCategories(selectedCategories);
+        if(selectedCategories.equals(listOfCategories.getValue())) {
+            filterMenuIcon.setValue(R.drawable.ic_filter);
+        } else {
+            filterMenuIcon.setValue(R.drawable.ic_filter_active);
+        }
         sortingManager.refreshSortingComparator();
     }
 
     public void clearCategoriesFilter() {
+        showFilterCategoryDialog.setValue(new Pair(null, false));
+        filterMenuIcon.setValue(R.drawable.ic_filter);
         disposables.add(debtRepository.getAllCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -233,5 +244,9 @@ public class ViewPagerViewModel extends ViewModel {
                     public void onComplete() {
                     }
                 }));
+    }
+
+    public void canceledFilterCategoryDialog() {
+        showFilterCategoryDialog.setValue(new Pair(null, false));
     }
 }
