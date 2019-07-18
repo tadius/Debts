@@ -201,6 +201,11 @@ public class ViewPagerViewModel extends ViewModel {
     }
 
     public void clickedOnFilterActiveMenu(boolean isChecked) {
+        if(isChecked) {
+            filterMenuIcon.setValue(R.drawable.ic_filter_active);
+        } else {
+            filterMenuIcon.setValue(R.drawable.ic_filter);
+        }
         filterManager.setShowOnlyActive(isChecked);
         isShowOnlyActive.setValue(isChecked);
         sortingManager.refreshSortingComparator();
