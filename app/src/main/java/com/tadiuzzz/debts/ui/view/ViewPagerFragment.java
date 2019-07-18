@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.ViewPagerAdapter;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 import com.tadiuzzz.debts.ui.presentation.ViewPagerViewModel;
@@ -118,7 +119,9 @@ public class ViewPagerFragment extends DaggerFragment {
         viewModel.getShowFilterCategoryDialogEvent().observe(getViewLifecycleOwner(), categoryBooleanPair -> {
             if (categoryBooleanPair.second) showFilterCategoryDialog(categoryBooleanPair.first);
         });
-//        viewModel.getShowFilterPersonDialogEvent().observe(getViewLifecycleOwner(), o -> showFilterPersonDialog());
+        viewModel.getShowFilterPersonDialogEvent().observe(getViewLifecycleOwner(), personBooleanPair -> {
+            if (personBooleanPair.second) showFilterPersonDialog(personBooleanPair.first);
+        });
     }
 
     private void showFilterCategoryDialog(List<Category> filteredCategories) {
@@ -158,6 +161,47 @@ public class ViewPagerFragment extends DaggerFragment {
                         viewModel.clearCategoriesFilter();
                     })
                     .setOnDismissListener(dialog -> viewModel.canceledFilterCategoryDialog());
+
+            builder.show();
+        });
+    }
+
+    private void showFilterPersonDialog(List<Person> filteredPersons) {
+        viewModel.getListOfPersons().observe(getViewLifecycleOwner(), listOfPersons -> {
+
+            ArrayList<Person> selectedPersons = new ArrayList<>();
+            String[] allPersons = new String[listOfPersons.size()];
+            boolean[] checkedPersons = new boolean[listOfPersons.size()];
+
+            //Заполняем массив checkedPersons исходя из переданного списка фильтрованных категорий (чтобы установить галочки)
+            for (int i = 0; i < listOfPersons.size(); i++) {
+                for (Person filteredPerson : filteredPersons) {
+                    if (filteredPerson.getId() == listOfPersons.get(i).getId())
+                        checkedPersons[i] = true;
+                }
+            }
+
+            //Приводим список объектов Категория к списку названий категорий
+            for (int i = 0; i < listOfPersons.size(); i++) {
+                allPersons[i] = listOfPersons.get(i).getName();
+            }
+
+            Builder builder = new Builder(getActivity())
+                    .setTitle("Фильтр по персонам:")
+                    .setMultiChoiceItems(allPersons, checkedPersons, (dialog, which, isChecked) -> checkedPersons[which] = isChecked)
+                    .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("ОК", (dialog, which) -> {
+                        for (int i = 0; i < checkedPersons.length; i++) {
+                            if (checkedPersons[i]) {
+                                selectedPersons.add(listOfPersons.get(i));
+                            }
+                        }
+                        viewModel.selectedFilteredPersons(selectedPersons);
+                    })
+                    .setNeutralButton("Отметить все", (dialog, which) -> {
+                        viewModel.clearPersonsFilter();
+                    })
+                    .setOnDismissListener(dialog -> viewModel.canceledFilterPersonDialog());
 
             builder.show();
         });

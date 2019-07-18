@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import com.tadiuzzz.debts.utils.FilterManager;
 import com.tadiuzzz.debts.utils.SortingManager;
@@ -40,9 +41,10 @@ public class ViewPagerViewModel extends ViewModel {
     private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
+    private MutableLiveData<List<Person>> listOfPersons = new MutableLiveData<>();
 
     private final MutableLiveData<Pair<List<Category>, Boolean>> showFilterCategoryDialog = new MutableLiveData<>();
-    private final MutableLiveData<Pair<String, Boolean>> showFilterPersonDialog = new MutableLiveData<>();
+    private final MutableLiveData<Pair<List<Person>, Boolean>> showFilterPersonDialog = new MutableLiveData<>();
 
     private MutableLiveData<Integer> filterMenuIcon = new MutableLiveData<>();
 
@@ -118,10 +120,34 @@ public class ViewPagerViewModel extends ViewModel {
                     public void onComplete() {
                     }
                 }));
+
+        disposables.add(debtRepository.getAllPersons()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSubscriber<List<Person>>() {
+                    @Override
+                    public void onNext(List<Person> persons) {
+                        filterManager.setFilteredPersons(persons);
+                        listOfPersons.setValue(persons);
+                        filterMenuIcon.setValue(R.drawable.ic_filter);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
     }
 
     public LiveData<List<Category>> getListOfCategories() {
         return listOfCategories;
+    }
+
+    public LiveData<List<Person>> getListOfPersons() {
+        return listOfPersons;
     }
 
     public LiveData<String> getSortMenuTitle() {
@@ -164,7 +190,7 @@ public class ViewPagerViewModel extends ViewModel {
         return showFilterCategoryDialog;
     }
 
-    public LiveData<Pair<String, Boolean>> getShowFilterPersonDialogEvent() {
+    public LiveData<Pair<List<Person>, Boolean>> getShowFilterPersonDialogEvent() {
         return showFilterPersonDialog;
     }
 
@@ -177,7 +203,7 @@ public class ViewPagerViewModel extends ViewModel {
     }
 
     public void clickedOnFilterPersonMenu() {
-//        showFilterPersonDialog.call();
+        showFilterPersonDialog.postValue(new Pair(filterManager.getFilteredPersons(), true));
     }
 
     public void clickedOnPersonsMenu() {
@@ -248,5 +274,43 @@ public class ViewPagerViewModel extends ViewModel {
 
     public void canceledFilterCategoryDialog() {
         showFilterCategoryDialog.setValue(new Pair(null, false));
+    }
+
+    public void selectedFilteredPersons(List<Person> selectedPersons) {
+        showFilterPersonDialog.setValue(new Pair(null, false));
+        filterManager.setFilteredPersons(selectedPersons);
+        if(selectedPersons.equals(listOfPersons.getValue())) {
+            filterMenuIcon.setValue(R.drawable.ic_filter);
+        } else {
+            filterMenuIcon.setValue(R.drawable.ic_filter_active);
+        }
+        sortingManager.refreshSortingComparator();
+    }
+
+    public void clearPersonsFilter() {
+        showFilterPersonDialog.setValue(new Pair(null, false));
+        filterMenuIcon.setValue(R.drawable.ic_filter);
+        disposables.add(debtRepository.getAllPersons()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSubscriber<List<Person>>() {
+                    @Override
+                    public void onNext(List<Person> persons) {
+                        filterManager.setFilteredPersons(persons);
+                        sortingManager.refreshSortingComparator();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
+    }
+
+    public void canceledFilterPersonDialog() {
+        showFilterPersonDialog.setValue(new Pair(null, false));
     }
 }

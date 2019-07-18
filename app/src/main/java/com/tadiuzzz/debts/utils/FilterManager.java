@@ -2,6 +2,7 @@ package com.tadiuzzz.debts.utils;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,12 @@ import io.reactivex.subjects.BehaviorSubject;
 public class FilterManager {
 
     private List<Category> filteredCategories;
+    private List<Person> filteredPersons;
 
     @Inject
     public FilterManager() {
         filteredCategories = new ArrayList<>();
+        filteredPersons = new ArrayList<>();
     }
 
     public List<Category> getFilteredCategories() {
@@ -29,5 +32,13 @@ public class FilterManager {
 
     public void setFilteredCategories(List<Category> selectedCategories) {
         filteredCategories = selectedCategories;
+    }
+
+    public List<Person> getFilteredPersons() {
+        return filteredPersons;
+    }
+
+    public void setFilteredPersons(List<Person> selectedPersons) {
+        filteredPersons = selectedPersons;
     }
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 import com.tadiuzzz.debts.utils.FilterManager;
 import com.tadiuzzz.debts.utils.SortingManager;
@@ -72,6 +73,12 @@ public class DebtsViewModel extends ViewModel {
                         .filter(debtPOJO -> {
                             for (Category filteredCategory : filterManager.getFilteredCategories()) {
                                 if(filteredCategory.getId() == debtPOJO.getDebtCategory().getId()) return true;
+                            }
+                            return false;
+                        })
+                        .filter(debtPOJO -> {
+                            for (Person filteredPerson : filterManager.getFilteredPersons()) {
+                                if(filteredPerson.getId() == debtPOJO.getDebtPerson().getId()) return true;
                             }
                             return false;
                         })
