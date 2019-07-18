@@ -57,10 +57,12 @@ public class DebtsViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         }));
 
     }
@@ -72,15 +74,23 @@ public class DebtsViewModel extends ViewModel {
                         .filter(debtPOJO -> debtPOJO.getDebt().amIBorrower() == amIBorrower)
                         .filter(debtPOJO -> {
                             for (Category filteredCategory : filterManager.getFilteredCategories()) {
-                                if(filteredCategory.getId() == debtPOJO.getDebtCategory().getId()) return true;
+                                if (filteredCategory.getId() == debtPOJO.getDebtCategory().getId())
+                                    return true;
                             }
                             return false;
                         })
                         .filter(debtPOJO -> {
                             for (Person filteredPerson : filterManager.getFilteredPersons()) {
-                                if(filteredPerson.getId() == debtPOJO.getDebtPerson().getId()) return true;
+                                if (filteredPerson.getId() == debtPOJO.getDebtPerson().getId())
+                                    return true;
                             }
                             return false;
+                        })
+                        .filter(debtPOJO -> {
+                            if(filterManager.isShowOnlyActive()) {
+                                return !debtPOJO.getDebt().isReturned();
+                            }
+                            return true;
                         })
                         .toSortedList(comparator)
                         .toFlowable()

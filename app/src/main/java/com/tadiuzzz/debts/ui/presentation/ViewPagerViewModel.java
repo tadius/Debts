@@ -48,6 +48,8 @@ public class ViewPagerViewModel extends ViewModel {
 
     private MutableLiveData<Integer> filterMenuIcon = new MutableLiveData<>();
 
+    private MutableLiveData<Boolean> isShowOnlyActive = new MutableLiveData<>();
+
     private MutableLiveData<Integer> sortMenuCheckedItem = new MutableLiveData<>();
     private MutableLiveData<String> sortMenuTitle = new MutableLiveData<>();
     private MutableLiveData<Integer> sortMenuIcon = new MutableLiveData<>();
@@ -150,6 +152,10 @@ public class ViewPagerViewModel extends ViewModel {
         return listOfPersons;
     }
 
+    public MutableLiveData<Boolean> getIsShowOnlyActive() {
+        return isShowOnlyActive;
+    }
+
     public LiveData<String> getSortMenuTitle() {
         return sortMenuTitle;
     }
@@ -194,8 +200,10 @@ public class ViewPagerViewModel extends ViewModel {
         return showFilterPersonDialog;
     }
 
-    public void clickedOnFilterActiveMenu() {
-        //обновить фильтр-менеджер на только активные
+    public void clickedOnFilterActiveMenu(boolean isChecked) {
+        filterManager.setShowOnlyActive(isChecked);
+        isShowOnlyActive.setValue(isChecked);
+        sortingManager.refreshSortingComparator();
     }
 
     public void clickedOnFilterCategoryMenu() {

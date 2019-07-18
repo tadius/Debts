@@ -19,6 +19,7 @@ public class FilterManager {
 
     private List<Category> filteredCategories;
     private List<Person> filteredPersons;
+    private boolean showOnlyActive;
 
     @Inject
     public FilterManager() {
@@ -41,4 +42,14 @@ public class FilterManager {
     public void setFilteredPersons(List<Person> selectedPersons) {
         filteredPersons = selectedPersons;
     }
+
+    public boolean isShowOnlyActive() {
+        return showOnlyActive;
+    }
+
+    public void setShowOnlyActive(boolean showOnlyActive) {
+        this.showOnlyActive = showOnlyActive;
+    }
+
+
 }

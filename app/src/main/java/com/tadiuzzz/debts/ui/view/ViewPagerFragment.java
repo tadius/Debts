@@ -105,6 +105,8 @@ public class ViewPagerFragment extends DaggerFragment {
 
         viewModel.getFilterMenuIcon().observe(getViewLifecycleOwner(), icon -> menu.findItem(R.id.menu_filter).setIcon(icon));
 
+        viewModel.getIsShowOnlyActive().observe(getViewLifecycleOwner(), isChecked -> menu.findItem(R.id.filter_active).setChecked(isChecked));
+
     }
 
     private void subscribeOnNavigationEvents() {
@@ -232,7 +234,11 @@ public class ViewPagerFragment extends DaggerFragment {
         } else {
             switch (item.getItemId()) {
                 case R.id.filter_active:
-                    viewModel.clickedOnFilterActiveMenu();
+                    if(item.isChecked()) {
+                        viewModel.clickedOnFilterActiveMenu(false);
+                    } else {
+                        viewModel.clickedOnFilterActiveMenu(true);
+                    }
                     return true;
                 case R.id.filter_category:
                     viewModel.clickedOnFilterCategoryMenu();
