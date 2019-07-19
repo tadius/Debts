@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -24,6 +25,8 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class MainActivity extends DaggerAppCompatActivity {
+
+    private static final String BACKUP_WORK_TAG = "BACKUP_WORK_TAG";
 
     NavController navController;
 
@@ -56,7 +59,8 @@ public class MainActivity extends DaggerAppCompatActivity {
         final PeriodicWorkRequest workRequest
                 = new PeriodicWorkRequest.Builder(BackupWorker.class, 3, TimeUnit.HOURS)
                 .build();
-        WorkManager.getInstance().enqueue(workRequest);
+        //создаем уникальный Work, чтобы не создавался новый Work после каждого запуска приложения
+        WorkManager.getInstance().enqueueUniquePeriodicWork(BACKUP_WORK_TAG, ExistingPeriodicWorkPolicy.KEEP, workRequest);
 
     }
 
