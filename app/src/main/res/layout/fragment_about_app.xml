@@ -1,74 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/tvLabelAppName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Приложение &quot;Мои долги&quot;"
-        />
+    <data>
+        <import type="android.text.Html" />
+        <variable
+            name="model"
+            type="com.tadiuzzz.debts.ui.presentation.AboutAppViewModel" />
+
+    </data>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="32dp">
-        <TextView
-            android:id="@+id/tvLabelAppVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Версия: "
-            />
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvAppVersion"
+            android:id="@+id/tvLabelAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"/>
+            android:text="Приложение &quot;Мои долги&quot;" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp">
+
+            <TextView
+                android:id="@+id/tvLabelAppVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Версия: " />
+
+            <TextView
+                android:id="@+id/tvAppVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{model.appVersion, default=`1.0.0`}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvLabelAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Автор: " />
+
+            <TextView
+                android:id="@+id/tvAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{model.authorName}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvAuthorEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:text="@{Html.fromHtml(`&lt;u>` + model.emailAuthor + `&lt;/u>`)}"
+                android:onClick="@{() -> model.clickedOnAuthorEmail()}"
+                android:textColor="#3F51B5" />
+        </LinearLayout>
+
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp">
-        <TextView
-            android:id="@+id/tvLabelAuthor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Автор: "
-            />
-
-        <TextView
-            android:id="@+id/tvAuthor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Виталий Симонов"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp">
-
-        <TextView
-            android:id="@+id/tvAuthorEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tadiuzzz@gmail.com"
-            android:textColor="#3F51B5" />
-    </LinearLayout>
-
-
-</LinearLayout>
+</layout>

@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.databinding.FragmentAboutAppBinding;
 import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
@@ -34,12 +36,6 @@ public class AboutAppFragment extends DaggerFragment {
     @Inject
     ViewModelProviderFactory providerFactory;
 
-    @BindView(R.id.tvAppVersion)
-    TextView tvAppVersion;
-    @BindView(R.id.tvAuthorEmail)
-    TextView tvAuthorEmail;
-
-    @OnClick(R.id.tvAuthorEmail)
     void onAuthorEmailClicked() {
         viewModel.clickedOnAuthorEmail();
     }
@@ -47,15 +43,16 @@ public class AboutAppFragment extends DaggerFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_about_app, container, false);
-
+//        View view = inflater.inflate(R.layout.fragment_about_app, container, false);
         viewModel = ViewModelProviders.of(this, providerFactory).get(AboutAppViewModel.class);
 
-        ButterKnife.bind(this, view);
+        FragmentAboutAppBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_about_app, container, false);
+        binding.setModel(viewModel);
+
 
         subscribeToNavigationChanges();
 
-        subscribeToData();
+        View view = binding.getRoot();
 
         return view;
     }
@@ -69,15 +66,6 @@ public class AboutAppFragment extends DaggerFragment {
         intent.setData(Uri.parse(String.format("mailto:%s", email))); // only email apps should handle this
         intent.putExtra(Intent.EXTRA_SUBJECT, "Моя зарплата");
         startActivity(Intent.createChooser(intent, "Отправить письмо: "));
-    }
-
-    private void subscribeToData() {
-        viewModel.getAppVersion().observe(this, appVersion -> tvAppVersion.setText(appVersion));
-
-        viewModel.getEmailAuthor().observe(this, authorEmail -> {
-            tvAuthorEmail.setText(authorEmail);
-            tvAuthorEmail.setPaintFlags(tvAuthorEmail.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        });
     }
 
 }

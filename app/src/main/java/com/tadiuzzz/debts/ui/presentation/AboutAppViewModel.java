@@ -1,12 +1,6 @@
 package com.tadiuzzz.debts.ui.presentation;
 
-import android.app.Application;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.BuildConfig;
@@ -21,9 +15,9 @@ public class AboutAppViewModel extends ViewModel {
 
     private final SingleLiveEvent<String> navigateSendEmailApp = new SingleLiveEvent<>();
 
-    private final MutableLiveData<String> appVersion = new MutableLiveData<>();
-    private final MutableLiveData<String> emailAuthor = new MutableLiveData<>();
-
+    private ObservableField<String> appVersion = new ObservableField<>();
+    private ObservableField<String> emailAuthor = new ObservableField<>();
+    private ObservableField<String> authorName = new ObservableField<>();
 
     @Inject
     public AboutAppViewModel() {
@@ -33,25 +27,31 @@ public class AboutAppViewModel extends ViewModel {
     private void initData() {
         String version = BuildConfig.VERSION_NAME;
         String email = "tadiuzzz@gmail.com";
+        String author = "Виталий Симонов";
 
-        appVersion.setValue(version);
-        emailAuthor.setValue(email);
+        appVersion.set(version);
+        emailAuthor.set(email);
+        authorName.set(author);
     }
 
     public SingleLiveEvent<String> getNavigateSendEmailAppEvent() {
         return navigateSendEmailApp;
     }
 
-    public LiveData<String> getAppVersion() {
+    public ObservableField<String> getAppVersion() {
         return appVersion;
     }
 
-    public LiveData<String> getEmailAuthor() {
+    public ObservableField<String> getEmailAuthor() {
         return emailAuthor;
     }
 
+    public ObservableField<String> getAuthorName() {
+        return authorName;
+    }
+
     public void clickedOnAuthorEmail() {
-        navigateSendEmailApp.callWithArgument(getEmailAuthor().getValue());
+        navigateSendEmailApp.callWithArgument(getEmailAuthor().get());
     }
 
     @Override
