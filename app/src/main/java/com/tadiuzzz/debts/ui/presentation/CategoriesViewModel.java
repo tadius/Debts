@@ -96,6 +96,10 @@ public class CategoriesViewModel extends ViewModel {
         debtRepository.getCachedDebtPOJO().getDebt().setCategoryId(category.getId());
     }
 
+    public void onAddButtonClick() {
+        navigateToEditCategoryScreen.call();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

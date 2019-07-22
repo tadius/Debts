@@ -1,76 +1,57 @@
 package com.tadiuzzz.debts.ui.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.databinding.CategoryItemBinding;
 import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.ui.adapter.viewholder.CategoryViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Simonov.vv on 03.06.2019.
  */
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     private OnCategoryClickListener onCategoryClickListener;
-    private List<Category> categories;
+    private List<Category> categories = new ArrayList<>();
+
+    public void setOnCategoryClickListener(OnCategoryClickListener onCategoryClickListener){
+        this.onCategoryClickListener = onCategoryClickListener;
+    }
 
     public void setData(List<Category> categories) {
-        this.categories = categories;
+        this.categories.clear();
+        this.categories.addAll(categories);
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View categoryView = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        CategoryItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.category_item, parent, false);
+        binding.setListener(onCategoryClickListener);
 
-        return new CategoryViewHolder(categoryView);
+        return new CategoryViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        Category category = categories.get(position);
-
-        holder.tvCategoryItemName.setText(category.getName());
+        holder.bind(categories.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return categories == null ? 0 : categories.size();
-    }
-
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.tvCategoryItemName) TextView tvCategoryItemName;
-
-        public CategoryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if(onCategoryClickListener != null && position != RecyclerView.NO_POSITION) {
-                    onCategoryClickListener.onCategoryClick(categories.get(position));
-                }
-            });
-        }
-    }
-
-    public interface OnCategoryClickListener{
-        void onCategoryClick(Category category);
-    }
-
-    public void setOnCategoryClickListener(OnCategoryClickListener onCategoryClickListener){
-        this.onCategoryClickListener = onCategoryClickListener;
+        return categories.size();
     }
 
 }
