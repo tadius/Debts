@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/editPersonFragment"
         android:name="com.tadiuzzz.debts.ui.view.EditPersonFragment"
-        android:label="fragment_edit_person"
+        android:label="Редактирование персоны"
         tools:layout="@layout/fragment_edit_person" />
     <fragment
         android:id="@+id/editDebtFragment"

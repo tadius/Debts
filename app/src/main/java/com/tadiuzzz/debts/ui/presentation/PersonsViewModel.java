@@ -89,6 +89,10 @@ public class PersonsViewModel extends ViewModel {
         debtRepository.getCachedDebtPOJO().getDebt().setPersonId(person.getId());
     }
 
+    public void onAddButtonClick() {
+        navigateToEditPersonScreen.call();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fbAddPerson"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_add"
-        android:layout_margin="32dp"
-        />
+    <data>
+        <import type="com.tadiuzzz.debts.ui.databinding.DataBindingAdapters" />
+        <variable
+            name="model"
+            type="com.tadiuzzz.debts.ui.presentation.PersonsViewModel" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPersons"
+        <variable
+            name="adapter"
+            type="com.tadiuzzz.debts.ui.adapter.PersonAdapter" />
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="72dp"
-        tools:listitem="@layout/person_item"/>
+        android:layout_height="match_parent">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fbAddPerson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/ic_add"
+            android:onClick="@{() -> model.onAddButtonClick()}"
+            android:layout_margin="32dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPersons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="72dp"
+            android:adapter="@{adapter}"
+            attachFAB="@{fbAddPerson}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/person_item" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
