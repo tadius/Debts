@@ -41,7 +41,8 @@
                 android:id="@+id/tvAppVersion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{model.appVersion, default=`1.0.0`}" />
+                android:text="@{model.appVersion}"
+                tools:text="1.0.0"/>
         </LinearLayout>
 
         <LinearLayout
@@ -61,7 +62,8 @@
                 android:id="@+id/tvAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{model.authorName}" />
+                android:text="@{model.authorName}"
+                tools:text="Симонов Виталий"/>
         </LinearLayout>
 
         <LinearLayout
@@ -78,7 +80,8 @@
                 android:textIsSelectable="true"
                 android:text="@{Html.fromHtml(`&lt;u>` + model.emailAuthor + `&lt;/u>`)}"
                 android:onClick="@{() -> model.clickedOnAuthorEmail()}"
-                android:textColor="#3F51B5" />
+                android:textColor="#3F51B5"
+                tools:text="tadiuzzz@gmail.com"/>
         </LinearLayout>
 
 
