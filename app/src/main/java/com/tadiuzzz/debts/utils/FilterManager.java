@@ -17,14 +17,34 @@ import io.reactivex.subjects.BehaviorSubject;
  */
 public class FilterManager {
 
+    private List<Category> allCategories;
+    private List<Person> allPersons;
+
     private List<Category> filteredCategories;
     private List<Person> filteredPersons;
     private boolean showOnlyActive;
 
     @Inject
     public FilterManager() {
+        allCategories = new ArrayList<>();
         filteredCategories = new ArrayList<>();
         filteredPersons = new ArrayList<>();
+    }
+
+    public List<Category> getAllCategories() {
+        return allCategories;
+    }
+
+    public void setAllCategories(List<Category> allCategories) {
+        this.allCategories = allCategories;
+    }
+
+    public List<Person> getAllPersons() {
+        return allPersons;
+    }
+
+    public void setAllPersons(List<Person> allPersons) {
+        this.allPersons = allPersons;
     }
 
     public List<Category> getFilteredCategories() {

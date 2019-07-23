@@ -3,6 +3,7 @@ package com.tadiuzzz.debts;
 import android.app.Activity;
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.tadiuzzz.debts.di.DaggerAppComponent;
 
 import javax.inject.Inject;
@@ -22,4 +23,9 @@ public class DebtsApplication extends DaggerApplication {
         return DaggerAppComponent.builder().application(this).build();
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Stetho.initializeWithDefaults(this);
+    }
 }

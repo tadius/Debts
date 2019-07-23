@@ -109,6 +109,7 @@ public class ViewPagerViewModel extends ViewModel {
                 .subscribeWith(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
+                        filterManager.setAllCategories(categories);
                         filterManager.setFilteredCategories(categories);
                         listOfCategories.setValue(categories);
                         filterMenuIcon.setValue(R.drawable.ic_filter);
@@ -129,6 +130,7 @@ public class ViewPagerViewModel extends ViewModel {
                 .subscribeWith(new DisposableSubscriber<List<Person>>() {
                     @Override
                     public void onNext(List<Person> persons) {
+                        filterManager.setAllPersons(persons);
                         filterManager.setFilteredPersons(persons);
                         listOfPersons.setValue(persons);
                         filterMenuIcon.setValue(R.drawable.ic_filter);
@@ -271,6 +273,7 @@ public class ViewPagerViewModel extends ViewModel {
                 .subscribeWith(new DisposableSubscriber<List<Category>>() {
                     @Override
                     public void onNext(List<Category> categories) {
+                        filterManager.setAllCategories(categories);
                         filterManager.setFilteredCategories(categories);
                         sortingManager.refreshSortingComparator();
                     }
@@ -309,6 +312,7 @@ public class ViewPagerViewModel extends ViewModel {
                 .subscribeWith(new DisposableSubscriber<List<Person>>() {
                     @Override
                     public void onNext(List<Person> persons) {
+                        filterManager.setAllPersons(persons);
                         filterManager.setFilteredPersons(persons);
                         sortingManager.refreshSortingComparator();
                     }

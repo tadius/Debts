@@ -73,6 +73,7 @@ public class DebtsViewModel extends ViewModel {
                 .flatMap(debtPOJOS -> Flowable.fromIterable(debtPOJOS)
                         .filter(debtPOJO -> debtPOJO.getDebt().amIBorrower() == amIBorrower)
                         .filter(debtPOJO -> {
+                            if(filterManager.getAllCategories().equals(filterManager.getFilteredCategories())) return true;
                             for (Category filteredCategory : filterManager.getFilteredCategories()) {
                                 if (filteredCategory.getId() == debtPOJO.getDebtCategory().getId())
                                     return true;
@@ -80,6 +81,7 @@ public class DebtsViewModel extends ViewModel {
                             return false;
                         })
                         .filter(debtPOJO -> {
+                            if(filterManager.getAllPersons().equals(filterManager.getFilteredPersons())) return true;
                             for (Person filteredPerson : filterManager.getFilteredPersons()) {
                                 if (filteredPerson.getId() == debtPOJO.getDebtPerson().getId())
                                     return true;
