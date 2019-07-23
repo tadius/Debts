@@ -57,7 +57,7 @@ public class MainActivity extends DaggerAppCompatActivity {
 
         //This is the subclass of our WorkRequest
         final PeriodicWorkRequest workRequest
-                = new PeriodicWorkRequest.Builder(BackupWorker.class, 3, TimeUnit.HOURS)
+                = new PeriodicWorkRequest.Builder(BackupWorker.class, 1, TimeUnit.HOURS)
                 .build();
         //создаем уникальный Work, чтобы не создавался новый Work после каждого запуска приложения
         WorkManager.getInstance().enqueueUniquePeriodicWork(BACKUP_WORK_TAG, ExistingPeriodicWorkPolicy.KEEP, workRequest);

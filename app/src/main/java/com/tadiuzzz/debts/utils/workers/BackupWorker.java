@@ -13,6 +13,7 @@ import com.tadiuzzz.debts.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,6 +28,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class BackupWorker extends Worker {
 
+    private Context context;
+
     private final String DATABASE_NAME = "debts_database";
     private final String DATABASE_NAME_SHM = "debts_database-shm";
     private final String DATABASE_NAME_WAL = "debts_database-wal";
@@ -35,6 +38,7 @@ public class BackupWorker extends Worker {
 
     public BackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        this.context = context;
         disposables = new CompositeDisposable();
     }
 
@@ -46,12 +50,42 @@ public class BackupWorker extends Worker {
     }
 
     private void startBackup() {
+        String pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name);
+
+        deleteOldBackups(pathToSdCardAppFolder);
+
         String backupName = "auto3hr";
-        String pathToSdCardAppFolder = Environment.getExternalStorageDirectory() + File.separator + getApplicationContext().getResources().getString(R.string.app_name);
+
         String date = new SimpleDateFormat("_ddMMyyyyHHmmss", Locale.getDefault()).format(new Date());
         String fullPath = pathToSdCardAppFolder + File.separator + backupName + date + "_auto" + File.separator;
 
         prepareForBackup(fullPath);
+    }
+
+    private void deleteOldBackups(String path) {
+
+        ArrayList<String> listOfBackups = new ArrayList<>(FileUtils.getListOfFiles(path));
+
+        listOfBackups.remove(1);
+        listOfBackups.remove(0);
+
+        for (String backupFile : listOfBackups) {
+            disposables.add(Completable.fromAction(() -> FileUtils.deleteFile(path + File.separator + backupFile))
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+//                            showToast.callWithArgument("Резервная копия удалена!");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+//                            showToast.callWithArgument("Ошибка удаления резервной копии!");
+                        }
+                    }));
+
+        }
     }
 
     private void prepareForBackup(String fullPath) {
@@ -89,9 +123,9 @@ public class BackupWorker extends Worker {
     }
 
     private void backupDB(String pathToBackupSave) throws IOException {
-        final String inFileName = getApplicationContext().getDatabasePath(DATABASE_NAME).toString();
-        final String inFileNameshm = getApplicationContext().getDatabasePath(DATABASE_NAME_SHM).toString();
-        final String inFileNamewal = getApplicationContext().getDatabasePath(DATABASE_NAME_WAL).toString();
+        final String inFileName = context.getDatabasePath(DATABASE_NAME).toString();
+        final String inFileNameshm = context.getDatabasePath(DATABASE_NAME_SHM).toString();
+        final String inFileNamewal = context.getDatabasePath(DATABASE_NAME_WAL).toString();
 
         FileUtils.copyFile(inFileName, pathToBackupSave + DATABASE_NAME);
         FileUtils.copyFile(inFileNameshm, pathToBackupSave + DATABASE_NAME_SHM);
