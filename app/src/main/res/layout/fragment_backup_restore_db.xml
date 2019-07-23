@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/tvLastBackupName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Last Backup" />
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.tadiuzzz.debts.ui.presentation.BackupRestoreViewModel" />
 
-    <Button
-        android:id="@+id/btnBackupDB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Backup" />
+    </data>
 
-    <Button
-        android:id="@+id/btnRestoreDB"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Restore" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvLastBackupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Backup" />
+
+        <Button
+            android:id="@+id/btnBackupDB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewmodel.clickedOnBackupButton()}"
+            android:text="Backup" />
+
+        <Button
+            android:id="@+id/btnRestoreDB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewmodel.clickedOnRestoreButton()}"
+            android:text="Restore" />
+    </LinearLayout>
+</layout>

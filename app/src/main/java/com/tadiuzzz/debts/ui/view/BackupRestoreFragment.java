@@ -2,7 +2,6 @@ package com.tadiuzzz.debts.ui.view;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
@@ -11,22 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Pair;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
-import com.tadiuzzz.debts.ui.presentation.AboutAppViewModel;
+import com.tadiuzzz.debts.databinding.FragmentBackupRestoreDbBinding;
 import com.tadiuzzz.debts.ui.presentation.BackupRestoreViewModel;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
 
@@ -34,9 +28,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dagger.android.support.DaggerFragment;
 
 /**
@@ -52,31 +43,14 @@ public class BackupRestoreFragment extends DaggerFragment {
     private BackupRestoreViewModel viewModel;
     private List<String> listOfFiles;
 
-    @BindView(R.id.tvLastBackupName)
-    TextView tvLastBackupName;
-    @BindView(R.id.btnBackupDB)
-    Button btnBackupDB;
-    @BindView(R.id.btnRestoreDB)
-    Button btnRestoreDB;
-
-    @OnClick(R.id.btnBackupDB)
-    void onBackUpButtonClick() {
-        viewModel.clickedOnBackupButton();
-    }
-
-    @OnClick(R.id.btnRestoreDB)
-    void onRestoreButtonClick() {
-        viewModel.clickedOnRestoreButton();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_backup_restore_db, container, false);
-
-        ButterKnife.bind(this, view);
 
         viewModel = ViewModelProviders.of(this, providerFactory).get(BackupRestoreViewModel.class);
+
+        FragmentBackupRestoreDbBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_backup_restore_db, container, false);
+        binding.setViewmodel(viewModel);
 
         subscribeOnData();
 
@@ -86,7 +60,7 @@ public class BackupRestoreFragment extends DaggerFragment {
 
         subscribeOnNotificationsEvents();
 
-        return view;
+        return binding.getRoot();
     }
 
     private void subscribeOnData() {

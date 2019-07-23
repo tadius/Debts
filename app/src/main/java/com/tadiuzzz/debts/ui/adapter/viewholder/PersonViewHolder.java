@@ -1,17 +1,8 @@
 package com.tadiuzzz.debts.ui.adapter.viewholder;
 
-import android.view.View;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.databinding.PersonItemBinding;
 import com.tadiuzzz.debts.domain.entity.Person;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Simonov.vv on 22.07.2019.
@@ -25,8 +16,9 @@ public class PersonViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
     }
 
-    public void bind(Person person) {
+    public void  bind(Person person) {
         binding.setPerson(person);
         binding.executePendingBindings();
     }
 }
+
