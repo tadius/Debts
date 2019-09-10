@@ -84,13 +84,8 @@
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
         <action
-            android:id="@+id/action_viewPagerFragment_to_backupRestoreFragment"
-            app:destination="@id/backupRestoreFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_viewPagerFragment_to_aboutAppFragment"
-            app:destination="@id/aboutAppFragment"
+            android:id="@+id/action_viewPagerFragment_to_preferencesFragment"
+            app:destination="@id/preferencesFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
     </fragment>
@@ -99,4 +94,19 @@
         android:name="com.tadiuzzz.debts.ui.view.AboutAppFragment"
         android:label="О приложении"
         tools:layout="@layout/fragment_about_app" />
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.tadiuzzz.debts.ui.view.PreferencesFragment"
+        android:label="Настройки" >
+        <action
+            android:id="@+id/action_preferencesFragment_to_aboutAppFragment"
+            app:destination="@id/aboutAppFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_preferencesFragment_to_backupRestoreFragment"
+            app:destination="@id/backupRestoreFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
 </navigation>

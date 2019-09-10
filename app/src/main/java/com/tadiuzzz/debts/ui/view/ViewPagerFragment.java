@@ -113,8 +113,7 @@ public class ViewPagerFragment extends DaggerFragment {
         viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
         viewModel.getNavigateToPersonsScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_personsFragment));
         viewModel.getNavigateToCategoriesScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_categoriesFragment));
-        viewModel.getNavigateToBackupRestoreScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_backupRestoreFragment));
-        viewModel.getNavigateToAboutScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_aboutAppFragment));
+        viewModel.getNavigateToPreferencesScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_preferencesFragment));
     }
 
     private void subscribeOnDialogsEvents() {
@@ -255,11 +254,8 @@ public class ViewPagerFragment extends DaggerFragment {
                 case R.id.menu_categories:
                     viewModel.clickedOnCategoriesMenu();
                     return true;
-                case R.id.menu_backup_restore:
-                    viewModel.clickedOnBackupRestoreMenu();
-                    return true;
-                case R.id.menu_about:
-                    viewModel.clickedOnAboutMenu();
+                case R.id.menu_preferences:
+                    viewModel.clickedOnPreferencesMenu();
                     return true;
                 default:
                     return super.onOptionsItemSelected(item);

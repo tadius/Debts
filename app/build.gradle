@@ -89,4 +89,8 @@ dependencies {
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
+    //Preferences
+    def preference_version = "1.1.0-rc01"
+    implementation "androidx.preference:preference:$preference_version"
+
 }

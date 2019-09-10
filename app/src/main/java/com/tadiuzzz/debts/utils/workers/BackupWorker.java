@@ -2,6 +2,7 @@ package com.tadiuzzz.debts.utils.workers;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -54,9 +55,9 @@ public class BackupWorker extends Worker {
 
         deleteOldBackups(pathToSdCardAppFolder);
 
-        String backupName = "auto3hr";
+        String backupName = "backup";
 
-        String date = new SimpleDateFormat("_ddMMyyyyHHmmss", Locale.getDefault()).format(new Date());
+        String date = new SimpleDateFormat("_dd-MM-yyyy_HH-mm-ss", Locale.getDefault()).format(new Date());
         String fullPath = pathToSdCardAppFolder + File.separator + backupName + date + "_auto" + File.separator;
 
         prepareForBackup(fullPath);
@@ -65,26 +66,32 @@ public class BackupWorker extends Worker {
     private void deleteOldBackups(String path) {
 
         ArrayList<String> listOfBackups = new ArrayList<>(FileUtils.getListOfFiles(path));
+        ArrayList<String> autoBackups = new ArrayList<>();
 
-        listOfBackups.remove(1);
-        listOfBackups.remove(0);
+        for (String backup : listOfBackups) {
+            if (backup.endsWith("_auto")) autoBackups.add(backup);
+        }
 
-        for (String backupFile : listOfBackups) {
-            disposables.add(Completable.fromAction(() -> FileUtils.deleteFile(path + File.separator + backupFile))
-                    .observeOn(Schedulers.io())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableCompletableObserver() {
-                        @Override
-                        public void onComplete() {
+        if (autoBackups.size() >= 3) {
+            autoBackups.remove(1);
+            autoBackups.remove(0);
+
+            for (String backupFile : autoBackups) {
+                disposables.add(Completable.fromAction(() -> FileUtils.deleteFile(path + File.separator + backupFile))
+                        .observeOn(Schedulers.io())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
 //                            showToast.callWithArgument("Резервная копия удалена!");
-                        }
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
+                            @Override
+                            public void onError(Throwable e) {
 //                            showToast.callWithArgument("Ошибка удаления резервной копии!");
-                        }
-                    }));
-
+                            }
+                        }));
+            }
         }
     }
 

@@ -5,7 +5,12 @@
     <string name="menu_person">Менеджер персон</string>
     <string name="menu_categories">Менеджер категорий</string>
     <string name="menu_backup_restore">Резервное копирование</string>
+    <string name="menu_preferences">Настройки</string>
     <string name="menu_about">О приложении</string>
+    <string name="backup_description">Вы можете создать резервную копию базы данных вручную или настроить автоматическое резервирование.
+        \nРезервные копии находятся в папке "Debts" на SD-карте устройства.
+        \nПри необходимости, Вы можете перенести файлы резервных копий на удобное для Вас хранилище.
+        \nВо избежание проблем, переносить необходимо полностью папку Debts.</string>
 
     <string-array name="sort_array">
         <item>по дате начала</item>

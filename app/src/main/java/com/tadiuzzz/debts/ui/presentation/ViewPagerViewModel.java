@@ -37,8 +37,7 @@ public class ViewPagerViewModel extends ViewModel {
     private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> navigateToPersonsScreen = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> navigateToCategoriesScreen = new SingleLiveEvent<>();
-    private SingleLiveEvent<Void> navigateToBackupRestoreScreen = new SingleLiveEvent<>();
-    private SingleLiveEvent<Void> navigateToAboutScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> navigateToPreferencesScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
     private MutableLiveData<List<Person>> listOfPersons = new MutableLiveData<>();
@@ -186,12 +185,8 @@ public class ViewPagerViewModel extends ViewModel {
         return navigateToCategoriesScreen;
     }
 
-    public SingleLiveEvent getNavigateToBackupRestoreScreenEvent() {
-        return navigateToBackupRestoreScreen;
-    }
-
-    public SingleLiveEvent getNavigateToAboutScreenEvent() {
-        return navigateToAboutScreen;
+    public SingleLiveEvent getNavigateToPreferencesScreenEvent() {
+        return navigateToPreferencesScreen;
     }
 
     public LiveData<Pair<List<Category>, Boolean>> getShowFilterCategoryDialogEvent() {
@@ -229,12 +224,8 @@ public class ViewPagerViewModel extends ViewModel {
         navigateToCategoriesScreen.call();
     }
 
-    public void clickedOnBackupRestoreMenu() {
-        navigateToBackupRestoreScreen.call();
-    }
-
-    public void clickedOnAboutMenu() {
-        navigateToAboutScreen.call();
+    public void clickedOnPreferencesMenu() {
+        navigateToPreferencesScreen.call();
     }
 
     public void clickedOnAddDebt() {

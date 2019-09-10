@@ -70,9 +70,6 @@
         android:id="@+id/menu_categories"
         android:title="@string/menu_categories" />
     <item
-        android:id="@+id/menu_backup_restore"
-        android:title="@string/menu_backup_restore" />
-    <item
-        android:id="@+id/menu_about"
-        android:title="@string/menu_about" />
+        android:id="@+id/menu_preferences"
+        android:title="@string/menu_preferences" />
 </menu>

@@ -146,6 +146,7 @@ public class BackupRestoreFragment extends DaggerFragment {
             String backupName = input.getText().toString();
             viewModel.enteredBackupName(backupName);
         });
+        builder.setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 

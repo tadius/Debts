@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Резервное копирование"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_autobackup_enabled"
+            android:summary="Автоматическое создание резервных копий базы данных "
+            android:title="Автобэкап"
+            app:iconSpaceReserved="false" />
+        <com.tadiuzzz.debts.ui.view.EditIntegerPreference
+            android:dependency="pref_autobackup_enabled"
+            android:key="pref_interval_int"
+            android:singleLine="true"
+            android:title="Интервал (дней)"
+            app:defaultValue="1"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+            android:title="Создать/восстановить резервную копию"
+            android:key="key_manual_backup"
+            app:iconSpaceReserved="false"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Другое"
+        app:iconSpaceReserved="false">
+    <Preference
+        android:title="О приложении"
+        android:key="key_about"
+        app:iconSpaceReserved="false"
+        />
+    </PreferenceCategory>
+</PreferenceScreen>

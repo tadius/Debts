@@ -14,23 +14,24 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvLastBackupName"
+            android:id="@+id/tvBackupDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Last Backup" />
+            android:layout_margin="16dp"
+            android:text="@string/backup_description" />
 
         <Button
             android:id="@+id/btnBackupDB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{() -> viewmodel.clickedOnBackupButton()}"
-            android:text="Backup" />
+            android:text="Создать" />
 
         <Button
             android:id="@+id/btnRestoreDB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{() -> viewmodel.clickedOnRestoreButton()}"
-            android:text="Restore" />
+            android:text="Восстановить" />
     </LinearLayout>
 </layout>
