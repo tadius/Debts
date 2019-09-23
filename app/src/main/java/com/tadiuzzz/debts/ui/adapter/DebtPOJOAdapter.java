@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
@@ -23,6 +24,12 @@ public class DebtPOJOAdapter extends RecyclerView.Adapter<DebtPOJOViewHolder> {
     private List<DebtPOJO> debtPOJOs = new ArrayList<>();
     private OnDebtPOJOClickListener onDebtPOJOClickListener;
 
+    private ObservableField<Boolean> isDataEmpty = new ObservableField<>();
+
+    public ObservableField<Boolean> getIsDataEmpty() {
+        return isDataEmpty;
+    }
+
     public void setOnDebtPOJOClickListener(OnDebtPOJOClickListener onDebtPOJOClickListener){
         this.onDebtPOJOClickListener = onDebtPOJOClickListener;
     }
@@ -30,6 +37,7 @@ public class DebtPOJOAdapter extends RecyclerView.Adapter<DebtPOJOViewHolder> {
     public void setData(List<DebtPOJO> debtPOJOs) {
         this.debtPOJOs.clear();
         this.debtPOJOs.addAll(debtPOJOs);
+        isDataEmpty.set(debtPOJOs.isEmpty());
         notifyDataSetChanged();
     }
 

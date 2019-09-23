@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewmodel"
             type="com.tadiuzzz.debts.ui.presentation.DebtsViewModel" />
@@ -17,6 +18,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Нет записей"
+            android:visibility="@{adapter.isDataEmpty ? View.VISIBLE : View.GONE}"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvDebts"

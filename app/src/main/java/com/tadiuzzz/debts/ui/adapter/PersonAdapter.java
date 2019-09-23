@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
@@ -23,6 +24,12 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonViewHolder> {
     private OnPersonClickListener onPersonClickListener;
     private List<Person> persons = new ArrayList<>();
 
+    private ObservableField<Boolean> isDataEmpty = new ObservableField<>();
+
+    public ObservableField<Boolean> getIsDataEmpty() {
+        return isDataEmpty;
+    }
+
     public void setOnPersonClickListener(OnPersonClickListener onPersonClickListener){
         this.onPersonClickListener = onPersonClickListener;
     }
@@ -30,6 +37,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonViewHolder> {
     public void setData(List<Person> persons) {
         this.persons.clear();
         this.persons.addAll(persons);
+        isDataEmpty.set(persons.isEmpty());
         notifyDataSetChanged();
     }
 

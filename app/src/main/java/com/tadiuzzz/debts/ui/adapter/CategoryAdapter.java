@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tadiuzzz.debts.R;
@@ -24,6 +25,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     private OnCategoryClickListener onCategoryClickListener;
     private List<Category> categories = new ArrayList<>();
 
+    private ObservableField<Boolean> isDataEmpty = new ObservableField<>();
+
+    public ObservableField<Boolean> getIsDataEmpty() {
+        return isDataEmpty;
+    }
+
     public void setOnCategoryClickListener(OnCategoryClickListener onCategoryClickListener){
         this.onCategoryClickListener = onCategoryClickListener;
     }
@@ -31,6 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     public void setData(List<Category> categories) {
         this.categories.clear();
         this.categories.addAll(categories);
+        isDataEmpty.set(categories.isEmpty());
         notifyDataSetChanged();
     }
 
