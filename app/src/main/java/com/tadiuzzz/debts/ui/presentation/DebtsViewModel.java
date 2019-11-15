@@ -36,7 +36,7 @@ public class DebtsViewModel extends ViewModel {
     private SortingManager sortingManager;
     private FilterManager filterManager;
 
-    private SingleLiveEvent<Void> navigateToEditDebtScreen = new SingleLiveEvent<>();
+    private SingleLiveEvent<DebtPOJO> navigateToEditDebtScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<DebtPOJO>> listOfDebtPOJOS = new MutableLiveData<>();
     private boolean amIBorrower;
@@ -120,14 +120,14 @@ public class DebtsViewModel extends ViewModel {
         return listOfDebtPOJOS;
     }
 
-    public SingleLiveEvent getNavigateToEditDebtScreenEvent() {
+    public SingleLiveEvent<DebtPOJO> getNavigateToEditDebtScreenEvent() {
         return navigateToEditDebtScreen;
     }
 
     public void clickedOnDebtPOJO(DebtPOJO debtPOJO) {
-        debtRepository.putDebtPOJOtoCache(debtPOJO);
+//        debtRepository.putDebtPOJOtoCache(debtPOJO);
 
-        navigateToEditDebtScreen.call();
+        navigateToEditDebtScreen.callWithArgument(debtPOJO);
     }
 
     @Override

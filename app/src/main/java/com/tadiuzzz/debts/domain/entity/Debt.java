@@ -1,5 +1,8 @@
 package com.tadiuzzz.debts.domain.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -8,7 +11,7 @@ import androidx.room.PrimaryKey;
  * Created by Simonov.vv on 30.05.2019.
  */
 @Entity(tableName = "debt_table")
-public class Debt {
+public class Debt implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -119,7 +122,7 @@ public class Debt {
         return amIBorrower;
     }
 
-    public void setIAmBorrower(boolean amIBorrower) {
+    public void setAmIBorrower(boolean amIBorrower) {
         this.amIBorrower = amIBorrower;
     }
 
@@ -137,5 +140,57 @@ public class Debt {
 
     public void setPersonId(int personId) {
         this.personId = personId;
+    }
+
+    /*
+     * Parcelable
+     */
+
+    @Ignore
+    protected Debt(Parcel in) {
+        id = in.readInt();
+        description = in.readString();
+        amount = in.readDouble();
+        dateOfStart = in.readLong();
+        dateOfEnd = in.readLong();
+        dateOfExpiration = in.readLong();
+        isReturned = in.readByte() != 0;
+        isActive = in.readByte() != 0;
+        amIBorrower = in.readByte() != 0;
+        categoryId = in.readInt();
+        personId = in.readInt();
+    }
+
+    public static final Creator<Debt> CREATOR = new Creator<Debt>() {
+        @Override
+        public Debt createFromParcel(Parcel in) {
+            return new Debt(in);
+        }
+
+        @Override
+        public Debt[] newArray(int size) {
+            return new Debt[size];
+        }
+    };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(description);
+        dest.writeDouble(amount);
+        dest.writeLong(dateOfStart);
+        dest.writeLong(dateOfEnd);
+        dest.writeLong(dateOfExpiration);
+        dest.writeByte((byte) (isReturned ? 1 : 0));
+        dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (amIBorrower ? 1 : 0));
+        dest.writeInt(categoryId);
+        dest.writeInt(personId);
     }
 }

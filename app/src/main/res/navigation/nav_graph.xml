@@ -20,6 +20,12 @@
             app:destination="@+id/editCategoryFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter"
+            app:popUpTo="@+id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editCategoryFragment"
@@ -36,6 +42,12 @@
             app:destination="@id/editPersonFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_personsFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter"
+            app:popUpTo="@+id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPersonFragment"

@@ -1,18 +1,19 @@
 package com.tadiuzzz.debts.ui.presentation;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.Debt;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
+import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,8 +37,8 @@ public class EditDebtViewModel extends ViewModel {
     private DebtRepository debtRepository;
 
     private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Void> navigateToPersonsList = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Void> navigateToCategoryList = new SingleLiveEvent<>();
+    private final SingleLiveEvent<DebtPOJO> navigateToPersonsList = new SingleLiveEvent<>();
+    private final SingleLiveEvent<DebtPOJO> navigateToCategoryList = new SingleLiveEvent<>();
     private final SingleLiveEvent<String> showToast = new SingleLiveEvent<>();
 
     private final SingleLiveEvent<Calendar> showPickDateOfStartDialog = new SingleLiveEvent<>();
@@ -47,7 +48,7 @@ public class EditDebtViewModel extends ViewModel {
 
     private final SingleLiveEvent<Boolean> showEndDateContainer = new SingleLiveEvent<>();
 
-    private MutableLiveData<DebtPOJO> liveDataCachedDebtPOJO = new MutableLiveData<>();
+    private MutableLiveData<DebtPOJO> tempDebtPojo = new MutableLiveData<>();
 
     @Inject
     public EditDebtViewModel(DebtRepository debtRepository) {
@@ -55,26 +56,21 @@ public class EditDebtViewModel extends ViewModel {
 
         disposables = new CompositeDisposable();
 
-        loadCachedDebtPOJO();
-    }
-
-    private void loadCachedDebtPOJO() {
-        liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
     }
 
     public LiveData<DebtPOJO> getCachedDebtPOJO() {
-        return liveDataCachedDebtPOJO;
+        return tempDebtPojo;
     }
 
     public SingleLiveEvent getNavigateToPreviousScreenEvent() {
         return navigateToPreviousScreen;
     }
 
-    public SingleLiveEvent getNavigateToPickPersonScreenEvent() {
+    public SingleLiveEvent<DebtPOJO> getNavigateToPickPersonScreenEvent() {
         return navigateToPersonsList;
     }
 
-    public SingleLiveEvent getNavigateToPickCategoryScreenEvent() {
+    public SingleLiveEvent<DebtPOJO> getNavigateToPickCategoryScreenEvent() {
         return navigateToCategoryList;
     }
 
@@ -102,16 +98,16 @@ public class EditDebtViewModel extends ViewModel {
     }
 
     public void pickPersonClicked() {
-        navigateToPersonsList.call();
+        navigateToPersonsList.callWithArgument(tempDebtPojo.getValue());
     }
 
     public void pickCategoryClicked() {
-        navigateToCategoryList.call();
+        navigateToCategoryList.callWithArgument(tempDebtPojo.getValue());
     }
 
     public void pickDateOfStartClicked() {
         Calendar calendar = Calendar.getInstance();
-        long dateOfStart = debtRepository.getCachedDebtPOJO().getDebt().getDateOfStart();
+        long dateOfStart = tempDebtPojo.getValue().getDebt().getDateOfStart();
         if (dateOfStart != 0) {
             calendar.setTimeInMillis(dateOfStart);
         }
@@ -120,7 +116,7 @@ public class EditDebtViewModel extends ViewModel {
 
     public void pickDateOfExpirationClicked() {
         Calendar calendar = Calendar.getInstance();
-        long dateOfExpiration = debtRepository.getCachedDebtPOJO().getDebt().getDateOfExpiration();
+        long dateOfExpiration = tempDebtPojo.getValue().getDebt().getDateOfExpiration();
         if (dateOfExpiration != 0) {
             calendar.setTimeInMillis(dateOfExpiration);
         }
@@ -129,7 +125,7 @@ public class EditDebtViewModel extends ViewModel {
 
     public void pickDateOfEndClicked() {
         Calendar calendar = Calendar.getInstance();
-        long dateOfEnd = debtRepository.getCachedDebtPOJO().getDebt().getDateOfEnd();
+        long dateOfEnd = tempDebtPojo.getValue().getDebt().getDateOfEnd();
         if (dateOfEnd != 0) {
             calendar.setTimeInMillis(dateOfEnd);
         }
@@ -140,26 +136,24 @@ public class EditDebtViewModel extends ViewModel {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
-        DebtPOJO debtPOJO = debtRepository.getCachedDebtPOJO();
-
         switch (typeOfDate) {
             case TYPE_OF_DATE_START:
-                debtPOJO.getDebt().setDateOfStart(calendar.getTimeInMillis());
+                tempDebtPojo.getValue().getDebt().setDateOfStart(calendar.getTimeInMillis());
                 break;
             case TYPE_OF_DATE_EXPIRATION:
-                debtPOJO.getDebt().setDateOfExpiration(calendar.getTimeInMillis());
+                tempDebtPojo.getValue().getDebt().setDateOfExpiration(calendar.getTimeInMillis());
                 break;
             case TYPE_OF_DATE_END:
-                debtPOJO.getDebt().setDateOfEnd(calendar.getTimeInMillis());
+                tempDebtPojo.getValue().getDebt().setDateOfEnd(calendar.getTimeInMillis());
                 break;
         }
 
-        liveDataCachedDebtPOJO.setValue(debtRepository.getCachedDebtPOJO());
+        tempDebtPojo.setValue(tempDebtPojo.getValue());
     }
 
     public void saveButtonClicked() {
         //возможно нужно будет сделать проверки на пустые поля?
-        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+        if (tempDebtPojo.getValue().getDebt().getId() != 0) {
             updateDebt();
         } else {
             insertDebt();
@@ -167,14 +161,13 @@ public class EditDebtViewModel extends ViewModel {
     }
 
     private void updateDebt() {
-        disposables.add(debtRepository.updateDebt(debtRepository.getCachedDebtPOJO().getDebt())
+        disposables.add(debtRepository.updateDebt(tempDebtPojo.getValue().getDebt())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно обновлена!");
-                        debtRepository.clearDebtPOJOCache();
                         navigateToPreviousScreen.call();
                     }
 
@@ -186,14 +179,13 @@ public class EditDebtViewModel extends ViewModel {
     }
 
     private void insertDebt() {
-        disposables.add(debtRepository.insertDebt(debtRepository.getCachedDebtPOJO().getDebt())
+        disposables.add(debtRepository.insertDebt(tempDebtPojo.getValue().getDebt())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно сохранена!");
-                        debtRepository.clearDebtPOJOCache();
                         navigateToPreviousScreen.call();
                     }
 
@@ -205,7 +197,7 @@ public class EditDebtViewModel extends ViewModel {
     }
 
     public void deleteButtonClicked() {
-        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+        if (tempDebtPojo.getValue().getDebt().getId() != 0) {
             showConfirmDeleteDialog.postValue(true);
         } else {
             showToast.callWithArgument("Такой записи не существует!");
@@ -217,21 +209,21 @@ public class EditDebtViewModel extends ViewModel {
     }
 
     public void confirmedDebtDelete() {
-        if (debtRepository.getCachedDebtPOJO().getDebt().getId() != 0) {
+        if (tempDebtPojo.getValue().getDebt().getId() != 0) {
             deleteDebt();
             showConfirmDeleteDialog.postValue(false);
         }
     }
 
     private void deleteDebt() {
-        disposables.add(debtRepository.deleteDebt(debtRepository.getCachedDebtPOJO().getDebt())
+        disposables.add(debtRepository.deleteDebt(tempDebtPojo.getValue().getDebt())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
                         showToast.callWithArgument("Запись успешно удалена!");
-                        debtRepository.clearDebtPOJOCache();
+//                        debtRepository.clearDebtPOJOCache(); - нужно ли очищать объект во вьюмодели, если она уничтожится?
                         navigateToPreviousScreen.call();
                     }
 
@@ -244,30 +236,28 @@ public class EditDebtViewModel extends ViewModel {
 
     public void changedTextDebtAmount(String allText) {
         if (allText.trim().equals("")) allText = "0.0";
-        debtRepository.getCachedDebtPOJO().getDebt().setAmount(Double.valueOf(allText.trim()));
+        tempDebtPojo.getValue().getDebt().setAmount(Double.valueOf(allText.trim()));
     }
 
     public void changedTextDebtDescription(final String allText) {
-        debtRepository.getCachedDebtPOJO().getDebt().setDescription(allText.trim());
+        tempDebtPojo.getValue().getDebt().setDescription(allText.trim());
     }
 
     public void isReturnedCheckChanged(boolean isChecked) {
-        DebtPOJO cachedDebtPojo = debtRepository.getCachedDebtPOJO();
-        cachedDebtPojo.getDebt().setReturned(isChecked);
+        tempDebtPojo.getValue().getDebt().setReturned(isChecked);
         showEndDateContainer.callWithArgument(isChecked);
         if (isChecked) {
             Calendar calendar = Calendar.getInstance();
-            cachedDebtPojo.getDebt().setDateOfEnd(calendar.getTimeInMillis());
+            tempDebtPojo.getValue().getDebt().setDateOfEnd(calendar.getTimeInMillis());
         } else {
-            cachedDebtPojo.getDebt().setDateOfEnd(Calendar.getInstance().getTimeInMillis() * 2); // ставим значительно большую дату, чтобы при сортировке незавершенные были в конце
+            tempDebtPojo.getValue().getDebt().setDateOfEnd(Calendar.getInstance().getTimeInMillis() * 2); // ставим значительно большую дату, чтобы при сортировке незавершенные были в конце
         }
-        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
+        tempDebtPojo.setValue(tempDebtPojo.getValue());
     }
 
     public void amIBorrowerClicked(boolean amIBorrower) {
-        DebtPOJO cachedDebtPojo = debtRepository.getCachedDebtPOJO();
-        cachedDebtPojo.getDebt().setIAmBorrower(amIBorrower);
-        liveDataCachedDebtPOJO.setValue(cachedDebtPojo);
+        tempDebtPojo.getValue().getDebt().setAmIBorrower(amIBorrower);
+        tempDebtPojo.setValue(tempDebtPojo.getValue()); //уведомить датабайндинг, что данные в объекте поменялись
     }
 
     @Override
@@ -276,4 +266,32 @@ public class EditDebtViewModel extends ViewModel {
         disposables.clear();
     }
 
+    public void clearCacheEditing() {
+        tempDebtPojo.setValue(null);
+    }
+
+    public void setTempDebtPojo(DebtPOJO debtPojo) {
+        tempDebtPojo.setValue(debtPojo);
+    }
+
+    public void createEmptyTempDebtPojo() {
+        DebtPOJO debtPOJO = new DebtPOJO();
+        debtPOJO.setDebt(new Debt());
+
+        debtPOJO.getDebt().setDateOfStart(Calendar.getInstance().getTimeInMillis());
+        debtPOJO.getDebt().setDateOfExpiration(Calendar.getInstance().getTimeInMillis());
+        debtPOJO.getDebt().setDateOfEnd(Calendar.getInstance().getTimeInMillis() * 2);
+
+        List<Category> categories = new ArrayList<>();
+        Category category = new Category();
+        categories.add(category);
+        debtPOJO.setCategory(categories);
+
+        List<Person> persons = new ArrayList<>();
+        Person person = new Person();
+        persons.add(person);
+        debtPOJO.setPerson(persons);
+
+        tempDebtPojo.setValue(debtPOJO);
+    }
 }

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tadiuzzz.debts.databinding.FragmentCategoriesBinding;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.adapter.OnCategoryClickListener;
 import com.tadiuzzz.debts.ui.presentation.CategoriesViewModel;
 import com.tadiuzzz.debts.R;
@@ -44,7 +45,7 @@ public class CategoriesFragment extends DaggerFragment implements OnCategoryClic
 
     private CategoriesViewModel viewModel;
     private CategoryAdapter categoryAdapter;
-    private boolean isPickingCategory;
+    private DebtPOJO tempDebtPojo;
     public static final String TAG = "logTag";
 
     @Nullable
@@ -61,7 +62,9 @@ public class CategoriesFragment extends DaggerFragment implements OnCategoryClic
         binding.setAdapter(categoryAdapter);
 
         Bundle bundle = getArguments();
-        if (bundle != null) isPickingCategory = bundle.getBoolean("pickCategory", false);
+        if (bundle != null) {
+            tempDebtPojo = bundle.getParcelable("debtPojo");
+        }
 
         subscribeOnData();
 
@@ -89,11 +92,15 @@ public class CategoriesFragment extends DaggerFragment implements OnCategoryClic
 
         });
 
-        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), debtPOJO -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("debtPojo", debtPOJO);
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_categoriesFragment_to_editDebtFragment, bundle);
+        });
     }
 
     @Override
     public void onCategoryClick(Category category) {
-        viewModel.clickedOnCategory(category, isPickingCategory);
+        viewModel.clickedOnCategory(category, tempDebtPojo);
     }
 }

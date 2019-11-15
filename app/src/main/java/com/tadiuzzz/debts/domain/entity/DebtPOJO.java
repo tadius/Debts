@@ -1,6 +1,10 @@
 package com.tadiuzzz.debts.domain.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Embedded;
+import androidx.room.Ignore;
 import androidx.room.Relation;
 
 import java.util.ArrayList;
@@ -9,7 +13,7 @@ import java.util.List;
 /**
  * Created by Simonov.vv on 30.05.2019.
  */
-public class DebtPOJO {
+public class DebtPOJO implements Parcelable {
     @Embedded
     private Debt debt;
 
@@ -70,5 +74,39 @@ public class DebtPOJO {
 
     public void setCategory(List<Category> category) {
         this.category = category;
+    }
+
+    /*
+     * Parcelable
+     */
+    @Ignore
+    protected DebtPOJO(Parcel in) {
+        debt = in.readParcelable(Debt.class.getClassLoader());
+        person = in.createTypedArrayList(Person.CREATOR);
+        category = in.createTypedArrayList(Category.CREATOR);
+    }
+
+    public static final Creator<DebtPOJO> CREATOR = new Creator<DebtPOJO>() {
+        @Override
+        public DebtPOJO createFromParcel(Parcel in) {
+            return new DebtPOJO(in);
+        }
+
+        @Override
+        public DebtPOJO[] newArray(int size) {
+            return new DebtPOJO[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(debt, flags);
+        dest.writeTypedList(person);
+        dest.writeTypedList(category);
     }
 }

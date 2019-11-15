@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
@@ -31,7 +32,7 @@ public class PersonsViewModel extends ViewModel {
 
     private DebtRepository debtRepository;
     private final SingleLiveEvent<Person> navigateToEditPersonScreen = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
+    private final SingleLiveEvent<DebtPOJO> navigateToPreviousScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<Person>> listOfPersons = new MutableLiveData<>();
 
@@ -65,7 +66,7 @@ public class PersonsViewModel extends ViewModel {
         return listOfPersons;
     }
 
-    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
+    public SingleLiveEvent<DebtPOJO> getNavigateToPreviousScreenEvent() {
         return navigateToPreviousScreen;
     }
 
@@ -73,20 +74,21 @@ public class PersonsViewModel extends ViewModel {
         return navigateToEditPersonScreen;
     }
 
-    public void clickedOnPerson(Person person, boolean isPicking) {
-        if (isPicking) {
-            putPersonToCache(person);
-            navigateToPreviousScreen.call();
+    public void clickedOnPerson(Person person, DebtPOJO debtPojo) {
+        if (debtPojo != null) {
+            debtPojo = putPersonToDebtPojo(person, debtPojo);
+            navigateToPreviousScreen.callWithArgument(debtPojo);
         } else {
             navigateToEditPersonScreen.callWithArgument(person);
         }
     }
 
-    private void putPersonToCache(Person person) {
+    private DebtPOJO putPersonToDebtPojo(Person person, DebtPOJO debtPOJO) {
         List<Person> persons = new ArrayList<>();
         persons.add(person);
-        debtRepository.getCachedDebtPOJO().setPerson(persons);
-        debtRepository.getCachedDebtPOJO().getDebt().setPersonId(person.getId());
+        debtPOJO.setPerson(persons);
+        debtPOJO.getDebt().setPersonId(person.getId());
+        return debtPOJO;
     }
 
     public void onAddButtonClick() {

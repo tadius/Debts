@@ -13,6 +13,7 @@ import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
 import com.tadiuzzz.debts.databinding.FragmentPersonsBinding;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.domain.entity.Person;
 import com.tadiuzzz.debts.ui.adapter.OnPersonClickListener;
 import com.tadiuzzz.debts.ui.adapter.PersonAdapter;
@@ -33,7 +34,7 @@ public class PersonsFragment extends DaggerFragment implements OnPersonClickList
 
     private PersonsViewModel viewModel;
     private PersonAdapter personAdapter;
-    private boolean isPickingPerson;
+    private DebtPOJO tempDebtPojo;
     public static final String TAG = "logTag";
 
     @Nullable
@@ -50,7 +51,9 @@ public class PersonsFragment extends DaggerFragment implements OnPersonClickList
         binding.setAdapter(personAdapter);
 
         Bundle bundle = getArguments();
-        if(bundle != null) isPickingPerson = bundle.getBoolean("pickPerson", false);
+        if (bundle != null) {
+            tempDebtPojo = bundle.getParcelable("debtPojo");
+        }
 
         subscribeOnData();
 
@@ -77,11 +80,14 @@ public class PersonsFragment extends DaggerFragment implements OnPersonClickList
             }
         });
 
-        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack());
-    }
+        viewModel.getNavigateToPreviousScreenEvent().observe(getViewLifecycleOwner(), debtPOJO -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("debtPojo", debtPOJO);
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_personsFragment_to_editDebtFragment, bundle);
+        });    }
 
     @Override
     public void onPersonClick(Person person) {
-        viewModel.clickedOnPerson(person, isPickingPerson);
+        viewModel.clickedOnPerson(person, tempDebtPojo);
     }
 }

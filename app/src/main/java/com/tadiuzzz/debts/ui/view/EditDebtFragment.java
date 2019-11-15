@@ -24,14 +24,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.tadiuzzz.debts.R;
+import com.tadiuzzz.debts.databinding.FragmentEditDebtBinding;
 import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.presentation.EditDebtViewModel;
+import com.tadiuzzz.debts.ui.presentation.SharedViewModel;
 import com.tadiuzzz.debts.ui.presentation.ViewModelProviderFactory;
+import com.tadiuzzz.debts.utils.NavigationResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,7 +51,7 @@ import dagger.android.support.DaggerFragment;
 /**
  * Created by Simonov.vv on 31.05.2019.
  */
-public class EditDebtFragment extends DaggerFragment {
+public class EditDebtFragment extends DaggerFragment implements NavigationResult {
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -56,8 +60,6 @@ public class EditDebtFragment extends DaggerFragment {
 
     public static final String TAG = "logTag";
 
-    @BindView(R.id.tvEditDebtId)
-    TextView tvEditDebtId;
     @BindView(R.id.rbIAmCreditor)
     RadioButton rbIAmCreditor;
     @BindView(R.id.rbIAmBorrower)
@@ -74,8 +76,6 @@ public class EditDebtFragment extends DaggerFragment {
     EditText etEditDebtDateOfEnd;
     @BindView(R.id.etEditDebtCategoryName)
     EditText etEditDebtCategoryName;
-    @BindView(R.id.etEditDebtPersonName)
-    EditText etEditDebtPersonName;
     @BindView(R.id.cbIsReturned)
     CheckBox cbIsReturned;
     @BindView(R.id.llDateOfEndContainer)
@@ -134,11 +134,26 @@ public class EditDebtFragment extends DaggerFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_edit_debt, container, false);
+
+        viewModel = ViewModelProviders.of(this, providerFactory).get(EditDebtViewModel.class);
+
+        FragmentEditDebtBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_debt, container, false);
+        binding.setLifecycleOwner(this);
+        binding.setViewmodel(viewModel);
+
+        View view = binding.getRoot();
 
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this, providerFactory).get(EditDebtViewModel.class);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            DebtPOJO debtPojo = bundle.getParcelable("debtPojo");
+            viewModel.setTempDebtPojo(debtPojo);
+        } else {
+            viewModel.createEmptyTempDebtPojo();
+        }
+
+
 
         setUpEditFieldsListeners();
 
@@ -149,6 +164,8 @@ public class EditDebtFragment extends DaggerFragment {
         subscribeOnDialogsEvents();
 
         subscribeOnNotificationEvents();
+
+
 
         return view;
     }
@@ -217,14 +234,14 @@ public class EditDebtFragment extends DaggerFragment {
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         });
 
-        viewModel.getNavigateToPickPersonScreenEvent().observe(getViewLifecycleOwner(), o -> {
+        viewModel.getNavigateToPickPersonScreenEvent().observe(getViewLifecycleOwner(), debtPOJO -> {
             Bundle bundle = new Bundle();
-            bundle.putBoolean("pickPerson", true);
+            bundle.putParcelable("debtPojo", debtPOJO);
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_personsFragment, bundle);
         });
-        viewModel.getNavigateToPickCategoryScreenEvent().observe(getViewLifecycleOwner(), o -> {
+        viewModel.getNavigateToPickCategoryScreenEvent().observe(getViewLifecycleOwner(), debtPOJO -> {
             Bundle bundle = new Bundle();
-            bundle.putBoolean("pickCategory", true);
+            bundle.putParcelable("debtPojo", debtPOJO);
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_editDebtFragment_to_categoriesFragment, bundle);
         });
     }
@@ -254,7 +271,6 @@ public class EditDebtFragment extends DaggerFragment {
     }
 
     private void setFields(DebtPOJO debtPOJO) {
-        tvEditDebtId.setText(String.valueOf(debtPOJO.getDebt().getId()));
         if (debtPOJO.getDebt().amIBorrower()) {
             rbIAmBorrower.setChecked(true);
             rbIAmBorrower.jumpDrawablesToCurrentState(); //skip toggle animation
@@ -284,9 +300,7 @@ public class EditDebtFragment extends DaggerFragment {
         if (debtPOJO.getDebtCategory().getId() != 0) {
             etEditDebtCategoryName.setText(debtPOJO.getDebtCategory().getName());
         }
-        if (debtPOJO.getDebtPerson().getId() != 0) {
-            etEditDebtPersonName.setText(debtPOJO.getDebtPerson().getName());
-        }
+
     }
 
     private void showDatePickerDialog(Calendar calendar, int typeOfDate) {
@@ -327,4 +341,17 @@ public class EditDebtFragment extends DaggerFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        viewModel.clearCacheEditing();
+    }
+
+    @Override
+    public void onNavigationResult(Bundle bundle) {
+        DebtPOJO tempDebtPojo = bundle.getParcelable("debtPojo");
+        if(tempDebtPojo != null) {
+            viewModel.setTempDebtPojo(tempDebtPojo);
+        }
+    }
 }

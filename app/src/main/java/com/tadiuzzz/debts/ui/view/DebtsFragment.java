@@ -73,11 +73,16 @@ public class DebtsFragment extends DaggerFragment implements OnDebtPOJOClickList
     }
 
     private void subscribeOnNavigationEvents() {
-        viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), o -> Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment));
+        viewModel.getNavigateToEditDebtScreenEvent().observe(getViewLifecycleOwner(), debtPojo -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("debtPojo", debtPojo);
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_viewPagerFragment_to_editDebtFragment, bundle);
+        });
        }
 
     @Override
     public void onDebtPOJOClick(DebtPOJO debtPOJO) {
         viewModel.clickedOnDebtPOJO(debtPOJO);
     }
+
 }

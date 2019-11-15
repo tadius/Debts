@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.tadiuzzz.debts.data.DebtRepository;
 import com.tadiuzzz.debts.domain.entity.Category;
+import com.tadiuzzz.debts.domain.entity.DebtPOJO;
 import com.tadiuzzz.debts.ui.SingleLiveEvent;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class CategoriesViewModel extends ViewModel {
     private DebtRepository debtRepository;
 
     private final SingleLiveEvent<Category> navigateToEditCategoryScreen = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Void> navigateToPreviousScreen = new SingleLiveEvent<>();
+    private final SingleLiveEvent<DebtPOJO> navigateToPreviousScreen = new SingleLiveEvent<>();
 
     private MutableLiveData<List<Category>> listOfCategories = new MutableLiveData<>();
 
@@ -72,7 +73,7 @@ public class CategoriesViewModel extends ViewModel {
         return listOfCategories;
     }
 
-    public SingleLiveEvent getNavigateToPreviousScreenEvent() {
+    public SingleLiveEvent<DebtPOJO> getNavigateToPreviousScreenEvent() {
         return navigateToPreviousScreen;
     }
 
@@ -80,20 +81,21 @@ public class CategoriesViewModel extends ViewModel {
         return navigateToEditCategoryScreen;
     }
 
-    public void clickedOnCategory(Category category, boolean isPicking) {
-        if (isPicking) {
-            putCategoryToCache(category);
-            navigateToPreviousScreen.call();
+    public void clickedOnCategory(Category category, DebtPOJO debtPojo) {
+        if (debtPojo != null) {
+            debtPojo = putCategoryToDebtPojo(category, debtPojo);
+            navigateToPreviousScreen.callWithArgument(debtPojo);
         } else {
             navigateToEditCategoryScreen.callWithArgument(category);
         }
     }
 
-    private void putCategoryToCache(Category category) {
+    private DebtPOJO putCategoryToDebtPojo(Category category, DebtPOJO debtPOJO) {
         List<Category> categories = new ArrayList<>();
         categories.add(category);
-        debtRepository.getCachedDebtPOJO().setCategory(categories);
-        debtRepository.getCachedDebtPOJO().getDebt().setCategoryId(category.getId());
+        debtPOJO.setCategory(categories);
+        debtPOJO.getDebt().setCategoryId(category.getId());
+        return debtPOJO;
     }
 
     public void onAddButtonClick() {

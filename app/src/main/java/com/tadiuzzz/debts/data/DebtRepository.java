@@ -108,16 +108,16 @@ public class DebtRepository {
         return categoryDao.delete(category);
     }
 
-    public DebtPOJO getCachedDebtPOJO(){
-        return cacheEditing.getCachedDebtPOJO();
-    }
-
-    public void putDebtPOJOtoCache(DebtPOJO debtPOJO){
-        cacheEditing.putDebtPOJOToCache(debtPOJO);
-    }
-
-    public void clearDebtPOJOCache(){
-        cacheEditing.clearCachedDebtPOJO();
-    }
+//    public DebtPOJO getCachedDebtPOJO(){
+//        return cacheEditing.getCachedDebtPOJO();
+//    }
+//
+//    public void putDebtPOJOtoCache(DebtPOJO debtPOJO){
+//        cacheEditing.putDebtPOJOToCache(debtPOJO);
+//    }
+//
+//    public void clearDebtPOJOCache(){
+//        cacheEditing.clearCachedDebtPOJO();
+//    }
 
 }
