@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_debt_graph"
+    app:startDestination="@id/editDebtFragment">
+
+    <fragment
+        android:id="@+id/editDebtFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditDebtFragment"
+        android:label="fragment_edit_debt"
+        tools:layout="@layout/fragment_edit_debt" >
+        <action
+            android:id="@+id/action_editDebtFragment_to_personsFragment"
+            app:destination="@id/personsFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_editDebtFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/personsFragment"
+        android:name="com.tadiuzzz.debts.ui.view.PersonsFragment"
+        android:label="fragment_persons"
+        tools:layout="@layout/fragment_persons" >
+        <action
+            android:id="@+id/action_personsFragment_to_editPersonFragment"
+            app:destination="@id/editPersonFragment"
+            app:enterAnim="@anim/anim_enter"
+            app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_personsFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:popUpTo="@+id/edit_debt_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPersonFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditPersonFragment"
+        android:label="fragment_edit_person"
+        tools:layout="@layout/fragment_edit_person" />
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.tadiuzzz.debts.ui.view.CategoriesFragment"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_editCategoryFragment"
+            app:destination="@id/editCategoryFragment" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_editDebtFragment"
+            app:destination="@id/editDebtFragment"
+            app:popUpTo="@+id/edit_debt_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/editCategoryFragment"
+        android:name="com.tadiuzzz.debts.ui.view.EditCategoryFragment"
+        android:label="fragment_edit_category"
+        tools:layout="@layout/fragment_edit_category" />
+</navigation>

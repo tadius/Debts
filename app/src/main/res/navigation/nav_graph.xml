@@ -20,12 +20,6 @@
             app:destination="@+id/editCategoryFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_categoriesFragment_to_editDebtFragment"
-            app:destination="@id/editDebtFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter"
-            app:popUpTo="@+id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editCategoryFragment"
@@ -42,34 +36,12 @@
             app:destination="@id/editPersonFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_personsFragment_to_editDebtFragment"
-            app:destination="@id/editDebtFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter"
-            app:popUpTo="@+id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPersonFragment"
         android:name="com.tadiuzzz.debts.ui.view.EditPersonFragment"
         android:label="Редактирование персоны"
         tools:layout="@layout/fragment_edit_person" />
-    <fragment
-        android:id="@+id/editDebtFragment"
-        android:name="com.tadiuzzz.debts.ui.view.EditDebtFragment"
-        android:label="Редактирование долга"
-        tools:layout="@layout/fragment_edit_debt">
-        <action
-            android:id="@+id/action_editDebtFragment_to_categoriesFragment"
-            app:destination="@id/categoriesFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-        <action
-            android:id="@+id/action_editDebtFragment_to_personsFragment"
-            app:destination="@id/personsFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
-    </fragment>
     <fragment
         android:id="@+id/backupRestoreFragment"
         android:name="com.tadiuzzz.debts.ui.view.BackupRestoreFragment"
@@ -80,11 +52,6 @@
         android:name="com.tadiuzzz.debts.ui.view.ViewPagerFragment"
         android:label="Долги"
         tools:layout="@layout/fragment_view_pager">
-        <action
-            android:id="@+id/action_viewPagerFragment_to_editDebtFragment"
-            app:destination="@id/editDebtFragment"
-            app:enterAnim="@anim/anim_enter"
-            app:popEnterAnim="@anim/anim_enter" />
         <action
             android:id="@+id/action_viewPagerFragment_to_categoriesFragment"
             app:destination="@id/categoriesFragment"
@@ -100,6 +67,9 @@
             app:destination="@id/preferencesFragment"
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_edit_debt_graph"
+            app:destination="@id/edit_debt_graph" />
     </fragment>
     <fragment
         android:id="@+id/aboutAppFragment"
@@ -121,4 +91,5 @@
             app:enterAnim="@anim/anim_enter"
             app:popEnterAnim="@anim/anim_enter" />
     </fragment>
+    <include app:graph="@navigation/edit_debt_graph" />
 </navigation>
